@@ -1,0 +1,51 @@
+#+BIND: org-export-use-babel nil
+#+TITLE: TDA Literature
+#+AUTHOR: Philip Hartout
+#+EMAIL: <philip.hartout@protonmail.com>
+#+DATE: August 16, 2020
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS:[a4paper,12pt,twoside]
+#+LaTeX_HEADER:\usepackage[usenames,dvipsnames,figures]{xcolor}
+#+LaTeX_HEADER:\usepackage[autostyle]{csquotes}
+#+LaTeX_HEADER:\usepackage[final]{pdfpages}
+#+LaTeX_HEADER:\usepackage[top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}
+#+LATEX_HEADER_EXTRA:\hypersetup{colorlinks=false, linkcolor=black, citecolor=black, filecolor=black, urlcolor=black}
+#+LATEX_HEADER_EXTRA:\newtheorem{definition}{Definition}[section]
+#+LATEX_HEADER_EXTRA:\pagestyle{fancy}
+#+LATEX_HEADER_EXTRA:\setlength{\headheight}{25pt}
+#+LATEX_HEADER_EXTRA:\lhead{\textbf{Philip Hartout}}
+#+LATEX_HEADER_EXTRA:\rhead{\textbf{}}
+#+LATEX_HEADER_EXTRA:\rfoot{}
+#+MACRO: NEWLINE @@latex:\\@@ @@html:<br>@@
+#+PROPERTY: header-args :exports both :session python_emacs_session :cache :results value
+#+OPTIONS: ^:nil
+#+STARTUP: latexpreview
+#+LATEX_COMPILER: pdflatexorg-mode restarted
+
+
+Reading list
+
+
+Online course for math part:
+https://www2.cs.duke.edu/courses/fall06/cps296.1/
+
+Overviews:
+https://anatomypubs.onlinelibrary.wiley.com/doi/full/10.1002/dvdy.175
+https://www.biorxiv.org/content/10.1101/457747v2.full
+https://www.researchgate.net/publication/220692408_Computational_Topology_An_Introduction
+
+Topological autoencoder
+https://arxiv.org/abs/1906.00722 - is an encoder interesting here?
+
+MRI + TDA:
+https://www.eneuro.org/content/7/3/ENEURO.0543-19.202
+https://www.nature.com/articles/s41467-018-03664-4
+https://arxiv.org/abs/2006.07882 - Riek et al on movies. Consider
+adapting methods
+Gleaned from the web:
+https://www.nature.com/articles/s41598-019-55818-z (traditional
+network analysis for Alzheimer's)
+https://www.frontiersin.org/articles/10.3389/fnins.2018.00685/full
+topology + egg + severe Alzheimer's
+https://www.frontiersin.org/articles/10.3389/fnagi.2018.00404/full -
+topology alternation and cognitive impairment

@@ -22,5 +22,4 @@
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
-This is the repository containing an analysis of the ADNI data
-analysis using TDA by the MLCB lab of ETHZ.
+This is the repository containing a TDA of the ADNI data done in the context of a lab rotation at the MLCB lab of ETHZ.

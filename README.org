@@ -1,5 +1,5 @@
 #+BIND: org-export-use-babel nil
-#+TITLE: TDA_ADNI
+#+TITLE: TDA_ADNI_MLCB
 #+AUTHOR: Philip Hartout
 #+EMAIL: <philip.hartout@protonmail.com>
 #+DATE: August 17, 2020

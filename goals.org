@@ -25,7 +25,7 @@
 ** Overall Goals
 
 Aim:
-- Maybe improve on this and apply to AD?
+- Maybe improve on [[https://arxiv.org/abs/2006.07882][this paper by Rieck, Yates et al]] and apply to AD?
 - Compare clustering performance relative to mapper?
 Members: Bastian Rieck, Philip Hartout
 Data: ADNI data

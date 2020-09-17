@@ -23,7 +23,6 @@
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
 * <2020-09-23 Wed> Meeting preparation
-Dear Bastian,
 ** Administrative matters
 - How to I get access to the ADNI dataset?
 - Do you use VMs or similar as a working environment, or can I work on my own machine?

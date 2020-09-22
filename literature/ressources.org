@@ -22,30 +22,60 @@
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
+* Reading list
 
-Reading list
-
-
-Online course for math part:
+** Online course for math part:
 https://www2.cs.duke.edu/courses/fall06/cps296.1/
+https://github.com/pjhartout/TDA_Course_Duke
 
-Overviews:
+** Overviews:
 https://anatomypubs.onlinelibrary.wiley.com/doi/full/10.1002/dvdy.175
 https://www.biorxiv.org/content/10.1101/457747v2.full
 https://www.researchgate.net/publication/220692408_Computational_Topology_An_Introduction
 
-Topological autoencoder
+** Math research
 https://arxiv.org/abs/1906.00722 - is an encoder interesting here?
 
-MRI + TDA:
+** MRI + TDA:
 https://www.eneuro.org/content/7/3/ENEURO.0543-19.202
 https://www.nature.com/articles/s41467-018-03664-4
-https://arxiv.org/abs/2006.07882 - Riek et al on movies. Consider
-adapting methods
-Gleaned from the web:
+https://arxiv.org/abs/2006.07882 - Riek et al on movies. Consider adapting methods?
+
+** Mapper
+*** Foundational paper
+- [[https://diglib.eg.org/bitstream/handle/10.2312/SPBG.SPBG07.091-100/091-100.pdf?sequence=1&isAllowed=y][Topological Methods for the Analysis of High DimensionalData Sets
+  and 3D Object Recognition]]
+*** Theoretical aspects
+- [[https://arxiv.org/abs/1504.03763][Mutiscale Mapper: A Framework for Topological Summarization of Data
+  and Maps]]
+- [[https://arxiv.org/abs/1512.04108][Convergence between Categorical Representations of Reeb Space and
+  Mapper]]
+- [[https://arxiv.org/abs/1511.05823][Structure and Stability of the 1-Dimensional Mapper]]
+- [[https://arxiv.org/abs/1706.00204][Statistical Analysis and Parameter Selection for Mapper]]
+- [[https://arxiv.org/abs/1906.08256][Steinhaus Filtration and Stable Paths in the Mapper]]
+- [[https://arxiv.org/abs/1712.10197][Interesting Paths in the Mapper]]
+- [[http://www.math.wsu.edu/math/faculty/bkrishna/Papers/Flares.pdf][Detecting Divergent Subpopulations in Phenomics Data using Interesting Flares]]
+*** Key applications done so far of this algorithm
+- [[https://stm.sciencemag.org/content/7/311/311ra174.short][Identification of type 2 diabetes subgroups through topological analysis of patient similarity]]
+Uses medical records and medical data and retrospectivally identified
+unique mutations for each subgroup.
+- [[https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4835107/][Tracking Resilience to Infections by Mapping Disease Space]]
+Use mice to track progress in disease space. Mice fated to die
+clustered together in topological space.
+- [[https://dl.acm.org/doi/10.1145/3307339.3342143][A Visual Analytics Framework for Analysis of Patient Trajectories]]
+About patient trajectories using mapper.
+
+** Random applications gleaned from the web (general topological considerations):
 https://www.nature.com/articles/s41598-019-55818-z (traditional
 network analysis for Alzheimer's)
-https://www.frontiersin.org/articles/10.3389/fnins.2018.00685/full
 topology + egg + severe Alzheimer's
 https://www.frontiersin.org/articles/10.3389/fnagi.2018.00404/full -
-topology alternation and cognitive impairment
+
+- topology alternation and cognitive impairment
+https://www.jneurosci.org/content/jneuro/28/18/4756.full.pdf
+Only looks at correlation between a number of things, but not e.g.
+persistent features. Only uses topology to extract graph and compute
+activation correlations using that.
+
+- Persistent features analysis
+https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwi34MeZr_DrAhXCwosKHcRNBesQFjABegQIBBAB&url=https%3A%2F%2Fwww.mdpi.com%2F1420-3049%2F25%2F11%2F2472%2Fpdf&usg=AOvVaw2CIp2GgliLfdzbWVnuksLv

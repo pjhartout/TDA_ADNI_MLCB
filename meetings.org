@@ -25,6 +25,8 @@
 * <2020-09-23 Wed> Meeting preparation
 ** Administrative matters
 - How to I get access to the ADNI dataset?
-- Do you use VMs or similar as a working environment, or can I work on my own machine?
+- Do you use VMs or similar as a working environment, or can I work on
+  my own machine?
+- Regarding internship, ok to sign in as K Borgwardt as supervisor?
 ** Goals of the project
 - What are the specific goals of the project?

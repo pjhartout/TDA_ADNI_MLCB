@@ -30,3 +30,9 @@
 - Regarding internship, ok to sign in as K Borgwardt as supervisor?
 ** Goals of the project
 - What are the specific goals of the project?
+ [[https://arxiv.org/abs/2006.07882][Check this paperthis paper by Rieck, Yates et al]] and possibly apply
+  it to AD?
+- Discuss also the timeline. Generally, Timeline: AS2020 (sept-dec
+  ideally).
+** TODO Post-meeting cleanup
+List of things to investigate

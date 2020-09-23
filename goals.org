@@ -22,35 +22,12 @@
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
-** Overall Goals
-
-Aim:
-- Maybe improve on [[https://arxiv.org/abs/2006.07882][this paper by Rieck, Yates et al]] and apply to AD?
-- Compare clustering performance relative to mapper?
-Members: Bastian Rieck, Philip Hartout
+Members: Bastian Rieck, Philip Hartout, (others?)
 Data: ADNI data
 Timeline: AS2020 (sept-dec ideally).
 
+* Overall setup of lab rotation
+TBD
 
-* Overall setup of studies
-** General way of applying topological analysis pipeline.
-- Perform demographic analysis.
-- Construct network using a brain atlas with varying regions. The
-  resulting network is a weighted adjacency matrix not directional, a
-  least [[https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwi34MeZr_DrAhXCwosKHcRNBesQFjABegQIBBAB&url=https%3A%2F%2Fwww.mdpi.com%2F1420-3049%2F25%2F11%2F2472%2Fpdf&usg=AOvVaw2CIp2GgliLfdzbWVnuksLv][in this example]].
-- Apply topological algorithms (e.g. filtration) to extact useful
-  features.
-- Useful topological features include: Betti numbers, integrated persistent feature,
-  characteristic path length, global efficiency, nodal strength,
-  modularity, clustering coefficient, and eigenvector centrality.
-
-** In "Uncovering the Topology of Time-Varying fMRI Data using Cubical Persistence" paper
-- Represent an fMRI stack as a volume
-- Create sequence of cubical complexes
-- Calculate persistent homology of this sequence, which results in a
-  set of time varying persistence diagrams
-- Calculate summary statistics of these diagrams
-- Convert to vectorial representations
-
-Advantages:
-- Unlike Mapper, operates on raw data and is parameter-free.
+* Timeline
+AS2020 for the first part.

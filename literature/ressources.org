@@ -23,7 +23,6 @@
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
 * Reading list
-
 ** Online course for math part:
 https://www2.cs.duke.edu/courses/fall06/cps296.1/
 https://github.com/pjhartout/TDA_Course_Duke
@@ -40,6 +39,20 @@ https://arxiv.org/abs/1906.00722 - is an encoder interesting here?
 https://www.eneuro.org/content/7/3/ENEURO.0543-19.202
 https://www.nature.com/articles/s41467-018-03664-4
 https://arxiv.org/abs/2006.07882 - Riek et al on movies. Consider adapting methods?
+*** In "Uncovering the Topology of Time-Varying fMRI Data using Cubical Persistence" paper
+- Represent an fMRI stack as a volume
+- Create sequence of cubical complexes
+- Calculate persistent homology of this sequence, which results in a
+  set of time varying persistence diagrams
+- Calculate summary statistics of these diagrams
+- Convert to vectorial representations
+ - Perform statistical analyses to resulting vectorial representations
+
+Advantages:
+- Unlike Mapper, operates on raw data and is parameter-free.
+
+But needs to be proven to be useful in visualizing MRI data in
+Alzheimer's disease patients.
 
 ** Mapper
 *** Foundational paper
@@ -68,7 +81,7 @@ About patient trajectories using mapper.
 ** Random applications gleaned from the web (general topological considerations):
 https://www.nature.com/articles/s41598-019-55818-z (traditional
 network analysis for Alzheimer's)
-topology + egg + severe Alzheimer's
+topology + EGG + severe Alzheimer's
 https://www.frontiersin.org/articles/10.3389/fnagi.2018.00404/full -
 
 - topology alternation and cognitive impairment
@@ -79,3 +92,15 @@ activation correlations using that.
 
 - Persistent features analysis
 https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwi34MeZr_DrAhXCwosKHcRNBesQFjABegQIBBAB&url=https%3A%2F%2Fwww.mdpi.com%2F1420-3049%2F25%2F11%2F2472%2Fpdf&usg=AOvVaw2CIp2GgliLfdzbWVnuksLv
+
+
+* Notes: general topological analysis pipeline.
+- Perform demographic analysis.
+- Construct network using a brain atlas with varying regions. The
+  resulting network is a weighted adjacency matrix not directional, a
+  least [[https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwi34MeZr_DrAhXCwosKHcRNBesQFjABegQIBBAB&url=https%3A%2F%2Fwww.mdpi.com%2F1420-3049%2F25%2F11%2F2472%2Fpdf&usg=AOvVaw2CIp2GgliLfdzbWVnuksLv][in this example]].
+- Apply topological algorithms (e.g. filtration) to extact useful (persistent)
+  features.
+- Useful topological features include: Betti numbers, integrated persistent feature,
+  characteristic path length, global efficiency, nodal strength,
+  modularity, clustering coefficient, and eigenvector centrality.

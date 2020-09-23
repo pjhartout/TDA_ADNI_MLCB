@@ -22,18 +22,42 @@
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
-* <2020-09-23 Wed> Meeting preparation
-** Administrative matters
+* <2020-09-23 Wed> Meeting - Preliminaries
+** Questions
 - How to I get access to the ADNI dataset?
 - Do you use VMs or similar as a working environment, or can I work on
   my own machine?
 - Regarding internship, ok to sign in as K Borgwardt as supervisor on MyStudies?
-** Goals of the project
 - What are the specific goals of the project?
- [[https://arxiv.org/abs/2006.07882][Check this paperthis paper by Rieck, Yates et al]] and possibly apply
-  it to AD? Also possibility of applying other algorithms like mapper,
-  etc to see if they can also help differentiate between the different phenotypes
 - Discuss also the timeline. Generally, Timeline: AS2020 (sept-dec
   ideally).
-** TODO Post-meeting cleanup
-List of things to investigate to do this week
+** Meeting Notes
+Possible directions:
+- Focus on the topological analysis of extracted graphs
+- Try out different atlases and look at whether there is prior
+  knowledge encoded in these, and whether TDA can remove this prior
+  knowledge, be indifferent to these graphs.
+
+State of the project:
+- MRI images are already processed in a normalized fashion. See
+  directory
+  /links/groups/borgwardt/Data/ADNI/brain_extraction-complete_normalized/sub-ADNI002S0295
+  for the typical patient. Different timepoints are available (up to
+  4, at 6 months interval).
+
+Regular meetings:
+- Spark group meeting at 3pm
+- Weekly one on one, choose slot (probably after Wednesday).
+
+Administrative matters:
+- Slack channel [TODO Bastian]
+- Server access will be granted when
+  registered. Servers are: =bs-borgwardt01= , =bs-borgwardt02=, =euler.ethz.ch=.
+- Directory to ADNI directory: links/groups/borgwardt/Data/ADNI
+- Look at brain extraction complete normalized within this directory
+  for the preprocessed dataset.
+
+Actionable list for next meeting:
+- Take common atlas, extract graphs
+- Then look at topological descriptors
+- Look at packages: https://nilearn.github.io/ and https://giotto-ai.github.io/gtda-docs/latest/library.html

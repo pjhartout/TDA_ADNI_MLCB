@@ -31,7 +31,8 @@
 ** Goals of the project
 - What are the specific goals of the project?
  [[https://arxiv.org/abs/2006.07882][Check this paperthis paper by Rieck, Yates et al]] and possibly apply
-  it to AD?
+  it to AD? Also possibility of applying other algorithms like mapper,
+  etc to see if they can also help differentiate between the different phenotypes
 - Discuss also the timeline. Generally, Timeline: AS2020 (sept-dec
   ideally).
 ** TODO Post-meeting cleanup

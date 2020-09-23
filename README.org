@@ -23,3 +23,13 @@
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
 This is the repository containing a TDA of the ADNI data done in the context of a lab rotation at the MLCB lab of ETHZ.
+
+Members: Bastian Rieck, Philip Hartout, (others?)
+Data: ADNI data
+Timeline: AS2020 (sept-dec ideally).
+
+* Overall setup of lab rotation
+TBD
+
+* Timeline
+AS2020

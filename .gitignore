@@ -1,3 +1,7 @@
+# Custom directories to ignore
+admin/
+data/
+
 # Custom ignores
 literature/*.pdf
 

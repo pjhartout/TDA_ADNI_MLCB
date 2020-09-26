@@ -39,6 +39,3 @@ MSc (theses):
 
 Dataset: ADNI data
 Timeline: AS2020 (sept-dec ideally).
-
-* Timeline
-AS2020 (12 weeks)

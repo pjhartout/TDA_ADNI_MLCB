@@ -93,7 +93,6 @@ activation correlations using that.
 - Persistent features analysis
 https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwi34MeZr_DrAhXCwosKHcRNBesQFjABegQIBBAB&url=https%3A%2F%2Fwww.mdpi.com%2F1420-3049%2F25%2F11%2F2472%2Fpdf&usg=AOvVaw2CIp2GgliLfdzbWVnuksLv
 
-
 * Notes: general topological analysis pipeline.
 - Perform demographic analysis.
 - Construct network using a brain atlas with varying regions. The

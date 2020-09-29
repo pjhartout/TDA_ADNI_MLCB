@@ -65,7 +65,7 @@ codename: Schaefer et al
 - Desikan et al
 - Varoquaux et al
 
-* General theoretical backgrounds & definitions.
+* General background & definitions.
 ** General
 - Alzheimer's disease: Alzheimer’s disease is an irreversible,
 progressive brain disorder that slowly destroys memory and thinking
@@ -364,3 +364,18 @@ G = nx.from_pandas_adjacency(df)
 #+end_src
 
 ... Perform topological data analysis from this graph.
+
+
+* Working with FSL and freesurfer
+** Plan
+1. FSL (Oxford Centre for Functional MRI of the Brain (FMRIB F)
+  Software Library) - Brain Extraction Tool (BET)
+2. Lesion Filling (manual step)
+3. Freesurfer - identify brain
+   regions  ~82 brain region - This
+   is where we look at different atlases.
+4. Freesurfer - identify brain volumes
+5. So in each cell of the correlation matrix there is a number between -1
+and 1 that represent the Pearson correlation coefficient between
+ROI’s. The diagonal elements of the constructed correlation matrix are
+set to zero.

@@ -22,6 +22,7 @@
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
+
 * <2020-09-29 Tue> Meeting - Progress Update #1
 ** Preparations
 - Updates: looked at data, started some exploration of the data and
@@ -35,8 +36,30 @@ memory='nilearn_cache', verbose=5)
 - Overall questions: how to extract the graph from MRI instead of
   fMRI? Crucial point where my understanding is lacking: what would be an intuitive
   understanding from masks? Specifically =NiftiMapsMasker= ?
-- Remind existence of repository =https://github.com/pjhartout/TDA_ADNI_MLCB=
+- Remind existence of repository
+  https://github.com/pjhartout/TDA_ADNI_MLCB
+- =/links/groups/borgwardt/Data/ADNI/brain_extraction-complete_normalized/sub-ADNI002S0295=
+  description. Have the images been normalized for brain volume
+  already? Provide possibly the code & methodology for the pipeline.
+
 ** Meeting Notes
+
+* <2020-09-29 Tue> SNF Spark Group Meeting
+** Louis Lukas presentation
+- Code?
+- fMRIprep?
+- State of the art?
+- Look at differences between voxels and ROI.
+- Voxel based morphometry pipeline.
+- Describe all of the steps you did.
+- Check all brain images one by one or don't say it at all.
+- fMRIprep creates mask.
+- fsl? What does that refer to? ->
+  https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FslOverview
+- Look at masking methods.
+** Merel Kuijs presentation
+- Check out demographics of the dataset I use.
+
 
 * <2020-09-23 Wed> Meeting - Preliminaries
 ** Questions

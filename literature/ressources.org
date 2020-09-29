@@ -97,10 +97,10 @@ https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwi34MeZ
 Example shown [[Construction of structural correlation network .][here]], procedure:
 1. FSL (Oxford Centre for Functional MRI of the Brain (FMRIB F)
   Software Library) - Brain Extraction Tool (BET)
-2. Lesion Fillin (manual step)
+2. Lesion Filling (manual step)
 3. Freesurfer - identify brain regions  ~82 brain region
 4. Freesurfer - identify brain volumes
-So in each cell of the correlation matrix there is a number between -1
+5. So in each cell of the correlation matrix there is a number between -1
 and 1 that represent the Pearson correlation co- efficient between
 ROI’s. The diagonal elements of the constructed correlation matrix are
 set to zero.

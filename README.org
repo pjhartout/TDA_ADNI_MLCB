@@ -25,17 +25,6 @@
 This is the repository containing a TDA of the ADNI data done in the context of a lab rotation at the MLCB lab of ETHZ.
 
 Supervision: Bastian Rieck
-Spark Team:
-Post-Docs
-- Felix Hensel - 1 topology based approaches for classification - limited
-  time available
-- Sarah Brüningk also classification using CNNs
-
-MSc (theses):
-- Louis - feature extraction methods, describe heteogeneity of the
-  data, identify subgroups.
-- Merel - Interpretability-based approaches. Make NN output
-  interpretable.
 
 Dataset: ADNI data
 Timeline: AS2020 (sept-dec ideally).

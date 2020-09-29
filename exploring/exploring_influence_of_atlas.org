@@ -1,0 +1,240 @@
+#+BIND: org-export-use-babel nil
+#+TITLE: Exploring the influence of the choice of Brain Atlas on Topological Descriptors
+#+AUTHOR: Philip Hartout
+#+EMAIL: <philip.hartout@protonmail.com>
+#+DATE: September 25, 2020
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS:[a4paper,12pt,twoside]
+#+LaTeX_HEADER:\usepackage[usenames,dvipsnames,figures]{xcolor}
+#+LaTeX_HEADER:\usepackage[autostyle]{csquotes}
+#+LaTeX_HEADER:\usepackage[final]{pdfpages}
+#+LaTeX_HEADER:\usepackage[top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}
+#+LATEX_HEADER_EXTRA:\hypersetup{colorlinks=false, linkcolor=black, citecolor=black, filecolor=black, urlcolor=black}
+#+LATEX_HEADER_EXTRA:\newtheorem{definition}{Definition}[section]
+#+LATEX_HEADER_EXTRA:\pagestyle{fancy}
+#+LATEX_HEADER_EXTRA:\setlength{\headheight}{25pt}
+#+LATEX_HEADER_EXTRA:\lhead{\textbf{Philip Hartout}}
+#+LATEX_HEADER_EXTRA:\rhead{\textbf{}}
+#+LATEX_HEADER_EXTRA:\rfoot{}
+#+MACRO: NEWLINE @@latex:\\@@ @@html:<br>@@
+#+PROPERTY: header-args :exports both :session python_emacs_session :cache :results value
+#+OPTIONS: ^:nil
+#+TODO: TODO IN-PROGRESS WAITING | DONE CANCELED
+#+STARTUP: latexpreview
+#+LATEX_COMPILER: pdflatexorg-mode restarted
+
+* Context
+This document explores the influence of the choice of brain atlas on
+the measure of topological descriptors. Concretely:
+1. we list a set of possible atlases used in research
+2. use these on the ADNI dataset to extract graphs
+3. compute the topological descriptors of these graphs
+4. make a statistical analysis of these descriptors
+
+* List of possible atlases to use
+** Found independently
+- [[https://www.sciencedirect.com/science/article/pii/S1053811920306121][Dictionary of Functional Modes for brain imaging]],
+website: https://parietal-inria.github.io/DiFuMo/
+code: https://github.com/Parietal-INRIA/DiFuMo
+codename: Dadi et al
+- [[https://pubmed.ncbi.nlm.nih.gov/26523655/][A human brain atlas derived via n-cut parcellation of resting-state and task-based fMRI data]] website:
+https://www.nitrc.org/docman/index.php?group_id=989&selected_doc_group_id=3875&language_id=1#folder
+codename: James et al
+- [[https://www.sciencedirect.com/science/article/pii/S1053811910008542?via%3Dihub][Automatic parcellation of human cortical gyri and sulci using
+  standard anatomical nomenclature]]
+used here:
+https://nilearn.github.io/auto_examples/01_plotting/plot_surf_atlas.html
+codename: Destrieux et al
+- An automated labeling system for subdividing the human cerebral
+  cortex on MRI scans into gyral based regions of interest
+codename Desikan et al
+- Multi-subject dictionary learning to segment an atlas of brain
+  spontaneous activity
+codename: Varoquaux et al
+** Found in the literature
+- In "Uncovering the Topology of Time-Varying fMRI Data using Cubical Persistence"
+paper: https://pubmed.ncbi.nlm.nih.gov/28981612/
+code:
+https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal
+codename: Schaefer et al
+** Current list of atlases considered
+- Dadi et al
+- James et al
+- Destrieux et al
+- Schaefer et al
+- Desikan et al
+- Varoquaux et al
+
+* Getting to know the libraries and the data
+
+First, we import the data.
+
+#+begin_src python
+import matplotlib.pyplot as plt
+import nibabel as nib # Useful to load data
+import nilearn
+from nilearn import datasets
+from nilearn import plotting
+from pathlib import Path
+import dotenv
+import numpy as np
+import networkx as nx
+import pandas as pd
+from nilearn.input_data import NiftiMapsMasker
+from nilearn.connectome import ConnectivityMeasure
+#+end_src
+
+Let's load an image
+
+#+begin_src python
+DOTENV_KEY2VAL = dotenv.dotenv_values()
+path = "/".join([DOTENV_KEY2VAL["ROOT_DIR"], DOTENV_KEY2VAL["DATA_DIR"], "sub-ADNI002S0295/M00/sub-ADNI002S0295-MNI_brain_normalized.nii.gz"])
+img = nib.load(path)
+#+end_src
+
+
+Now an atlas. MSDL is a probabilistic atlas
+#+begin_src python
+atlas = datasets.fetch_atlas_msdl()
+atlas_filename = atlas["maps"]
+#+end_src
+
+For an fMRI, the pipeline goes as follows:
+#+begin_src python
+labels = atlas['labels']
+data = datasets.fetch_development_fmri(n_subjects=1)
+data = data.func[0]
+masker = NiftiMapsMasker(maps_img=atlas_filename, standardize=True,
+                         memory='nilearn_cache', verbose=5)
+
+time_series = masker.fit_transform(data)
+# shape is (number of time points x number of regions)
+
+correlation_measure = ConnectivityMeasure(kind='correlation')
+correlation_matrix = correlation_measure.fit_transform([time_series])[0]
+
+np.fill_diagonal(correlation_matrix, 0)
+plotting.plot_matrix(correlation_matrix, labels=labels, colorbar=True,
+                     vmax=0.8, vmin=-0.8)
+plotting.show()
+time_series.shape
+#+end_src
+
+Results in time series dimensions:
+| Time stamps | Voxels |
+|         168 |     39 |
+
+Plot fancy connectome graph
+
+#+begin_src python
+coords = atlas.region_coords
+# We threshold to keep only the 20% of edges with the highest value
+# because the graph is very dense
+plotting.plot_connectome(correlation_matrix, coords,
+                         edge_threshold="80%", colorbar=True)
+plotting.show()
+#+end_src
+
+That's all super cool.
+
+The only thing is, we don't have multiple time points per visit. We
+First, we import the datahave only 1. Indeed, let us
+consider one of our files with the same atlas:
+
+#+begin_src python
+time_series = masker.fit_transform(data)
+# shape is (number of time points x number of regions)
+print(time_series.shape)
+correlation_measure = ConnectivityMeasure(kind='correlation')
+correlation_matrix = correlation_measure.fit_transform([time_series])[0]
+
+np.fill_diagonal(correlation_matrix, 0)
+plotting.plot_matrix(correlation_matrix, labels=labels, colorbar=True,
+                     vmax=0.8, vmin=-0.8)
+plotting.show()
+#+end_src
+
+That's not working, because we have 3D. not 4D data for each visit.
+The only way we could do so is to stitch together MRI images and make
+the correlation matrix for _those_.
+
+Q: what exactly does =time_series = masker.fit_transform(img)= output?
+What is a masker?
+From [[https://nilearn.github.io/manipulating_images/masker_objects.html][nilearn]] we get the following useful information:
+"In any analysis, the first step is to load the data. It is often
+convenient to apply some basic data transformations and to turn the
+data in a 2D (samples x features) matrix, where the samples could be
+different time points, and the features derived from different voxels
+(e.g., restrict analysis to the ventral visual stream), regions of
+interest (e.g., extract local signals from spheres/cubes), or
+pre-specified networks (e.g., look at data from all voxels of a set of
+network nodes). Think of masker objects as swiss-army knifes for
+shaping the raw neuroimaging data in 3D space into the units of
+observation relevant for the research questions at hand."
+
+Specifically for =NiftiMasker=:
+NiftiMasker is a powerful tool to load images and extract voxel signals in the area defined by the mask. It applies some basic preprocessing steps with commonly used parameters as defaults. *But it is very important to look at your data to see the effects of the preprocessings and validate them.*
+
+Let us go ahead and try to stack the timeseries signals from voxels
+from different time points.
+
+#+begin_src python
+masker = NiftiMapsMasker(maps_img=atlas_filename, standardize=True,
+                         memory='nilearn_cache', verbose=5)
+
+path = DOTENV_KEY2VAL["ROOT_DIR"] + DOTENV_KEY2VAL["DATA_DIR"]
+patients = os.listdir(path)
+patient = patients[0]
+time_series = np.array([])
+i=1
+for root,dirs,files in os.walk(path + patient):
+    for image in files:
+        if "T1w" in image:
+            print(image)
+            img = nib.load(root + "/" + image)
+            time_series_timestamp = masker.fit_transform(img)
+            time_series = np.append([[time_series]], [[time_series_timestamp]])
+            time_series = time_series.reshape((i,39))
+            print(time_series)
+            i = i + 1
+#+end_src
+
+#+RESULTS:
+
+
+#+begin_src python
+correlation_measure = ConnectivityMeasure(kind='correlation')
+correlation_matrix = correlation_measure.fit_transform([time_series])[0]
+
+np.fill_diagonal(correlation_matrix, 0)
+plotting.plot_matrix(correlation_matrix, labels=labels, colorbar=True,
+                     vmax=0.8, vmin=-0.8)
+plotting.show()
+#+end_src
+
+#+begin_src python
+coords = atlas.region_coords
+# We threshold to keep only the 20% of edges with the highest value
+# because the graph is very dense
+plotting.plot_connectome(correlation_matrix, coords,
+                         edge_threshold="80%", colorbar=True)
+plotting.show()
+#+end_src
+
+Good, so let's make a graph out of it.
+PS: we take absolute value, because negative coorelations are just as
+important?
+
+#+begin_src python
+threshold = 0.8
+binarized_matrix =  np.where(correlation_matrix>np.abs(threshold), 1, 0)
+#+end_src
+
+Transform into graph object
+
+#+begin_src python
+df = pd.DataFrame(data=binarized_matrix, columns=labels, index=labels)
+G = nx.from_pandas_adjacency(df)
+#+end_src
+
+... Perform topological data analysis from this graph.

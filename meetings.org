@@ -33,9 +33,23 @@
 masker = NiftiMapsMasker(maps_img=atlas_filename, standardize=True,
 memory='nilearn_cache', verbose=5)
 #+end_src
-- Overall questions: how to extract the graph from MRI instead of
-  fMRI? Crucial point where my understanding is lacking: what would be an intuitive
-  understanding from masks? Specifically =NiftiMapsMasker= ?
+This is a little bit weird that it works just like that.
+- Discuss plan for the analysis pipeline:
+1. FSL (Oxford Centre for Functional MRI of the Brain (FMRIB F)
+  Software Library) - Brain Extraction Tool (BET)
+2. Lesion Filling (manual step)
+3. Freesurfer - identify brain
+   regions  ~82 brain region - This
+   is where we look at different atlases. - is that possible?
+4. Freesurfer - identify brain volumes for each volume in the selected
+   atlas - is that possible?
+5. So in each cell of the correlation matrix there is a number between -1
+and 1 that represent the Pearson correlation coefficient between
+ROI’s. The diagonal elements of the constructed correlation matrix are
+set to zero.
+OR matrix showing the progression of each voxel using a
+linear model over multiple MRIs.
+
 - Remind existence of repository
   https://github.com/pjhartout/TDA_ADNI_MLCB
 - =/links/groups/borgwardt/Data/ADNI/brain_extraction-complete_normalized/sub-ADNI002S0295=

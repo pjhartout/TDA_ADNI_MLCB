@@ -93,6 +93,17 @@ activation correlations using that.
 - Persistent features analysis
 https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwi34MeZr_DrAhXCwosKHcRNBesQFjABegQIBBAB&url=https%3A%2F%2Fwww.mdpi.com%2F1420-3049%2F25%2F11%2F2472%2Fpdf&usg=AOvVaw2CIp2GgliLfdzbWVnuksLv
 
+** Extracting graphs from sMRI
+Example shown [[Construction of structural correlation network .][here]], procedure:
+1. FSL (Oxford Centre for Functional MRI of the Brain (FMRIB F)
+  Software Library) - Brain Extraction Tool (BET)
+2. Lesion Fillin (manual step)
+3. Freesurfer - identify brain regions  ~82 brain region
+4. Freesurfer - identify brain volumes
+So in each cell of the correlation matrix there is a number between -1
+and 1 that represent the Pearson correlation co- efficient between
+ROI’s. The diagonal elements of the constructed correlation matrix are
+set to zero.
 * Notes: general topological analysis pipeline.
 - Perform demographic analysis.
 - Construct network using a brain atlas with varying regions. The

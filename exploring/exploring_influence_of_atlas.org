@@ -65,6 +65,132 @@ codename: Schaefer et al
 - Desikan et al
 - Varoquaux et al
 
+* General theoretical backgrounds & definitions.
+** General
+- Alzheimer's disease: Alzheimer’s disease is an irreversible,
+progressive brain disorder that slowly destroys memory and thinking
+skills and, eventually, the ability to carry out the simplest tasks.
+In most people with the disease—those with the late-onset
+type—symptoms first appear in their mid-60s. Early-onset Alzheimer’s
+occurs between a person’s 30s and mid-60s and is very rare.
+Alzheimer’s disease is the most common cause of dementia among older
+adults. Source:
+https://www.nia.nih.gov/health/what-alzheimers-disease
+
+- Structural MRI (sMRI): Structural magnetic resonance imaging (sMRI)
+  is a technique for measuring the anatomy of the brain. By measuring
+  the amount of water at a given location, sMRI is capable of
+  acquiring a detailed anatomical picture of our brain. This allows us
+  to accurately distinguish between different types of tissue, such as
+  gray and white matter. Structural images are high-resolution images
+  of the brain that are used as reference images for multiple
+  purposes, such as corregistration, normalization, segmentation, and
+  surface reconstruction.
+
+As there is no time pressure during
+acquisition of anatomical images (the anatomy is not supposed to
+change while the person is in the scanner), a higher resolution can be
+used for recording anatomical images, with a voxel extent of 0.2 to
+1.5mm, depending on the strength of the magnetic field in the scanner,
+e.g. 1.5T, 3T or 7T. Grey matter structures are seen in dark, and the
+white matter structures in bright colors. Source:
+
+
+** sMRI preprocessing steps ([[https://miykael.github.io/nipype-beginner-s-guide/neuroimaging.html][source]])
+*** Coregistration
+Motion correction aligns all the images within a volume so they are
+‘aligned’. Coregistration aligns the functional image with the
+reference structural image. If you think of the functional image as
+having been printed on tracing paper, coregistration moves that image
+around on the reference image until the alignment is at its best. In
+other words, coregistration tries to superimpose the functional image
+perfectly on the anatomical image. This allows further transformations
+of the anatomical image, such as normalization, to be directly applied
+to the functional image. The following picture shows an example of
+good (top) and bad (bottom) coregistration of functional images with
+the corresponding anatomical images. The red lines are the outline of
+the cortical folds of the anatomical image superimposed on the
+underlying greyscale functional image.
+
+#+ATTR_ORG: :width 800
+[[./images/coregistration.png]]
+
+*** Normalization
+Every person’s brain is slightly different from every other’s. Brains
+differ in size and shape. To compare the images of one person’s brain
+to another’s, the images must first be translated onto a common shape
+and size, which is called normalization. Normalization maps data from
+the individual subject-space it was measured in onto a
+reference-space. Once this step is completed, a group analysis or
+comparison among data can be performed. There are different ways to
+normalize data but it always includes a template and a source image.
+
+#+ATTR_ORG: :width 1000
+[[./images/normalization.png]]
+
+    - The template image is the standard brain in reference-space onto
+    which you want to map your data. This can be a Talairach-, MNI-,
+    or SPM-template, or some other reference image you choose to use.
+    - The source image (normally a higher resolution structural image)
+    is used to calculate the transformation matrix necessary to map
+    the source image onto the template image. This transformation
+    matrix is then used to map the rest of your images (functional and
+    structural) into the reference-space.
+
+
+*** Smoothing
+
+Structural as well as functional images are smoothed by applying a
+filter to the image. Smoothing increases the signal to noise ratio of
+your data by filtering the highest frequencies from the frequency
+domain; that is, removing the smallest scale changes among voxels.
+That helps to make the larger scale changes more apparent. There is
+some inherent variability in functional location among individuals,
+and smoothing helps to reduce spatial differences between subjects and
+therefore aids comparing multiple subjects. The trade-off, of course,
+is that you lose resolution by smoothing. Keep in mind, though, that
+smoothing can cause regions that are functionally different to combine
+with each other. In such cases a surface based analysis with smoothing
+on the surface might be a better choice.
+
+#+ATTR_ORG: :width 1000
+[[./images/smoothed.png]]
+
+Smoothing is implemented by applying a 3D Gaussian kernel to the
+image, and the amount of smoothing is typically determined by its full
+width at half maximum (FWHM) parameter. As the name implies, FWHM is
+the width/diameter of the smoothing kernel at half of its height. Each
+voxel’s value is changed to the result of applying this smoothing
+kernel to its original value.
+
+Choosing the size of the smoothing kernel also depends on your reason
+for smoothing. If you want to study a small region, a large kernel
+might smooth your data too much. The filter shouldn’t generally be
+larger than the activation you’re trying to detect. Thus, the amount
+of smoothing that you should use is determined partly by the question
+you want to answer. Some authors suggest using twice the voxel
+dimensions as a reasonable starting point.
+
+#+ATTR_ORG: :width 400
+[[./images/kernel.png]]
+
+*** Segmentation
+Segmentation is the process by which a brain is divided into
+neurological sections according to a given template specification.
+This can be rather general, for example, segmenting the brain into
+gray matter, white matter and cerebrospinal fluid, as is done with
+SPM’s Segmentation, or quite detailed, segmenting into specific
+functional regions and their subregions, as is done with FreeSurfer’s
+recon-all, and that is illustrated in the figure.
+
+Segmentation can be used for different things. You can use the
+segmentation to aid the normalization process or use it to aid further
+analysis by using a specific segmentation as a mask or as the
+definition of a specific region of interest (ROI).
+#+ATTR_ORG: :width 400
+[[./images/segmentation.gif]]
+
+
 * Getting to know the libraries and the data
 
 First, we import the data.

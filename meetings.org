@@ -33,7 +33,10 @@
 masker = NiftiMapsMasker(maps_img=atlas_filename, standardize=True,
 memory='nilearn_cache', verbose=5)
 #+end_src
-This is a little bit weird that it works just like that.
+Can nibabel/nilearn do the same as fsl, etc? Haven't found a way to
+measure brain volumes yet in nilearn.
+
+
 - Discuss plan for the analysis pipeline:
 1. FSL (Oxford Centre for Functional MRI of the Brain (FMRIB F)
   Software Library) - Brain Extraction Tool (BET)

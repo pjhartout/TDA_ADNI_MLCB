@@ -46,10 +46,11 @@ This is a little bit weird that it works just like that.
 5. So in each cell of the correlation matrix there is a number between -1
 and 1 that represent the Pearson correlation coefficient between
 ROI’s. The diagonal elements of the constructed correlation matrix are
-set to zero.
+set to zero. The structural correlation between a ROI pair of i and j was defined as the Pear-
+son correlation coefficient between their mean GM volumes across the subjects
+within a group.
 OR matrix showing the progression of each voxel using a
 linear model over multiple MRIs.
-
 - Remind existence of repository
   https://github.com/pjhartout/TDA_ADNI_MLCB
 - =/links/groups/borgwardt/Data/ADNI/brain_extraction-complete_normalized/sub-ADNI002S0295=

@@ -22,6 +22,11 @@
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
+* Spark group meeting <2020-10-06 Tue>
+- Longitudinal vs. cross-sectional pipeline for fressurfer?
+- Access to repo from Louis?
+- Should be able to access the normalized data without any additional
+  steps required.
 
 * <2020-09-29 Tue> Meeting - Progress Update #1
 ** Preparations
@@ -59,7 +64,7 @@ linear model over multiple MRIs.
 - =/links/groups/borgwardt/Data/ADNI/brain_extraction-complete_normalized/sub-ADNI002S0295=
   description. Have the images been normalized for brain volume
   already? Provide possibly the code & methodology for the pipeline.
-
+- Get links to zoom meetings/channels where this gets announced.
 ** Meeting Notes
 
 * <2020-09-29 Tue> SNF Spark Group Meeting

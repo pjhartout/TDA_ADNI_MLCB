@@ -22,50 +22,29 @@
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
+* <2020-09-29 Tue> Meeting - Progress Update #1
+** Preparations
+** Meeting Notes
+Change of plans:
+- Take region, and distance to next region by distance (# of voxels)
+  -> weighted graph.
+- Maybe look at temporal regions specifically.
+- Look at DIPHA on hippocampal region?
+*** Sequence of steps to take:
+- pick atlas, look at hippocampal/temporal region (defined by an atlas)
+- then extract complex/3d volume of cubical complexes
+- extract the cubical complexes from the voxels themselves and look at
+  topological features of these.
+- look at subfield - statistical analysis topological descriptors (significance
+tests) - https://www.jmlr.org/papers/volume16/bubenik15a/bubenik15a.pdf
+
+
+
 * Spark group meeting <2020-10-06 Tue>
-- Longitudinal vs. cross-sectional pipeline for fressurfer?
+- What are longitudinal vs. cross-sectional pipeline for fressurfer?
 - Access to repo from Louis?
 - Should be able to access the normalized data without any additional
   steps required (see other notebook).
-
-* <2020-09-29 Tue> Meeting - Progress Update #1
-** Preparations
-- Updates: looked at data, started some exploration of the data and
-  the literature. Extracted a graph for one patient, using the following code to extract a
-  time series for each voxel for a probabilistic brain atlas
-  (=datasets.fetch_atlas_msdl()=).
-#+begin_src python
-masker = NiftiMapsMasker(maps_img=atlas_filename, standardize=True,
-memory='nilearn_cache', verbose=5)
-#+end_src
-Can nibabel/nilearn do the same as fsl, etc? Haven't found a way to
-measure brain volumes yet in nilearn.
-
-
-- Discuss plan for the analysis pipeline:
-1. FSL (Oxford Centre for Functional MRI of the Brain (FMRIB F)
-  Software Library) - Brain Extraction Tool (BET)
-2. Lesion Filling (manual step)
-3. Freesurfer - identify brain
-   regions  ~82 brain region - This
-   is where we look at different atlases. - is that possible?
-4. Freesurfer - identify brain volumes for each volume in the selected
-   atlas - is that possible?
-5. So in each cell of the correlation matrix there is a number between -1
-and 1 that represent the Pearson correlation coefficient between
-ROI’s. The diagonal elements of the constructed correlation matrix are
-set to zero. The structural correlation between a ROI pair of i and j was defined as the Pear-
-son correlation coefficient between their mean GM volumes across the subjects
-within a group.
-OR matrix showing the progression of each voxel using a
-linear model over multiple MRIs.
-- Remind existence of repository
-  https://github.com/pjhartout/TDA_ADNI_MLCB
-- =/links/groups/borgwardt/Data/ADNI/brain_extraction-complete_normalized/sub-ADNI002S0295=
-  description. Have the images been normalized for brain volume
-  already? Provide possibly the code & methodology for the pipeline.
-- Get links to zoom meetings/channels where this gets announced.
-** Meeting Notes
 
 * <2020-09-29 Tue> SNF Spark Group Meeting
 ** Louis Lukas presentation

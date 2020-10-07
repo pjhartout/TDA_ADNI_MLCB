@@ -26,7 +26,7 @@
 - Longitudinal vs. cross-sectional pipeline for fressurfer?
 - Access to repo from Louis?
 - Should be able to access the normalized data without any additional
-  steps required.
+  steps required (see other notebook).
 
 * <2020-09-29 Tue> Meeting - Progress Update #1
 ** Preparations

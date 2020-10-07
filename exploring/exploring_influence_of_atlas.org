@@ -190,7 +190,6 @@ definition of a specific region of interest (ROI).
 #+ATTR_ORG: :width 400
 [[./images/segmentation.gif]]
 
-
 * Getting to know the libraries and the data
 
 First, we import the data.
@@ -364,7 +363,6 @@ G = nx.from_pandas_adjacency(df)
 #+end_src
 
 ... Perform topological data analysis from this graph.
-
 
 * Working with FSL and freesurfer
 ** Plan

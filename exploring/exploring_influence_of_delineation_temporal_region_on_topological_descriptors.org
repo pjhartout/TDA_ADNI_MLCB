@@ -24,3 +24,10 @@
 #+LATEX_COMPILER: pdflatexfundamental-mode restarted
 
 * <2020-10-07 Wed> Updates following meeting with Bastian
+** From meeting notes
+- pick atlas, look at hippocampal/temporal region (defined by an atlas)
+- then extract complex/3d volume of cubical complexes
+- extract the cubical complexes from the voxels themselves and look at
+  topological features of these.
+- look at subfield - statistical analysis topological descriptors (significance
+tests) - https://www.jmlr.org/papers/volume16/bubenik15a/bubenik15a.pdf

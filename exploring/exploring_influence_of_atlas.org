@@ -379,3 +379,5 @@ G = nx.from_pandas_adjacency(df)
 and 1 that represent the Pearson correlation coefficient between
 ROI’s. The diagonal elements of the constructed correlation matrix are
 set to zero.
+-> These images have already been preprocessed in the provided
+directory, so no need to worry about that.

@@ -31,3 +31,258 @@
   topological features of these.
 - look at subfield - statistical analysis topological descriptors (significance
 tests) - https://www.jmlr.org/papers/volume16/bubenik15a/bubenik15a.pdf
+
+** Further reflection
+- Compute persistent homology of volume using DIPHA/another tool.
+- Look at descriptors.
+
+This comes from [[https://nilearn.github.io/auto_examples/04_manipulating_images/plot_extract_rois_smith_atlas.html#sphx-glr-auto-examples-04-manipulating-images-plot-extract-rois-smith-atlas-py][here]].
+
+
+#+begin_src python
+
+from nilearn import datasets
+from nilearn.regions import RegionExtractor
+from nilearn import plotting
+from nilearn.image import index_img
+from nilearn.plotting import find_xyz_cut_coords
+import matplotlib.pyplot as plt
+import nibabel as nib # Useful to load data
+import nilearn
+from nilearn import datasets
+from nilearn import plotting
+from pathlib import Path
+import dotenv
+import gtda
+import gtda.images
+import numpy as np
+import networkx as nx
+import pandas as pd
+from nilearn.input_data import NiftiMapsMasker
+from nilearn.connectome import ConnectivityMeasure
+from nilearn.regions import RegionExtractor
+from nilearn import plotting
+from nilearn.image import index_img
+from nilearn.plotting import find_xyz_cut_coords
+
+import plotly.express as px
+import plotly.graph_objects as go
+
+import nighres
+
+from gtda.homology import VietorisRipsPersistence
+from gtda.diagrams import PersistenceEntropy
+from gtda.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+from gtda.plotting import plot_diagram, plot_point_cloud, plot_heatmap
+from gtda.homology import CubicalPersistence
+from gtda.diagrams import Scaler, Filtering, PersistenceEntropy, BettiCurve, PairwiseDistance
+
+#+end_src
+
+#+begin_src python
+smith_atlas = datasets.fetch_atlas_smith_2009()
+atlas_networks = smith_atlas.rsn10
+
+# min_region_size in voxel volume mm^3
+extraction = RegionExtractor(atlas_networks, min_region_size=800,
+                             threshold=98, thresholding_strategy='percentile')
+
+# Just call fit() to execute region extraction procedure
+extraction.fit()
+regions_img = extraction.regions_img_
+
+
+
+# Showing region extraction results using 4D maps visualization tool
+plotting.plot_prob_atlas(regions_img, display_mode='z', cut_coords=1,
+                         view_type='contours', title="Regions extracted.")
+#+end_src
+
+
+[[https://nilearn.github.io/auto_examples/01_plotting/plot_prob_atlas.html#sphx-glr-auto-examples-01-plotting-plot-prob-atlas-py][Overview of atlases]].
+
+
+#+begin_src python
+os.chdir("../")
+#+end_src
+
+#+begin_src python
+img = nib.load("./data/sub-ADNI002S0295/M00/sub-ADNI002S0295-T1w_brain_normalized.nii.gz")
+img = np.array(img.dataobj)
+img2 = nib.load("./data/sub-ADNI002S0413/M00/sub-ADNI002S0413-T1w_brain_normalized.nii.gz")
+img2 = np.array(img2.dataobj)
+#+end_src
+
+* Giotto-tda approach
+Use image to pointclouds.
+
+
+#+begin_src python
+plt.hist(np.unique(img),bins=100)
+plt.show()
+#+end_src
+
+#+begin_src python
+def transform_image_to_point_cloud(img, shape, threshold=0):
+    """Transform array to point cloud using threshold"""
+    binarized_image = np.where(img>0, 1, 0)
+    binarized_image = binarized_image.reshape(shape)
+    point_cloud_tranformer = gtda.images.ImageToPointCloud()
+    point_cloud = point_cloud_tranformer.fit_transform(binarized_image.reshape((1, 193, 229, 193)))
+    point_cloud_coords = np.empty(shape=(3,))
+    point_cloud = np.vstack((np.asarray(point_cloud)))
+    return point_cloud
+#+end_src
+
+
+#+begin_src python
+point_cloud = transform_image_to_point_cloud(img)
+point_cloud2 = transform_image_to_point_cloud(img2)
+#+end_src
+
+#+begin_src python
+def sample_rows(arr, n):
+    return arr[np.random.choice(arr.shape[0], n, replace=False), :]
+#+end_src
+
+#+begin_src python
+point_cloud = sample_rows(point_cloud, int(11500*1.5))
+point_cloud2 = sample_rows(point_cloud2, int(11500*1.5))
+image_spaces = np.asarray([point_cloud,point_cloud2])
+#+end_src
+
+#+begin_src python
+point_cloud = point_cloud.rename(columns={0: "x", 1: "y", 2: "z"})
+
+df = point_cloud.sample(2000)
+
+x, y, z = df["x"].values, df["y"].values, df["z"].values
+fig = go.Figure(data=[go.Scatter3d(
+    x=x,
+    y=y,
+    z=z,
+    mode='markers',
+    marker=dict(
+         size=5,
+    #     color=z,                # set color to an array/list of desired values
+    #     colorscale='Viridis',   # choose a colorscale
+    #     opacity=0.8
+    )
+)])
+
+# tight layout
+fig.update_layout(margin=dict(l=0, r=0, b=0, t=0))
+fig.show()
+#+end_src
+
+Looks like we have good data now.
+
+VR persistence + Betti Curves.
+#+begin_src python
+homology_dimensions = (0, 1, 2)
+VR = VietorisRipsPersistence(metric="euclidean", max_edge_length=10, homology_dimensions=homology_dimensions, n_jobs=8)
+diagrams_VietorisRips = VR.fit_transform_plot(image_spaces)
+BC = BettiCurve()
+X_betti_curves = BC.fit_transform(diagrams_VietorisRips)
+BC.plot(X_betti_curves)
+#+end_src
+
+
+Cubical persistence (still needs work)
+#+begin_src python
+homology_dimensions = (0, 1, 2)
+CP = CubicalPersistence(homology_dimensions=homology_dimensions, n_jobs=8)
+diagrams_CP = CP.fit_transform_plot(img.reshape((193, 229, 193)))
+print(f"diagrams.shape: {diagrams.shape}")
+#+end_src
+
+
+* Apply atlas to select relevant regions
+** CANCELED Playing with region extractor
+   CLOSED: [2020-10-13 Tue 10:18]
+[[https://nilearn.github.io/auto_examples/01_plotting/plot_prob_atlas.html#sphx-glr-auto-examples-01-plotting-plot-prob-atlas-py][Atlas selected here]].
+#+begin_src python
+smith = datasets.fetch_atlas_smith_2009()
+atlas = smith.rsn20
+
+extraction = RegionExtractor(atlas, min_region_size=300,
+                             threshold=1, thresholding_strategy='percentile')
+
+img = nib.load("./data/sub-ADNI002S0295/M00/sub-ADNI002S0295-MNI_brain_normalized.nii.gz")
+extracted_regions = extraction.fit_transform(img)
+fit = extraction.fit(img)
+#+end_src
+
+#+begin_src python
+plotting.plot_prob_atlas(fit, display_mode='z', cut_coords=1,
+                         view_type='contours', title="Regions extracted.")
+plotting.show()
+#+end_src
+
+** CANCELED manipulation of atlas
+   CLOSED: [2020-10-13 Tue 11:57]
+[[https://nilearn.github.io/auto_examples/01_plotting/plot_atlas.html][basic roi plotting]]
+#+begin_src python
+dataset = datasets.fetch_atlas_harvard_oxford('cort-maxprob-thr25-2mm')
+atlas_filename = dataset.maps
+
+print('Atlas ROIs are located at: %s' % atlas_filename)
+
+plotting.plot_roi(atlas_filename, title="Harvard Oxford atlas")
+plotting.show()
+#+end_src
+
+#+begin_src python
+def transform_image_to_point_cloud(img, shape, threshold=0):
+    """Transform array to point cloud using threshold"""
+    binarized_image = np.where(img>0, 1, 0)
+    binarized_image = binarized_image.reshape((shape))
+    point_cloud_tranformer = gtda.images.ImageToPointCloud()
+    point_cloud = point_cloud_tranformer.fit_transform(binarized_image.reshape((shape)))
+    point_cloud_coords = np.empty(shape=(3,))
+    point_cloud = np.vstack((np.asarray(point_cloud)))
+    return point_cloud
+#+end_src
+
+#+begin_src python
+smith = datasets.fetch_atlas_smith_2009()
+atlas = smith.rsn20
+atlas = nib.load(atlas)
+# atlas = np.array(atlas.dataobj)
+# atlas_point_cloud = transform_image_to_point_cloud(atlas,atlas.shape)
+# atlas_point_cloud = sample_rows(atlas_point_cloud,5000)
+#+end_src
+
+#+begin_src python
+
+fig = go.Figure(data=[go.Scatter3d(
+    x=atlas_point_cloud[:,0],
+    y=atlas_point_cloud[:,1],
+    z=atlas_point_cloud[:,2],
+    mode='markers',
+    marker=dict(
+          size=5,
+    # #     color=z,                # set color to an array/list of desired values
+    # #     colorscale='Viridis',   # choose a colorscale
+    # #     opacity=0.8
+    )
+)])
+
+# tight layout
+fig.update_layout(margin=dict(l=0, r=0, b=0, t=0))
+fig.show()
+#+end_src
+
+** IN-PROGRESS Tryouts with nighres
+
+#+begin_src python
+out_dir = os.path.join(os.getcwd(), "segmented_ADNI/ADNI002S0295")
+# img = nib.load("./data/sub-ADNI002S0295/M00/sub-ADNI002S0295-T1w_brain_normalized.nii.gz")
+norm_img_dir = "./data/sub-ADNI002S0295/M00/sub-ADNI002S0295-T1w_brain_normalized.nii.gz"
+mgdm_results1 = nighres.brain.mgdm_segmentation(
+                        contrast_image1=norm_img_dir,
+                        contrast_type1="T1map3T",
+                        save_data=True, file_name="ADNI002S0295",
+                        output_dir=out_dir)
+#+end_src

@@ -22,6 +22,17 @@
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
+
+* <2020-10-13 Tue> Meeting - Progress Update #2
+** To discuss
+- Progress update
+- Access to compute (how to get euler access, or something else?),
+  particularly lots of RAM for VR filtration.
+- Cubical persistence vs. Vietoris-Rips persistence - good overview of
+  this somewhere?
+- List of topologcal descriptors somewhere? Can use same as [[https://github.com/BorgwardtLab/Ephemeral][here]]?
+  Other suggestions?
+
 * <2020-09-29 Tue> Meeting - Progress Update #1
 ** Preparations
 ** Meeting Notes

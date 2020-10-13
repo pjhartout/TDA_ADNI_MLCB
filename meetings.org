@@ -32,6 +32,20 @@
   this somewhere?
 - List of topologcal descriptors somewhere? Can use same as [[https://github.com/BorgwardtLab/Ephemeral][here]]?
   Other suggestions?
+- Atlases - where are they used exactly? In fMRI mostly? It seems they are
+  not so relevant in sMRI.
+
+* <2020-10-13 Tue> Meeting spark group
+** Notes
+- Look at superlevel sets
+- Sarah Patch Coordinates
+- Look at boundary effect
+- Look at how much we can remove from the diagram.
+- https://www.wikiwand.com/en/Level_set#/Sublevel_and_superlevel_sets
+- latent representation?
+- Some patients are classified accurately with TDA, some with RF.
+Admin:
+- move to biweekly setup
 
 * <2020-09-29 Tue> Meeting - Progress Update #1
 ** Preparations
@@ -41,8 +55,6 @@ Change of plans:
   -> weighted graph.
 - Maybe look at temporal regions specifically.
 - Look at DIPHA on hippocampal region?
-*** Sequence of steps to take:
-
 
 
 

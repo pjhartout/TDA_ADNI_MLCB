@@ -1,4 +1,4 @@
-s#+BIND: org-export-use-babel nil
+#+BIND: org-export-use-babel nil
 #+TITLE: Applying filtration to subsample
 #+AUTHOR: Philip Hartout
 #+EMAIL: <philip.hartout@protonmail.com>
@@ -23,7 +23,7 @@ s#+BIND: org-export-use-babel nil
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
-Let's load the data and apply the filtration to it.
+Let's load the patches of images and apply the filtration to it.
 
 Programme:
 
@@ -36,52 +36,60 @@ Programme:
 
 #+BEGIN_SRC python
 import nibabel
+import nibabel as nib  # Useful to load data
 
+import nilearn
 from nilearn import datasets
 from nilearn.regions import RegionExtractor
 from nilearn import plotting
 from nilearn.image import index_img
 from nilearn.plotting import find_xyz_cut_coords
-import matplotlib.pyplot as plt
-import nibabel as nib # Useful to load data
-import nilearn
-from nilearn import datasets
-from nilearn import plotting
-from pathlib import Path
-import dotenv
-import gtda
-import gtda.images
-import numpy as np
-import networkx as nx
-import pandas as pd
 from nilearn.input_data import NiftiMapsMasker
 from nilearn.connectome import ConnectivityMeasure
 from nilearn.regions import RegionExtractor
 from nilearn import plotting
 from nilearn.image import index_img
-from nilearn.plotting import find_xyz_cut_coords
+from nilearn import datasets
+from nilearn import plotting
+
+import matplotlib.pyplot as plt
+
+
+from pathlib import Path
+import dotenv
+
+
+import numpy as np
+import networkx as nx
+import pandas as pd
 
 import plotly.express as px
 import plotly.graph_objects as go
 
 import nighres
 
+import gtda
+from gtda.images import ImageToPointCloud, ErosionFiltration
 from gtda.homology import VietorisRipsPersistence
 from gtda.diagrams import PersistenceEntropy
 from gtda.pipeline import Pipeline
-from sklearn.linear_model import LogisticRegression
 from gtda.plotting import plot_diagram, plot_point_cloud, plot_heatmap
 from gtda.homology import CubicalPersistence
-from gtda.diagrams import Scaler, Filtering, PersistenceEntropy, BettiCurve, PairwiseDistance
+from gtda.diagrams import (
+    Scaler,
+    Filtering,
+    PersistenceEntropy,
+    BettiCurve,
+    PairwiseDistance,
+)
 
 import os
 import tempfile
 from urllib.request import urlretrieve
 import zipfile
 
+from sklearn.linear_model import LogisticRegression
 from skimage import io
-
-
 #+END_SRC
 
 Determine threshold for pointcloud
@@ -243,11 +251,6 @@ plt.show()
 #+END_SRC
 
 #+BEGIN_SRC python
-
-
-#+END_SRC
-
-#+BEGIN_SRC python
 binarized_patch = np.where(patch>0.25, 1, 0)
 multi_slice_viewer(binarized_patch)
 multi_slice_viewer(patch)
@@ -273,7 +276,7 @@ def transform_image_to_point_cloud(img, target_shape, threshold=0):
     return point_cloud
 #+END_SRC
 
-Thought = What if we do a filtration on the negative space?
+
 
 #+BEGIN_SRC python
 shape = (1, 30, 36, 30)
@@ -285,21 +288,21 @@ patch_pc = point_cloud_tranformer.fit_transform(binarized_patch.reshape(shape))
 df = pd.DataFrame(patch_pc[0]).rename(columns={0: "x", 1: "y", 2: "z"})
 
 x, y, z = df["x"].values, df["y"].values, df["z"].values
-fig = go.Figure(data=[go.Scatter3d(
+fig = go.Figure("data":[go.Scatter3d(
     x=x,
     y=y,
     z=z,
     mode='markers',
     marker=dict(
          size=5,
-         color=z,                # set color to an array/list of desired values
+         color=x,                # set color to an array/list of desired values
          colorscale='Viridis',   # choose a colorscale
          opacity=0.8
     )
 )])
 
 # tight layout
-fig.update_layout(margin=dict(l=0, r=0, b=0, t=0))
+fig.update_layout(margin=dict(l=0, r=0, b=0), title="CN patient")
 fig.show()
 #+END_SRC
 
@@ -311,8 +314,158 @@ topology.
 #+begin_src python
 homology_dimensions = (0, 1, 2)
 VR = VietorisRipsPersistence(metric="euclidean", max_edge_length=5, homology_dimensions=homology_dimensions, n_jobs=8)
-diagrams_VietorisRips = VR.fit_transform_plot(np.asarray(patch_pc))
+diagrams_VietorisRips = VR.fit_transform(np.asarray(patch_pc))
+#+end_src
+
+#+BEGIN_SRC python
+VR.plot(diagrams_VietorisRips)
 BC = BettiCurve()
 X_betti_curves = BC.fit_transform(diagrams_VietorisRips)
 BC.plot(X_betti_curves)
+#+END_SRC
+
+Let's just take a sample from AD and CN.
+
+#+BEGIN_SRC python
+patch_ad = np.load("../data/cropped/sub-ADNI002S0729-M48-MNI.npy")
+patch_ad.shape
+binarized_patch_ad = np.where(patch_ad>0.25, 1, 0)
+#+END_SRC
+
+
+#+BEGIN_SRC python
+shape = (1, 30, 36, 30)
+point_cloud_tranformer = gtda.images.ImageToPointCloud()
+patch_ad_pc = point_cloud_tranformer.fit_transform(binarized_patch_ad.reshape(shape))
+#+END_SRC
+
+
+#+begin_src python
+homology_dimensions = (0, 1, 2)
+VR = VietorisRipsPersistence(metric="euclidean", max_edge_length=5, homology_dimensions=homology_dimensions, n_jobs=8)
+diagrams_VietorisRips = VR.fit_transform(np.asarray(patch_ad_pc))
 #+end_src
+
+#+BEGIN_SRC python
+VR.plot(diagrams_VietorisRips).show()
+BC = BettiCurve()
+X_betti_curves = BC.fit_transform(diagrams_VietorisRips)
+BC.plot(X_betti_curves)
+#+END_SRC
+
+Now let's look at both *(code above bundled together to avoid mistakes)*
+
+#+BEGIN_SRC python
+multi_slice_viewer(patch_ad)
+multi_slice_viewer(patch)
+plt.show()
+#+END_SRC
+
+* Cleaner implementation
+
+Make plot
+
+First we define a bunch of functions in a utils file which might
+become handy later on.
+#+BEGIN_SRC python
+def make_3d_scatterplot(point_cloud, title):
+    df = pd.DataFrame(point_cloud).rename(columns={0: "x", 1: "y", 2: "z"})
+
+    x, y, z = df["x"].values, df["y"].values, df["z"].values
+    fig = go.Figure(
+        data=[
+            go.Scatter3d(
+                x=x,
+                y=y,
+                z=z,
+                mode="markers",
+                marker=dict(
+                    size=5,
+                    color=x,  # set color to an array/list of desired values
+                    colorscale="Viridis",  # choose a colorscale
+                    opacity=0.8,
+                ),
+            )
+        ]
+    )
+
+    # tight layout
+    fig.update_layout(margin=dict(l=0, r=0, b=0), title=title)
+    fig.show()
+#+END_SRC
+
+#+BEGIN_SRC python
+make_3d_scatterplot(point_cloud, title)
+make_3d_scatterplot(point_cloud, title)
+#+END_SRC
+
+VR on plots
+
+#+BEGIN_SRC python
+shape = (1, 30, 36, 30)
+point_cloud_tranformer = gtda.images.ImageToPointCloud()
+patch_ad_pc = point_cloud_tranformer.fit_transform(binarized_patch_ad.reshape(shape))
+#+END_SRC
+
+
+#+begin_src python
+homology_dimensions = (0, 1, 2)
+VR = VietorisRipsPersistence(metric="euclidean", max_edge_length=5, homology_dimensions=homology_dimensions, n_jobs=8)
+diagrams_VietorisRips = VR.fit_transform(np.asarray(patch_ad_pc))
+#+end_src
+
+#+BEGIN_SRC python
+VR.plot(diagrams_VietorisRips).show()
+BC = BettiCurve()
+X_betti_curves = BC.fit_transform(diagrams_VietorisRips)
+BC.plot(X_betti_curves)
+#+END_SRC
+
+* Using =utils.py=
+
+#+BEGIN_SRC python
+import utils
+patch_cn_binarized, patch_cn = utils.prepare_image("../data/cropped/sub-ADNI002S0295-M00-MNI.npy", 0.5)
+patch_ad_binarized, patch_ad = utils.prepare_image("../data/cropped/sub-ADNI002S0729-M48-MNI.npy", 0.5)
+patch_cn_pc = utils.prepare_point_cloud(patch_cn_binarized)
+patch_ad_pc = utils.prepare_point_cloud(patch_ad_binarized)
+utils.make_3d_scatterplot(patch_cn_pc[0], "CN patient")
+utils.make_3d_scatterplot(patch_ad_pc[0], "AD patient")
+utils.vr_persistent_homology(patch_cn_pc[0])
+utils.vr_persistent_homology(patch_ad_pc[0])
+#+END_SRC
+
+* Cubical persistence
+
+Let's try cubical persistence as this seems to be _de facto_ standard in
+MRI images.
+
+#+BEGIN_SRC python
+import utils
+patch_cn_binarized, patch_cn = utils.prepare_image("../data/cropped/sub-ADNI002S0295-M00-MNI.npy", 0.5)
+patch_ad_binarized, patch_ad = utils.prepare_image("../data/cropped/sub-ADNI002S0729-M48-MNI.npy", 0.5)
+utils.cubical_persistence(patch_cn)
+utils.cubical_persistence(patch_ad)
+#+END_SRC
+
+
+* Erosion filtration
+TODO.
+https://giotto-ai.github.io/gtda-docs/latest/modules/generated/images/gtda.images.ErosionFiltration.html
+
+#+BEGIN_SRC python
+import utils
+SHAPE = (1, 30, 36, 30)
+patch_cn_binarized, patch_cn = utils.prepare_image("../data/cropped/sub-ADNI002S0295-M00-MNI.npy", 0.5)
+ef = ErosionFiltration(n_iterations=1000, n_jobs=-1)
+diagrams_Erosion = ef.fit_transform(patch_cn.reshape(SHAPE))
+ef.plot(diagrams_Erosion, sample=0).show()
+multi_slice_viewer(diagrams_Erosion.reshape((30, 36, 30)))
+plt.show()
+#+END_SRC
+
+
+* Future directions.
+- What if we do a filtration on the negative space? On the edge space
+  (=filtration on the border between tissue and non-tissue?)
+- What descriptors used diagrams?

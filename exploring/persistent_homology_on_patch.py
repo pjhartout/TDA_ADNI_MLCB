@@ -28,8 +28,6 @@ from nilearn.plotting import find_xyz_cut_coords
 import plotly.express as px
 import plotly.graph_objects as go
 
-import nighres
-
 from gtda.homology import VietorisRipsPersistence
 from gtda.diagrams import PersistenceEntropy
 from gtda.pipeline import Pipeline

@@ -6,7 +6,6 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python==3.7.9
   - ipython
   - pandas
   - scikit-learn
@@ -16,8 +15,6 @@ dependencies:
   - pip
   - pip:
       - giotto-tda
-      - Cython
       - scikit-tda
       - nilearn
       - python-dotenv
-prefix: /home/pjh/.anaconda/envs/tda_adni_mlcb

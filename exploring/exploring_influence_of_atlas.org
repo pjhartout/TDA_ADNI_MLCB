@@ -95,7 +95,6 @@ used for recording anatomical images, with a voxel extent of 0.2 to
 e.g. 1.5T, 3T or 7T. Grey matter structures are seen in dark, and the
 white matter structures in bright colors. Source:
 
-
 ** sMRI preprocessing steps ([[https://miykael.github.io/nipype-beginner-s-guide/neuroimaging.html][source]])
 *** Coregistration
 Motion correction aligns all the images within a volume so they are
@@ -136,7 +135,6 @@ normalize data but it always includes a template and a source image.
     the source image onto the template image. This transformation
     matrix is then used to map the rest of your images (functional and
     structural) into the reference-space.
-
 
 *** Smoothing
 
@@ -189,6 +187,9 @@ analysis by using a specific segmentation as a mask or as the
 definition of a specific region of interest (ROI).
 #+ATTR_ORG: :width 400
 [[./images/segmentation.gif]]
+
+*** MNI
+basically a space where things looks better. [[https://brainmap.org/training/BrettTransform.html][Link to good ressources]].
 
 * Getting to know the libraries and the data
 

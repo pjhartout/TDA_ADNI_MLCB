@@ -12,6 +12,8 @@ dependencies:
   - argparse
   - pathlib
   - python-dotenv
+  - networkx
+  - scikit-image
   - pip
   - pip:
       - giotto-tda

@@ -197,7 +197,6 @@ diagrams_CP = CP.fit_transform_plot(img.reshape((193, 229, 193)))
 print(f"diagrams.shape: {diagrams.shape}")
 #+end_src
 
-
 * Apply atlas to select relevant regions
 ** CANCELED Playing with region extractor
    CLOSED: [2020-10-13 Tue 10:18]

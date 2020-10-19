@@ -310,7 +310,7 @@ topology.
 
 #+begin_src python
 homology_dimensions = (0, 1, 2)
-VR = VietorisRipsPersistence(metric="euclidean", max_edge_length=10, homology_dimensions=homology_dimensions, n_jobs=8)
+VR = VietorisRipsPersistence(metric="euclidean", max_edge_length=5, homology_dimensions=homology_dimensions, n_jobs=8)
 diagrams_VietorisRips = VR.fit_transform_plot(np.asarray(patch_pc))
 BC = BettiCurve()
 X_betti_curves = BC.fit_transform(diagrams_VietorisRips)

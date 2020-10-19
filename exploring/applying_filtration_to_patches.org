@@ -1,0 +1,318 @@
+s#+BIND: org-export-use-babel nil
+#+TITLE: Applying filtration to subsample
+#+AUTHOR: Philip Hartout
+#+EMAIL: <philip.hartout@protonmail.com>
+#+DATE: October 18, 2020
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS:[a4paper,12pt,twoside]
+#+LaTeX_HEADER:\usepackage[usenames,dvipsnames,figures]{xcolor}
+#+LaTeX_HEADER:\usepackage[autostyle]{csquotes}
+#+LaTeX_HEADER:\usepackage[final]{pdfpages}
+#+LaTeX_HEADER:\usepackage[top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}
+#+LATEX_HEADER_EXTRA:\hypersetup{colorlinks=false, linkcolor=black, citecolor=black, filecolor=black, urlcolor=black}
+#+LATEX_HEADER_EXTRA:\newtheorem{definition}{Definition}[section]
+#+LATEX_HEADER_EXTRA:\pagestyle{fancy}
+#+LATEX_HEADER_EXTRA:\setlength{\headheight}{25pt}
+#+LATEX_HEADER_EXTRA:\lhead{\textbf{Philip Hartout}}
+#+LATEX_HEADER_EXTRA:\rhead{\textbf{}}
+#+LATEX_HEADER_EXTRA:\rfoot{}
+#+MACRO: NEWLINE @@latex:\\@@ @@html:<br>@@
+#+PROPERTY: header-args :exports both :session python_emacs_session :cache :results value
+#+OPTIONS: ^:nil
+#+TODO: TODO IN-PROGRESS WAITING | DONE CANCELED
+#+STARTUP: latexpreview
+#+LATEX_COMPILER: pdflatexorg-mode restarted
+
+Let's load the data and apply the filtration to it.
+
+Programme:
+
+
+- VR filtration
+- Cubical filtration
+- Statistical investigation of filtration
+
+* Imports
+
+#+BEGIN_SRC python
+import nibabel
+
+from nilearn import datasets
+from nilearn.regions import RegionExtractor
+from nilearn import plotting
+from nilearn.image import index_img
+from nilearn.plotting import find_xyz_cut_coords
+import matplotlib.pyplot as plt
+import nibabel as nib # Useful to load data
+import nilearn
+from nilearn import datasets
+from nilearn import plotting
+from pathlib import Path
+import dotenv
+import gtda
+import gtda.images
+import numpy as np
+import networkx as nx
+import pandas as pd
+from nilearn.input_data import NiftiMapsMasker
+from nilearn.connectome import ConnectivityMeasure
+from nilearn.regions import RegionExtractor
+from nilearn import plotting
+from nilearn.image import index_img
+from nilearn.plotting import find_xyz_cut_coords
+
+import plotly.express as px
+import plotly.graph_objects as go
+
+import nighres
+
+from gtda.homology import VietorisRipsPersistence
+from gtda.diagrams import PersistenceEntropy
+from gtda.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+from gtda.plotting import plot_diagram, plot_point_cloud, plot_heatmap
+from gtda.homology import CubicalPersistence
+from gtda.diagrams import Scaler, Filtering, PersistenceEntropy, BettiCurve, PairwiseDistance
+
+import os
+import tempfile
+from urllib.request import urlretrieve
+import zipfile
+
+from skimage import io
+
+
+#+END_SRC
+
+Determine threshold for pointcloud
+
+#+BEGIN_SRC python
+patch = np.load("../data/cropped/sub-ADNI002S0295-M00-MNI.npy")
+patch.shape
+#+END_SRC
+
+#+BEGIN_SRC python
+plt.hist(np.unique(patch),bins=100)
+plt.show()
+#+END_SRC
+
+It seems that the values are bounded between 0 and 1, so take 0.5 as a
+threshold. But let's look at a slide of the data.
+
+#+BEGIN_SRC python
+plt.imshow(patch[15,:])
+plt.show()
+#+END_SRC
+
+* Build slicer
+
+From [[https://www.datacamp.com/community/tutorials/matplotlib-3d-volumetric-data][this tutorial]] we want to build a slicer to determine the optimal
+threshold to binarize our data for the VR persistance.
+
+Get data for tutorial
+#+BEGIN_SRC python
+
+# Create a temporary directory
+d = tempfile.mkdtemp()
+
+
+
+# Return the tail of the path
+os.path.basename('http://google.com/attention.zip')
+
+# Define URL
+url = 'http://www.fil.ion.ucl.ac.uk/spm/download/data/attention/attention.zip'
+
+# Retrieve the data
+fn, info = urlretrieve(url, os.path.join(d, 'attention.zip'))
+# Extract the contents into the temporary directory we created earlier
+zipfile.ZipFile(fn).extractall(path=d)
+
+# Read the image
+struct = nibabel.load(os.path.join(d, 'attention/structural/nsM00587_0002.hdr'))
+
+# Get a plain NumPy array, without all the metadata
+struct_arr = struct.get_data()
+struct_arr = io.imread("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/attention-mri.tif")
+#+END_SRC
+
+Plotting with the toy data
+
+#+BEGIN_SRC python
+plt.imshow(struct_arr[75])
+plt.show()
+#+END_SRC
+
+Sagittal view
+#+BEGIN_SRC python
+plt.imshow(struct_arr[75], aspect=0.5)
+plt.show()
+#+END_SRC
+
+Axial view
+#+BEGIN_SRC python
+struct_arr2 = struct_arr.T
+plt.imshow(struct_arr2[34])
+plt.show()
+#+END_SRC
+
+Coronal view
+#+BEGIN_SRC python
+plt.imshow(struct_arr2[5])
+plt.show()
+#+END_SRC
+
+
+Definition of the functions used in slicer
+
+#+BEGIN_SRC python
+
+def multi_slice_viewer(volume):
+    remove_keymap_conflicts({'j', 'k'})
+    fig, ax = plt.subplots()
+    ax.volume = volume
+    ax.index = volume.shape[0] // 2
+    ax.imshow(volume[ax.index])
+    fig.canvas.mpl_connect('key_press_event', process_key)
+
+def process_key(event):
+    fig = event.canvas.figure
+    ax = fig.axes[0]
+    if event.key == 'j':
+        previous_slice(ax)
+    elif event.key == 'k':
+        next_slice(ax)
+    fig.canvas.draw()
+
+def previous_slice(ax):
+    volume = ax.volume
+    ax.index = (ax.index - 1) % volume.shape[0]  # wrap around using %
+    ax.images[0].set_array(volume[ax.index])
+
+def next_slice(ax):
+    volume = ax.volume
+    ax.index = (ax.index + 1) % volume.shape[0]
+    ax.images[0].set_array(volume[ax.index])
+
+def remove_keymap_conflicts(new_keys_set):
+    for prop in plt.rcParams:
+        if prop.startswith('keymap.'):
+            keys = plt.rcParams[prop]
+            remove_list = set(keys) & new_keys_set
+            for key in remove_list:
+                keys.remove(key)
+#+END_SRC
+
+Slicer with toy data
+#+BEGIN_SRC python
+
+multi_slice_viewer(struct_arr2)
+
+#+END_SRC
+
+
+cleanup tmp files
+
+#+BEGIN_SRC python
+import shutil
+
+# Remove the temporary directory
+shutil.rmtree(d)
+#+END_SRC
+
+Slicer with our data
+#+BEGIN_SRC python
+multi_slice_viewer(patch)
+plt.show()
+#+END_SRC
+
+This works! Now let's define an appropriate threshold for the data.
+
+* Threshold definition for image binarization
+
+
+Let's also get a histogram of the pixels as well
+#+BEGIN_SRC python
+plt.hist(patch.flatten(),bins=100)
+plt.show()
+#+END_SRC
+
+#+BEGIN_SRC python
+plt.hist(np.unique(patch),bins=100)
+plt.show()
+#+END_SRC
+
+#+BEGIN_SRC python
+
+
+#+END_SRC
+
+#+BEGIN_SRC python
+binarized_patch = np.where(patch>0.25, 1, 0)
+multi_slice_viewer(binarized_patch)
+multi_slice_viewer(patch)
+plt.show()
+#+END_SRC
+
+This works great but is there a more formal way of finding edges holes
+than a hard threshold? Maybe other ways of preprocessing the data in topology?
+
+Let's import the function to transform an image to a point cloud we first defined [[../exploring/exploring_influence_of_delineation_temporal_region_on_topological_descriptors.org][here]].
+
+#+BEGIN_SRC python
+def transform_image_to_point_cloud(img, target_shape, threshold=0):
+    """Transform array to point cloud using threshold (above which there's
+    a one. otherwise a 0)
+    """
+    binarized_image = np.where(img>threshold, 1, 0)
+    binarized_image = binarized_image.reshape(target_shape)
+    point_cloud_tranformer = gtda.images.ImageToPointCloud()
+    point_cloud = point_cloud_tranformer.fit_transform(binarized_image)
+    point_cloud_coords = np.empty(shape=(3,))
+    point_cloud = np.vstack((np.asarray(point_cloud)))
+    return point_cloud
+#+END_SRC
+
+Thought = What if we do a filtration on the negative space?
+
+#+BEGIN_SRC python
+shape = (1, 30, 36, 30)
+point_cloud_tranformer = gtda.images.ImageToPointCloud()
+patch_pc = point_cloud_tranformer.fit_transform(binarized_patch.reshape(shape))
+#+END_SRC
+
+#+BEGIN_SRC python
+df = pd.DataFrame(patch_pc[0]).rename(columns={0: "x", 1: "y", 2: "z"})
+
+x, y, z = df["x"].values, df["y"].values, df["z"].values
+fig = go.Figure(data=[go.Scatter3d(
+    x=x,
+    y=y,
+    z=z,
+    mode='markers',
+    marker=dict(
+         size=5,
+         color=z,                # set color to an array/list of desired values
+         colorscale='Viridis',   # choose a colorscale
+         opacity=0.8
+    )
+)])
+
+# tight layout
+fig.update_layout(margin=dict(l=0, r=0, b=0, t=0))
+fig.show()
+#+END_SRC
+
+
+This seems to work now at least for one patch. Now let's look at the
+topology.
+
+
+#+begin_src python
+homology_dimensions = (0, 1, 2)
+VR = VietorisRipsPersistence(metric="euclidean", max_edge_length=10, homology_dimensions=homology_dimensions, n_jobs=8)
+diagrams_VietorisRips = VR.fit_transform_plot(np.asarray(patch_pc))
+BC = BettiCurve()
+X_betti_curves = BC.fit_transform(diagrams_VietorisRips)
+BC.plot(X_betti_curves)
+#+end_src

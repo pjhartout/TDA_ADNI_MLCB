@@ -22,6 +22,11 @@
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
+* <2020-10-20 Tue> Meeting progress update #3
+** Preparations
+- Status update:
+- Sarah: do you have the images in non-MNI space? What does the
+  scaling correspond to?
 
 * <2020-10-13 Tue> Meeting - Progress Update #2
 ** To discuss

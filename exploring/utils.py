@@ -1,5 +1,24 @@
 #!/usr/bin/env python
 
+"""utils.py
+
+Utils module for the functions used in the exploring/ directory of this project.
+
+Functions included:
+    - data loader
+    - make a 3D scatterplot
+    - Vietoris-Rips filtration
+    - cubical persistence
+    - erosion filtration
+
+TODO:
+    - add docstrings
+"""
+
+__author__ = "Philip Hartout"
+__email__ = "philip.hartout@protonmail.com"
+
+
 import nibabel
 import nibabel as nib  # Useful to load data
 

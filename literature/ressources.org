@@ -26,7 +26,8 @@
 ** Online course for math part:
 https://www2.cs.duke.edu/courses/fall06/cps296.1/
 https://github.com/pjhartout/TDA_Course_Duke
-
+** Book
+https://www.maths.ed.ac.uk/~v1ranick/papers/edelcomp.pdf
 ** Overviews:
 https://anatomypubs.onlinelibrary.wiley.com/doi/full/10.1002/dvdy.175
 https://www.biorxiv.org/content/10.1101/457747v2.full
@@ -79,7 +80,7 @@ clustered together in topological space.
 About patient trajectories using mapper.
 
 ** Random applications gleaned from the web (general topological considerations):
-https://www.nature.com/articles/s41598-019-55818-z (traditional
+   https://www.nature.com/articles/s41598-019-55818-z (traditional
 network analysis for Alzheimer's)
 topology + EGG + severe Alzheimer's
 https://www.frontiersin.org/articles/10.3389/fnagi.2018.00404/full -

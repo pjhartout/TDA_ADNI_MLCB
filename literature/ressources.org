@@ -105,6 +105,8 @@ Example shown [[Construction of structural correlation network .][here]], proced
 and 1 that represent the Pearson correlation co- efficient between
 ROI’s. The diagonal elements of the constructed correlation matrix are
 set to zero.
+** Statistical analysis of persitence diagrams/landscapes
+https://www.jmlr.org/papers/volume16/bubenik15a/bubenik15a.pdf
 * Notes: general topological analysis pipeline.
 - Perform demographic analysis.
 - Construct network using a brain atlas with varying regions. The

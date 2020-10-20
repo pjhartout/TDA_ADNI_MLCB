@@ -448,10 +448,23 @@ utils.cubical_persistence(patch_cn)
 utils.cubical_persistence(patch_ad)
 #+END_SRC
 
-
 * Erosion filtration
-TODO.
 https://giotto-ai.github.io/gtda-docs/latest/modules/generated/images/gtda.images.ErosionFiltration.html
+
+Filtrations of 2D/3D binary images based on the erosion of activated regions.
+
+Binary erosion is a morphological operator commonly used in image processing and relies on the scipy.ndimage module.
+
+This filtration assigns to each pixel in an image a greyscale value
+calculated as follows. If the minimum Manhattan distance between the
+pixel and any deactivated pixel in the image is less than or equal to
+the parameter n_iterations, the assigned value is this distance – in
+particular, deactivated pixels are assigned a value of 0. Otherwise,
+the assigned greyscale value is the sum of the lengths along all axes
+of the image – equivalently, it is the maximum Manhattan distance
+between any two pixels in the image. The name of this filtration comes
+from the fact that these values can be computed by iteratively eroding
+activated regions, shrinking them by a total amount n_iterations.
 
 #+BEGIN_SRC python
 import utils
@@ -465,7 +478,11 @@ plt.show()
 #+END_SRC
 
 
+* Statistics on persistence diagrams
+
+
 * Future directions.
 - What if we do a filtration on the negative space? On the edge space
   (=filtration on the border between tissue and non-tissue?)
 - What descriptors used diagrams?
+- What if we perform the analysis on non-MNI space?

@@ -50,12 +50,14 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-import nighres
-
 import gtda
 from gtda.images import ImageToPointCloud, ErosionFiltration
 from gtda.homology import VietorisRipsPersistence
-from gtda.diagrams import PersistenceEntropy
+from gtda.diagrams import (
+    PersistenceEntropy,
+    PersistenceLandscape,
+    PersistenceImage
+)
 from gtda.pipeline import Pipeline
 from gtda.plotting import plot_diagram, plot_point_cloud, plot_heatmap
 from gtda.homology import CubicalPersistence
@@ -181,9 +183,12 @@ def vr_persistent_homology(patch_pc):
     BC = BettiCurve()
     X_betti_curves = BC.fit_transform(diagrams_VietorisRips)
     BC.plot(X_betti_curves).show()
+    return diagrams_VietorisRips
 
 
-def cubical_persistence(patch_cn):
+def cubical_persistence(
+    patch_cn, title, plot_diagrams=False, betti_curves=False
+):
     homology_dimensions = (0, 1, 2)
     cp = CubicalPersistence(
         homology_dimensions=homology_dimensions,
@@ -193,17 +198,59 @@ def cubical_persistence(patch_cn):
         reduced_homology=True,
         n_jobs=None,
     )
-    diagrams_CubicalPersistence = cp.fit_transform_plot(
-        patch_cn.reshape(SHAPE)
+    diagrams_cubical_persistence = cp.fit_transform(patch_cn.reshape(SHAPE))
+    if plot_diagrams:
+        fig = cp.plot(diagrams_cubical_persistence)
+        fig.update_layout(title=title)
+    if betti_curves:
+        BC = BettiCurve()
+        X_betti_curves = BC.fit_transform(diagrams_cubical_persistence)
+        fig = BC.plot(X_betti_curves)
+        fig.update_layout(title=title)
+        fig.show()
+    return diagrams_cubical_persistence
+
+
+def erosion_filtration(img):
+    ef = ErosionFiltration(n_iterations=None, n_jobs=-1)
+    diagrams_Erosion = ef.fit_transformp(img)
+    # BC = BettiCurve()
+    # X_betti_curves = BC.fit_transform(diagrams_Erosion)
+    # BC.plot(X_betti_curves).show()
+    return diagrams_erosion
+
+
+def persistence_landscape(persistence_diagram, title):
+    pl = PersistenceLandscape(n_layers=1, n_bins=100, n_jobs=-1)
+    persistence_landscape = pl.fit_transform(persistence_diagram)
+    fig = pl.plot(persistence_landscape)
+    fig.update_layout(
+        title=title,
+        xaxis_title="Filtration parameter value",
+        yaxis_title="Persistence",
+    ).show()
+    return persistence_landscape
+
+
+def persistence_image(persistence_diagram, sigma, title):
+    pl = PersistenceImage(
+        sigma=sigma, n_bins=100, weight_function=None, n_jobs=-1
     )
-    BC = BettiCurve()
-    X_betti_curves = BC.fit_transform(diagrams_CubicalPersistence)
-    BC.plot(X_betti_curves).show()
+    persistence_image = pl.fit_transform(persistence_diagram)
+    fig = pl.plot(persistence_image)
+    fig.update_layout(title=title).show()
+    return persistence_image
 
 
-def erosion_filtration(patch_cn):
-    ef = ErosionFiltration(n_iterations=None, n_jobs=None)
-    diagrams_Erosion = ef.fit_transform_plot(patch_cn)
-    BC = BettiCurve()
-    X_betti_curves = BC.fit_transform(diagrams_Erosion)
-    BC.plot(X_betti_curves).show()
+def get_arrays_from_dir(directory):
+    images = np.empty()
+    for (dirpath, dirnames, filenames) in walk(directory):
+        for f in filenames:
+            if f.endswith('.' + "npy"):
+                images = np.asarray([images, np.load(f)])
+    print(images.shape)
+    return images
+
+
+def main():
+    images = get_arrays_from_dir("../data/cropped/")

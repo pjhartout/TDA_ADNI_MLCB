@@ -517,6 +517,7 @@ the distance of the i-th diagram from all the others.
 
 implemented in [[./distance_between_PIs.py][this script]]
 
+clustering of patients based on distances?
 
 * Future directions.
 - What if we do a filtration on the negative space? On the edge space

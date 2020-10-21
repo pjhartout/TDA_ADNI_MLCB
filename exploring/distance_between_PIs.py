@@ -1,0 +1,156 @@
+#!/usr/bin/env python
+"""distance_between_PIs.py
+
+This script assesses the distance between persistence images for CN, MCI and AD patients.
+
+TODO:
+    - add docstrings
+"""
+
+__author__ = "Philip Hartout"
+__email__ = "philip.hartout@protonmail.com"
+
+import nibabel
+import nibabel as nib  # Useful to load data
+
+import nilearn
+from nilearn import datasets
+from nilearn.regions import RegionExtractor
+from nilearn import plotting
+from nilearn.image import index_img
+from nilearn.plotting import find_xyz_cut_coords
+from nilearn.input_data import NiftiMapsMasker
+from nilearn.connectome import ConnectivityMeasure
+from nilearn.regions import RegionExtractor
+from nilearn import plotting
+from nilearn.image import index_img
+from nilearn import datasets
+from nilearn import plotting
+
+import matplotlib.pyplot as plt
+
+
+from pathlib import Path
+import dotenv
+
+
+import numpy as np
+import networkx as nx
+import pandas as pd
+
+import plotly.express as px
+import plotly.graph_objects as go
+
+import gtda
+from gtda.images import ImageToPointCloud, ErosionFiltration
+from gtda.homology import VietorisRipsPersistence
+from gtda.diagrams import (
+    PersistenceEntropy,
+    PersistenceLandscape,
+    PersistenceImage,
+)
+from gtda.pipeline import Pipeline
+from gtda.plotting import plot_diagram, plot_point_cloud, plot_heatmap
+from gtda.homology import CubicalPersistence
+from gtda.diagrams import (
+    Scaler,
+    Filtering,
+    PersistenceEntropy,
+    BettiCurve,
+    PairwiseDistance,
+)
+
+import os
+import tempfile
+from urllib.request import urlretrieve
+import zipfile
+
+from sklearn.linear_model import LogisticRegression
+from skimage import io
+
+import glob
+import json
+
+
+# Import utils library
+import utils
+
+
+def main():
+
+    directory = "/home/pjh/Documents/Git/TDA_ADNI_MLCB/data/"
+    image_dir = directory + "cropped/"
+    diagnosis_json = "collected_diagnoses_complete.json"
+    # First we get all the diagnoses
+    (
+        cn_patients,
+        mci_patients,
+        ad_patients,
+    ) = utils.get_earliest_available_diagnosis(directory + diagnosis_json)
+
+    images_cn = utils.get_arrays_from_dir(image_dir, cn_patients)
+    images_mci = utils.get_arrays_from_dir(image_dir, mci_patients)
+    images_ad = utils.get_arrays_from_dir(image_dir, ad_patients)
+
+    # Then we compute the PD on each image.
+    diagrams_cn = utils.cubical_persistence(
+        images_cn,
+        "Patches on all images",
+        plot_diagrams=False,
+        betti_curves=False,
+    )
+    diagrams_mci = utils.cubical_persistence(
+        images_mci,
+        "Patch MCI Patient",
+        plot_diagrams=False,
+        betti_curves=False,
+    )
+    diagrams_ad = utils.cubical_persistence(
+        images_ad, "Patch AD Patient", plot_diagrams=False, betti_curves=False
+    )
+
+    # Then we compute the distance between the PDs.
+    # Distance between PDs
+    distance_matrices_cn = utils.evaluate_distance_functions(
+        diagrams_cn,
+        [
+            "wasserstein",
+            "betti",
+            "landscape",
+            "silhouette",
+            "heat",
+            "persistence_image",
+        ],
+        plot_distance_matrix=True,
+        file_suffix="cn",
+    )
+    distance_matrices_mci = utils.evaluate_distance_functions(
+        diagrams_cn,
+        [
+            "wasserstein",
+            "betti",
+            "landscape",
+            "silhouette",
+            "heat",
+            "persistence_image",
+        ],
+        plot_distance_matrix=True,
+        file_suffix="mci",
+    )
+    distance_matrices_ad = utils.evaluate_distance_functions(
+        diagrams_cn,
+        [
+            "wasserstein",
+            "betti",
+            "landscape",
+            "silhouette",
+            "heat",
+            "persistence_image",
+        ],
+        plot_distance_matrix=True,
+        file_suffix="ad",
+    )
+
+
+if __name__ == "__main__":
+    main()

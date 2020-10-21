@@ -49,6 +49,7 @@ import pandas as pd
 
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 import gtda
 from gtda.images import ImageToPointCloud, ErosionFiltration
@@ -178,7 +179,7 @@ def vr_persistent_homology(patch_pc):
         metric="euclidean",
         max_edge_length=5,
         homology_dimensions=homology_dimensions,
-        n_jobs=8,
+        n_jobs=4,
     )
     diagrams_VietorisRips = VR.fit_transform(np.asarray(patch_pc))
     VR.plot(diagrams_VietorisRips).show()
@@ -189,7 +190,7 @@ def vr_persistent_homology(patch_pc):
 
 
 def cubical_persistence(
-    patch_cn, title, plot_diagrams=False, betti_curves=False
+    images, title, plot_diagrams=False, betti_curves=False
 ):
     homology_dimensions = (0, 1, 2)
     cp = CubicalPersistence(
@@ -198,9 +199,9 @@ def cubical_persistence(
         periodic_dimensions=None,
         infinity_values=None,
         reduced_homology=True,
-        n_jobs=None,
+        n_jobs=4,
     )
-    diagrams_cubical_persistence = cp.fit_transform(patch_cn.reshape(SHAPE))
+    diagrams_cubical_persistence = cp.fit_transform(images)
     if plot_diagrams:
         fig = cp.plot(diagrams_cubical_persistence)
         fig.update_layout(title=title)
@@ -214,8 +215,8 @@ def cubical_persistence(
 
 
 def erosion_filtration(img):
-    ef = ErosionFiltration(n_iterations=None, n_jobs=-1)
-    diagrams_Erosion = ef.fit_transformp(img)
+    ef = ErosionFiltration(n_iterations=None, n_jobs=4)
+    diagrams_erosion = ef.fit_transformp(img)
     # BC = BettiCurve()
     # X_betti_curves = BC.fit_transform(diagrams_Erosion)
     # BC.plot(X_betti_curves).show()
@@ -223,7 +224,7 @@ def erosion_filtration(img):
 
 
 def persistence_landscape(persistence_diagram, title):
-    pl = PersistenceLandscape(n_layers=1, n_bins=100, n_jobs=-1)
+    pl = PersistenceLandscape(n_layers=1, n_bins=100, n_jobs=4)
     persistence_landscape = pl.fit_transform(persistence_diagram)
     fig = pl.plot(persistence_landscape)
     fig.update_layout(
@@ -236,7 +237,7 @@ def persistence_landscape(persistence_diagram, title):
 
 def persistence_image(persistence_diagram, sigma, title):
     pl = PersistenceImage(
-        sigma=sigma, n_bins=100, weight_function=None, n_jobs=-1
+        sigma=sigma, n_bins=100, weight_function=None, n_jobs=4
     )
     persistence_image = pl.fit_transform(persistence_diagram)
     fig = pl.plot(persistence_image)
@@ -246,8 +247,16 @@ def persistence_image(persistence_diagram, sigma, title):
 
 def get_arrays_from_dir(directory, filelist):
     filelist = [directory + file for file in filelist]
-    images = np.array([np.array(np.load(arr)) for arr in filelist])
-    return images
+    images = []
+    for arr in filelist:
+        try:
+            images.append(np.load(arr))
+        except FileNotFoundError:
+            print(
+                f"Patient {arr} had no corresponding array available (no "
+                f"MRI was performed at the time of diagnosis)"
+            )
+    return np.asarray(images)
 
 
 def get_earliest_available_diagnosis(path_to_diags):
@@ -269,20 +278,135 @@ def get_earliest_available_diagnosis(path_to_diags):
 
 
 def format_patient(patient, diagnoses):
-    if patient == "sub-ADNI133S1170":
-        print(patient)
     patient = patient + "-" + list(diagnoses[patient].keys())[0] + "-MNI.npy"
     return patient.replace("-ses", "")
 
 
-def compute_distance_matrix(diagrams, metric, metric_params, plot_distance_matrix=False, title=None):
+def compute_distance_matrix(
+    diagrams, metric, metric_params, plot_distance_matrix=False, title=None
+):
     PD = PairwiseDistance(
-        metric=metric,
-        metric_params=metric_params,
-        order=None,
+        metric=metric, metric_params=metric_params, order=None, n_jobs=4
     )
     X_distance = PD.fit_transform(diagrams)
     if plot_distance_matrix:
-        fig = PD.plot(X_distance)
-        fig.update_layout(title=title).show()
+        fig = make_subplots(
+            rows=1,
+            cols=3,
+            subplot_titles=(
+                "Distance between PDs for H_0",
+                "Distance between PDs for H_1",
+                "Distance between PDs for H_2",
+            ),
+        )
+        fig.add_trace(
+            go.Heatmap(
+                z=X_distance[:, :, 0],
+                colorbar_x=1 / 3 - 0.05,
+                colorbar_thickness=10,
+                colorscale="Greens",
+            ),
+            1,
+            1,
+        )
+        fig.add_trace(
+            go.Heatmap(
+                z=X_distance[:, :, 1],
+                colorbar_x=2 / 3 - 0.025,
+                colorbar_thickness=10,
+                colorscale="Blues",
+            ),
+            1,
+            2,
+        )
+        fig.add_trace(
+            go.Heatmap(
+                z=X_distance[:, :, 2],
+                colorbar_x=1,
+                colorbar_thickness=10,
+                colorscale="Oranges",
+            ),
+            1,
+            3,
+        )
+        fig.update_layout(title=title,).show()
+
     return X_distance
+
+
+def evaluate_distance_functions(
+    diagrams, list_of_distance_functions, plot_distance_matrix
+):
+    distance_matrices = []
+    if "landscape" in list_of_distance_functions:
+        list_of_distance_functions.append(
+            compute_distance_matrix(
+                diagrams,
+                metric="landscape",
+                metric_params={"p": 2, "n_layers": 5, "n_bins": 1000},
+                plot_distance_matrix=True,
+                title="Landscape distance matrix between PDs",
+            )
+        )
+
+    if "wasserstein" in list_of_distance_functions:
+        # Wasserstein
+        list_of_distance_functions.append(
+            compute_distance_matrix(
+                diagrams,
+                metric="wasserstein",
+                metric_params={"p": 2, "delta": 0.1},
+                plot_distance_matrix=plot_distance_matrix,
+                title="Wasserstein distance matrix between PDs",
+            )
+        )
+
+    if "betti" in list_of_distance_functions:
+        list_of_distance_functions.append(
+            compute_distance_matrix(
+                diagrams,
+                metric="betti",
+                metric_params={"p": 2, "n_bins": 1000},
+                plot_distance_matrix=plot_distance_matrix,
+                title="Betti distance matrix between PDs",
+            )
+        )
+
+    if "silhouette" in list_of_distance_functions:
+        list_of_distance_functions.append(
+            compute_distance_matrix(
+                diagrams,
+                metric="silhouette",
+                metric_params={"p": 2, "power": 1, "n_bins": 1000},
+                plot_distance_matrix=plot_distance_matrix,
+                title="Silhouette distance matrix between PDs",
+            )
+        )
+
+    if "heat" in list_of_distance_functions:
+        list_of_distance_functions.append(
+            compute_distance_matrix(
+                diagrams,
+                metric="heat",
+                metric_params={"p": 2, "sigma": 0.1, "n_bins": 1000},
+                plot_distance_matrix=plot_distance_matrix,
+                title="Heat distance matrix between PDs",
+            )
+        )
+
+    if "persistence_image" in list_of_distance_functions:
+        list_of_distance_functions.append(
+            compute_distance_matrix(
+                diagrams,
+                metric="persistence_image",
+                metric_params={
+                    "p": 2,
+                    "sigma": 0.1,
+                    "n_bins": 1000,
+                    "weight_function": None,
+                },
+                plot_distance_matrix=plot_distance_matrix,
+                title="Persistence image distance matrix between PDs",
+            )
+        )
+    return np.asarray(distance_matrices)

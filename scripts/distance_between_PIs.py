@@ -102,61 +102,49 @@ def main():
 
     # Then we compute the PD on each image.
     diagrams_cn = utils.cubical_persistence(
-        images_cn[:5],
+        images_cn,
         "Patches on CN patients",
         plot_diagrams=False,
         betti_curves=False,
     )
     diagrams_mci = utils.cubical_persistence(
-        images_mci[:5],
+        images_mci,
         "Patch MCI Patient",
         plot_diagrams=False,
         betti_curves=False,
     )
     diagrams_ad = utils.cubical_persistence(
-        images_ad[:5],
+        images_ad,
         "Patch AD Patient",
         plot_diagrams=False,
         betti_curves=False,
     )
-
+    distances_to_evaluate = (
+        [
+            "wasserstein",
+            "betti",
+            "landscape",
+            "silhouette",
+            "heat",
+            "persistence_image",
+        ],
+    )
     # Then we compute the distance between the PDs.
     distance_matrices_cn = utils.evaluate_distance_functions(
         diagrams_cn,
-        [
-            # "wasserstein",
-            # "betti",
-            "landscape",
-            # "silhouette",
-            # "heat",
-            "persistence_image",
-        ],
+        distances_to_evaluate,
         plot_distance_matrix=True,
         file_prefix="cn",
     )
     distance_matrices_mci = utils.evaluate_distance_functions(
         diagrams_mci,
-        [
-            # "wasserstein",
-            # "betti",
-            "landscape",
-            # "silhouette",
-            # "heat",
-            "persistence_image",
-        ],
+        distances_to_evaluate,
         plot_distance_matrix=True,
         file_prefix="mci",
     )
     distance_matrices_ad = utils.evaluate_distance_functions(
         diagrams_ad,
-        [
-            # "wasserstein",
-            # "betti",
-            "landscape",
-            # "silhouette",
-            # "heat",
-            "persistence_image",
-        ],
+        distances_to_evaluate,
         plot_distance_matrix=True,
         file_prefix="ad",
     )
@@ -177,6 +165,7 @@ def main():
         zip(dist_vectors_cn, dist_vectors_mci, dist_vectors_ad)
     ):
         utils.compute_distplot(vectors, group_labels, title=titles[index])
+
 
 if __name__ == "__main__":
     main()

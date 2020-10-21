@@ -207,17 +207,20 @@ def cubical_persistence(
     )
     diagrams_cubical_persistence = cp.fit_transform(images)
     sc = Scaler(metric="bottleneck")
-    sc.fit_transform(diagrams_cubical_persistence)
+    scaled_diagrams_cubical_persistence = sc.fit_transform(
+        diagrams_cubical_persistence
+    )
     if plot_diagrams:
-        fig = cp.plot(diagrams_cubical_persistence)
+        fig = cp.plot(scaled_diagrams_cubical_persistence)
         fig.update_layout(title=title)
     if betti_curves:
         BC = BettiCurve()
-        X_betti_curves = BC.fit_transform(diagrams_cubical_persistence)
+        X_betti_curves = BC.fit_transform(scaled_diagrams_cubical_persistence)
         fig = BC.plot(X_betti_curves)
         fig.update_layout(title=title)
         fig.show()
-    return diagrams_cubical_persistence
+    print(f"Computed CP for {title}")
+    return scaled_diagrams_cubical_persistence
 
 
 def erosion_filtration(img):
@@ -427,6 +430,7 @@ def evaluate_distance_functions(
             file_prefix=file_prefix + "_persistence_image",
         )
         distance_matrices.append(distance_matrix)
+    print(f"Computed distance matrices for {list_of_distance_functions}")
     return distance_matrices
 
 

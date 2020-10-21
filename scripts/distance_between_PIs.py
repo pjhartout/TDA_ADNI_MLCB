@@ -103,19 +103,19 @@ def main():
     # Then we compute the PD on each image.
     diagrams_cn = utils.cubical_persistence(
         images_cn,
-        "Patches on CN patients",
+        "Patches of CN patients",
         plot_diagrams=False,
         betti_curves=False,
     )
     diagrams_mci = utils.cubical_persistence(
         images_mci,
-        "Patch MCI Patient",
+        "Patches of MCI Patient",
         plot_diagrams=False,
         betti_curves=False,
     )
     diagrams_ad = utils.cubical_persistence(
         images_ad,
-        "Patch AD Patient",
+        "Patches of AD Patient",
         plot_diagrams=False,
         betti_curves=False,
     )
@@ -127,8 +127,9 @@ def main():
             "silhouette",
             "heat",
             "persistence_image",
-        ],
+        ]
     )
+    distances_to_evaluate = distances_to_evaluate[0]
     # Then we compute the distance between the PDs.
     distance_matrices_cn = utils.evaluate_distance_functions(
         diagrams_cn,

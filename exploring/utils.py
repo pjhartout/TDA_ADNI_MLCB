@@ -56,7 +56,7 @@ from gtda.homology import VietorisRipsPersistence
 from gtda.diagrams import (
     PersistenceEntropy,
     PersistenceLandscape,
-    PersistenceImage
+    PersistenceImage,
 )
 from gtda.pipeline import Pipeline
 from gtda.plotting import plot_diagram, plot_point_cloud, plot_heatmap
@@ -77,6 +77,8 @@ import zipfile
 from sklearn.linear_model import LogisticRegression
 from skimage import io
 
+import glob
+import json
 
 SHAPE = (1, 30, 36, 30)
 
@@ -242,15 +244,45 @@ def persistence_image(persistence_diagram, sigma, title):
     return persistence_image
 
 
-def get_arrays_from_dir(directory):
-    images = np.empty()
-    for (dirpath, dirnames, filenames) in walk(directory):
-        for f in filenames:
-            if f.endswith('.' + "npy"):
-                images = np.asarray([images, np.load(f)])
-    print(images.shape)
+def get_arrays_from_dir(directory, filelist):
+    filelist = [directory + file for file in filelist]
+    images = np.array([np.array(np.load(arr)) for arr in filelist])
     return images
 
 
-def main():
-    images = get_arrays_from_dir("../data/cropped/")
+def get_earliest_available_diagnosis(path_to_diags):
+    """Gets diagnosis at first available timepoint"""
+    cn_patients = []
+    mci_patients = []
+    ad_patients = []
+    with open(path_to_diags) as f:
+        diagnoses = json.load(f)
+
+    for patient in list(diagnoses.keys()):
+        if diagnoses[patient][list(diagnoses[patient].keys())[0]] == "CN":
+            cn_patients.append(format_patient(patient, diagnoses))
+        elif diagnoses[patient][list(diagnoses[patient].keys())[0]] == "MCI":
+            mci_patients.append(format_patient(patient, diagnoses))
+        elif diagnoses[patient][list(diagnoses[patient].keys())[0]] == "AD":
+            ad_patients.append(format_patient(patient, diagnoses))
+    return cn_patients, mci_patients, ad_patients
+
+
+def format_patient(patient, diagnoses):
+    if patient == "sub-ADNI133S1170":
+        print(patient)
+    patient = patient + "-" + list(diagnoses[patient].keys())[0] + "-MNI.npy"
+    return patient.replace("-ses", "")
+
+
+def compute_distance_matrix(diagrams, metric, metric_params, plot_distance_matrix=False, title=None):
+    PD = PairwiseDistance(
+        metric=metric,
+        metric_params=metric_params,
+        order=None,
+    )
+    X_distance = PD.fit_transform(diagrams)
+    if plot_distance_matrix:
+        fig = PD.plot(X_distance)
+        fig.update_layout(title=title).show()
+    return X_distance

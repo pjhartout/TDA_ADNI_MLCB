@@ -40,6 +40,7 @@ import pandas as pd
 
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.figure_factory as ff
 
 import gtda
 from gtda.images import ImageToPointCloud, ErosionFiltration
@@ -71,16 +72,23 @@ from skimage import io
 import glob
 import json
 
-
 # Import utils library
 import utils
 
 
+DOTENV_KEY2VAL = dotenv.dotenv_values()
+
+
 def main():
 
-    directory = "/home/pjh/Documents/Git/TDA_ADNI_MLCB/data/"
-    image_dir = directory + "cropped/"
+    directory = DOTENV_KEY2VAL["DATA_DIR"]
+    image_dir = directory + "/patch_92/"
     diagnosis_json = "collected_diagnoses_complete.json"
+
+    if not os.path.exists(DOTENV_KEY2VAL["GEN_FIGURES_DIR"]):
+        print(f"Creating {DOTENV_KEY2VAL['GEN_FIGURES_DIR']}")
+        os.mkdir(DOTENV_KEY2VAL["GEN_FIGURES_DIR"])
+
     # First we get all the diagnoses
     (
         cn_patients,
@@ -94,63 +102,81 @@ def main():
 
     # Then we compute the PD on each image.
     diagrams_cn = utils.cubical_persistence(
-        images_cn,
-        "Patches on all images",
+        images_cn[:5],
+        "Patches on CN patients",
         plot_diagrams=False,
         betti_curves=False,
     )
     diagrams_mci = utils.cubical_persistence(
-        images_mci,
+        images_mci[:5],
         "Patch MCI Patient",
         plot_diagrams=False,
         betti_curves=False,
     )
     diagrams_ad = utils.cubical_persistence(
-        images_ad, "Patch AD Patient", plot_diagrams=False, betti_curves=False
+        images_ad[:5],
+        "Patch AD Patient",
+        plot_diagrams=False,
+        betti_curves=False,
     )
 
     # Then we compute the distance between the PDs.
-    # Distance between PDs
     distance_matrices_cn = utils.evaluate_distance_functions(
         diagrams_cn,
         [
-            "wasserstein",
-            "betti",
+            # "wasserstein",
+            # "betti",
             "landscape",
-            "silhouette",
-            "heat",
+            # "silhouette",
+            # "heat",
             "persistence_image",
         ],
         plot_distance_matrix=True,
-        file_suffix="cn",
+        file_prefix="cn",
     )
     distance_matrices_mci = utils.evaluate_distance_functions(
-        diagrams_cn,
+        diagrams_mci,
         [
-            "wasserstein",
-            "betti",
+            # "wasserstein",
+            # "betti",
             "landscape",
-            "silhouette",
-            "heat",
+            # "silhouette",
+            # "heat",
             "persistence_image",
         ],
         plot_distance_matrix=True,
-        file_suffix="mci",
+        file_prefix="mci",
     )
     distance_matrices_ad = utils.evaluate_distance_functions(
-        diagrams_cn,
+        diagrams_ad,
         [
-            "wasserstein",
-            "betti",
+            # "wasserstein",
+            # "betti",
             "landscape",
-            "silhouette",
-            "heat",
+            # "silhouette",
+            # "heat",
             "persistence_image",
         ],
         plot_distance_matrix=True,
-        file_suffix="ad",
+        file_prefix="ad",
     )
 
+    # We can plot the different distances between them.
+    dist_vectors_cn = utils.get_distance_vector_from_matrices(
+        distance_matrices_cn
+    )
+    dist_vectors_mci = utils.get_distance_vector_from_matrices(
+        distance_matrices_mci
+    )
+    dist_vectors_ad = utils.get_distance_vector_from_matrices(
+        distance_matrices_ad
+    )
+    group_labels = ["CN", "MCI", "AD"]
+    titles = ["landscape", "persistence_image"]
+    for index, vectors in enumerate(
+        zip(dist_vectors_cn, dist_vectors_mci, dist_vectors_ad)
+    ):
+        utils.compute_distplot(vectors, group_labels, title=titles[index])
 
 if __name__ == "__main__":
     main()

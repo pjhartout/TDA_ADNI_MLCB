@@ -50,6 +50,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import plotly.figure_factory as ff
 
 import gtda
 from gtda.images import ImageToPointCloud, ErosionFiltration
@@ -80,8 +81,11 @@ from skimage import io
 
 import glob
 import json
+import dotenv
 
+# Shape of a patch
 SHAPE = (1, 30, 36, 30)
+DOTENV_KEY2VAL = dotenv.dotenv_values()
 
 
 def make_3d_scatterplot(point_cloud, title):
@@ -202,6 +206,8 @@ def cubical_persistence(
         n_jobs=4,
     )
     diagrams_cubical_persistence = cp.fit_transform(images)
+    sc = Scaler(metric="bottleneck")
+    sc.fit_transform(diagrams_cubical_persistence)
     if plot_diagrams:
         fig = cp.plot(diagrams_cubical_persistence)
         fig.update_layout(title=title)
@@ -283,7 +289,12 @@ def format_patient(patient, diagnoses):
 
 
 def compute_distance_matrix(
-    diagrams, metric, metric_params, plot_distance_matrix=False, title=None
+    diagrams,
+    metric,
+    metric_params,
+    plot_distance_matrix=False,
+    title=None,
+    file_prefix=None,
 ):
     PD = PairwiseDistance(
         metric=metric, metric_params=metric_params, order=None, n_jobs=4
@@ -329,84 +340,118 @@ def compute_distance_matrix(
             1,
             3,
         )
-        fig.update_layout(title=title,).show()
-
+        fig.update_layout(title=title)
+        fig.write_html(
+            DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+            + file_prefix
+            + "_distance_matrix.html",
+        )
+        fig.show()
     return X_distance
 
 
 def evaluate_distance_functions(
-    diagrams, list_of_distance_functions, plot_distance_matrix
+    diagrams,
+    list_of_distance_functions,
+    plot_distance_matrix=False,
+    file_prefix=None,
 ):
     distance_matrices = []
     if "landscape" in list_of_distance_functions:
-        list_of_distance_functions.append(
-            compute_distance_matrix(
-                diagrams,
-                metric="landscape",
-                metric_params={"p": 2, "n_layers": 5, "n_bins": 1000},
-                plot_distance_matrix=True,
-                title="Landscape distance matrix between PDs",
-            )
+        distance_matrix = compute_distance_matrix(
+            diagrams,
+            metric="landscape",
+            metric_params={"p": 2, "n_layers": 5, "n_bins": 1000},
+            plot_distance_matrix=True,
+            title="Landscape distance matrix between PDs",
+            file_prefix=file_prefix + "_landscape_distance",
         )
+        distance_matrices.append(distance_matrix)
 
     if "wasserstein" in list_of_distance_functions:
-        # Wasserstein
-        list_of_distance_functions.append(
-            compute_distance_matrix(
-                diagrams,
-                metric="wasserstein",
-                metric_params={"p": 2, "delta": 0.1},
-                plot_distance_matrix=plot_distance_matrix,
-                title="Wasserstein distance matrix between PDs",
-            )
+        distance_matrix = compute_distance_matrix(
+            diagrams,
+            metric="wasserstein",
+            metric_params={"p": 2, "delta": 0.1},
+            plot_distance_matrix=plot_distance_matrix,
+            title="Wasserstein distance matrix between PDs",
+            file_prefix=file_prefix + "_wasserstein",
         )
+        distance_matrices.append(distance_matrix)
 
     if "betti" in list_of_distance_functions:
-        list_of_distance_functions.append(
-            compute_distance_matrix(
-                diagrams,
-                metric="betti",
-                metric_params={"p": 2, "n_bins": 1000},
-                plot_distance_matrix=plot_distance_matrix,
-                title="Betti distance matrix between PDs",
-            )
+        distance_matrix = compute_distance_matrix(
+            diagrams,
+            metric="betti",
+            metric_params={"p": 2, "n_bins": 1000},
+            plot_distance_matrix=plot_distance_matrix,
+            title="Betti distance matrix between PDs",
+            file_prefix=file_prefix + "_betti",
         )
+        distance_matrices.append(distance_matrix)
 
     if "silhouette" in list_of_distance_functions:
-        list_of_distance_functions.append(
-            compute_distance_matrix(
-                diagrams,
-                metric="silhouette",
-                metric_params={"p": 2, "power": 1, "n_bins": 1000},
-                plot_distance_matrix=plot_distance_matrix,
-                title="Silhouette distance matrix between PDs",
-            )
+        distance_matrix = compute_distance_matrix(
+            diagrams,
+            metric="silhouette",
+            metric_params={"p": 2, "power": 1, "n_bins": 1000},
+            plot_distance_matrix=plot_distance_matrix,
+            title="Silhouette distance matrix between PDs",
+            file_prefix=file_prefix + "_silhouette",
         )
+        distance_matrices.append(distance_matrix)
 
     if "heat" in list_of_distance_functions:
-        list_of_distance_functions.append(
-            compute_distance_matrix(
-                diagrams,
-                metric="heat",
-                metric_params={"p": 2, "sigma": 0.1, "n_bins": 1000},
-                plot_distance_matrix=plot_distance_matrix,
-                title="Heat distance matrix between PDs",
-            )
+        distance_matrix = compute_distance_matrix(
+            diagrams,
+            metric="heat",
+            metric_params={"p": 2, "sigma": 0.1, "n_bins": 1000},
+            plot_distance_matrix=plot_distance_matrix,
+            title="Heat distance matrix between PDs",
+            file_prefix=file_prefix + "_heat",
         )
+        distance_matrices.append(distance_matrix)
 
     if "persistence_image" in list_of_distance_functions:
-        list_of_distance_functions.append(
-            compute_distance_matrix(
-                diagrams,
-                metric="persistence_image",
-                metric_params={
-                    "p": 2,
-                    "sigma": 0.1,
-                    "n_bins": 1000,
-                    "weight_function": None,
-                },
-                plot_distance_matrix=plot_distance_matrix,
-                title="Persistence image distance matrix between PDs",
-            )
+        distance_matrix = compute_distance_matrix(
+            diagrams,
+            metric="persistence_image",
+            metric_params={
+                "p": 2,
+                "sigma": 0.1,
+                "n_bins": 1000,
+                "weight_function": None,
+            },
+            plot_distance_matrix=plot_distance_matrix,
+            title="Persistence image distance matrix between PDs",
+            file_prefix=file_prefix + "_persistence_image",
         )
-    return np.asarray(distance_matrices)
+        distance_matrices.append(distance_matrix)
+    return distance_matrices
+
+
+def get_distance_vector_from_matrices(distance_matrices):
+    distance_vectors = []
+    for distance_matrix in distance_matrices:
+        upper_triangular_distance_matrix = np.triu(distance_matrix)
+        distance_vectors.append(
+            upper_triangular_distance_matrix[
+                upper_triangular_distance_matrix > 0
+            ]
+        )
+    return distance_vectors
+
+
+def compute_distplot(vectors, group_labels, title=None):
+    """list_of_distance_vectors must be structured in such a way that each list
+    of vectors can be plotted individually for each distance."""
+    fig = ff.create_distplot(
+        np.log(vectors), group_labels, bin_size=0.1
+    ).update_layout(title=title)
+    fig.show()
+    fig.write_html(
+        DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+        + "distplot_"
+        + title
+        + "_distance_vectors.html"
+    )

@@ -512,27 +512,10 @@ persistence_landscape_ad = utils.persistence_image(diagrams_CubicalPersistence_a
 ** Distances among diagrams
 - From [[https://docs-tda.giotto.ai/0.3.0/notebooks/lorenz_attractor.html][case study]]
 
-#+BEGIN_SRC python
-import utils
-patch_cn_binarized, patch_cn = utils.prepare_image("../data/cropped/sub-ADNI002S0295-M00-MNI.npy", 0.5)
-patch_ad_binarized, patch_ad = utils.prepare_image("../data/cropped/sub-ADNI002S0729-M48-MNI.npy", 0.5)
-diagrams_cp_cn = utils.cubical_persistence(patch_cn, "CN patch patient", plot_diagrams=False, betti_curves=False)
-diagrams_cp_ad = utils.cubical_persistence(patch_ad, "AD patch patient", plot_diagrams=False, betti_curves=False)
-#+END_SRC
-
-#+BEGIN_SRC python
-p_L = 2
-n_layers = 5
-PD = PairwiseDistance(metric='landscape',
-                      metric_params={'p': p_L, 'n_layers': n_layers, 'n_bins': 1000},
-                      order=None)
-
-X_distance_L = PD.fit_transform(np.asarray([diagrams_cp_cn, diagrams_ad_cn]))
-plot_heatmap(X_distance_L, colorscale='blues').show()
-#+END_SRC
-
 In each case, we will obtain distance matrices whose i-th row encodes
 the distance of the i-th diagram from all the others.
+
+implemented in [[./distance_between_PIs.py][this script]]
 
 
 * Future directions.

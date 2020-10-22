@@ -1,10 +1,12 @@
 #!/usr/bin/env python
-"""distance_between_PIs.py
+"""distance_between_pds.py
 
-This script assesses the distance between persistence images for CN, MCI and AD patients.
+This script assesses the distance between persistence images for CN, MCI and
+AD patients using various pd representations and distance functions.
 
 TODO:
     - add docstrings
+    - make sure PEP standards are met.
 """
 
 __author__ = "Philip Hartout"
@@ -96,58 +98,55 @@ def main():
         ad_patients,
     ) = utils.get_earliest_available_diagnosis(directory + diagnosis_json)
 
-    images_cn = utils.get_arrays_from_dir(image_dir, cn_patients)
-    images_mci = utils.get_arrays_from_dir(image_dir, mci_patients)
-    images_ad = utils.get_arrays_from_dir(image_dir, ad_patients)
+    images_cn = utils.get_arrays_from_dir(image_dir, cn_patients[:10])
+    images_mci = utils.get_arrays_from_dir(image_dir, mci_patients[:10])
+    images_ad = utils.get_arrays_from_dir(image_dir, ad_patients[:10])
 
     # Then we compute the PD on each image.
     diagrams_cn = utils.cubical_persistence(
         images_cn,
-        "Patches of CN patients",
+        "Patch 92 of CN patients",
         plot_diagrams=False,
         betti_curves=False,
     )
     diagrams_mci = utils.cubical_persistence(
         images_mci,
-        "Patches of MCI Patient",
+        "Patch 92 of MCI Patient",
         plot_diagrams=False,
         betti_curves=False,
     )
     diagrams_ad = utils.cubical_persistence(
         images_ad,
-        "Patches of AD Patient",
+        "Patche 92 of AD Patient",
         plot_diagrams=False,
         betti_curves=False,
     )
-    distances_to_evaluate = (
-        [
-            "wasserstein",
-            "betti",
-            "landscape",
-            "silhouette",
-            "heat",
-            "persistence_image",
-        ]
-    )
-    distances_to_evaluate = distances_to_evaluate[0]
+    distances_to_evaluate = [
+        "wasserstein",
+        "betti",
+        # "landscape",
+        # "silhouette",
+        # "heat",
+        # "persistence_image",
+    ]
     # Then we compute the distance between the PDs.
     distance_matrices_cn = utils.evaluate_distance_functions(
         diagrams_cn,
         distances_to_evaluate,
         plot_distance_matrix=True,
-        file_prefix="cn",
+        file_prefix="CN ",
     )
     distance_matrices_mci = utils.evaluate_distance_functions(
         diagrams_mci,
         distances_to_evaluate,
         plot_distance_matrix=True,
-        file_prefix="mci",
+        file_prefix="MCI ",
     )
     distance_matrices_ad = utils.evaluate_distance_functions(
         diagrams_ad,
         distances_to_evaluate,
         plot_distance_matrix=True,
-        file_prefix="ad",
+        file_prefix="AD ",
     )
 
     # We can plot the different distances between them.
@@ -161,11 +160,40 @@ def main():
         distance_matrices_ad
     )
     group_labels = ["CN", "MCI", "AD"]
-    titles = ["landscape", "persistence_image"]
     for index, vectors in enumerate(
         zip(dist_vectors_cn, dist_vectors_mci, dist_vectors_ad)
     ):
-        utils.compute_distplot(vectors, group_labels, title=titles[index])
+        utils.compute_distplot(
+            vectors, group_labels, title=distances_to_evaluate[index]
+        )
+
+    # We can also conduct the same analysis to uncover heterogeneity between
+    # all images regardless of diagnosis
+    images_all = utils.get_arrays_from_dir(
+        image_dir, cn_patients + mci_patients + ad_patients
+    )
+    diagrams_all = utils.cubical_persistence(
+        images_all,
+        "Patch 92 of all patients",
+        plot_diagrams=False,
+        betti_curves=False,
+    )
+    distance_matrices_all = utils.evaluate_distance_functions(
+        diagrams_all,
+        distances_to_evaluate,
+        plot_distance_matrix=True,
+        file_prefix="All ",
+    )
+    dist_vectors_all = utils.get_distance_vector_from_matrices(
+        distance_matrices_all
+    )
+    for index, vectors in enumerate(dist_vectors_all):
+        utils.compute_distplot(
+            [distance_matrices_all[index]],
+            ["All patients"],
+            title=distances_to_evaluate[index]
+            + "distance distribution between patches for",
+        )
 
 
 if __name__ == "__main__":

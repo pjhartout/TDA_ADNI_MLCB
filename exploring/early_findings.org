@@ -1,0 +1,56 @@
+#+BIND: org-export-use-babel nil
+#+TITLE: Early findings
+#+AUTHOR: Philip Hartout
+#+EMAIL: <philip.hartout@protonmail.com>
+#+DATE: October 22, 2020
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS:[a4paper,12pt,twoside]
+#+LaTeX_HEADER:\usepackage[usenames,dvipsnames,figures]{xcolor}
+#+LaTeX_HEADER:\usepackage[autostyle]{csquotes}
+#+LaTeX_HEADER:\usepackage[final]{pdfpages}
+#+LaTeX_HEADER:\usepackage[top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}
+#+LATEX_HEADER_EXTRA:\hypersetup{colorlinks=false, linkcolor=black, citecolor=black, filecolor=black, urlcolor=black}
+#+LATEX_HEADER_EXTRA:\newtheorem{definition}{Definition}[section]
+#+LATEX_HEADER_EXTRA:\pagestyle{fancy}
+#+LATEX_HEADER_EXTRA:\setlength{\headheight}{25pt}
+#+LATEX_HEADER_EXTRA:\lhead{\textbf{Philip Hartout}}
+#+LATEX_HEADER_EXTRA:\rhead{\textbf{}}
+#+LATEX_HEADER_EXTRA:\rfoot{}
+#+MACRO: NEWLINE @@latex:\\@@ @@html:<br>@@
+#+PROPERTY: header-args :exports both :session python_emacs_session :cache :results value
+#+OPTIONS: ^:nil
+#+TODO: TODO IN-PROGRESS WAITING | DONE CANCELED
+#+STARTUP: latexpreview
+#+LATEX_COMPILER: pdflatexorg-mode restarted
+
+This summarises the early findinds I have on the paper
+
+* Distance between PDs
+** Goal
+- look at topological heterogeneity of dataset (both within diagnostic
+  category as well as overall)
+** What I did
+- Took all the images from earliest available diagnosis
+- Perform cubical persistence
+- Calculate distance matrix on persistence diagram or representations thereof
+- plot distributions.
+** What I found
+[pipeline running]
+
+* Mapper
+** Goal
+- Look at topology of the relationship between datapoints
+** What I did
+- Load images
+- Perform PCA with n=2
+- Use resulting projected data with Mapper to get the "topological signature" of the ADNI dataset.
+** What I found
+- Some flares characterise patients in the reasonably well.
+- Notable outliers, containing both AD/MCI/CN patients.
+- Results are sensitive to parameters/noise.
+
+
+* Future directions
+** Look at robustness of above findings to data in non-MNI space
+** Try out t-SNE/ISOMAP
+** Look at other cool things for persistent homology?

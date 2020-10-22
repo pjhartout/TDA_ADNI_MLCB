@@ -25,13 +25,6 @@
 
 Let's load the patches of images and apply the filtration to it.
 
-Programme:
-
-
-- VR filtration
-- Cubical filtration
-- Statistical investigation of filtration
-
 * Imports
 
 #+BEGIN_SRC python

@@ -107,6 +107,8 @@ ROI’s. The diagonal elements of the constructed correlation matrix are
 set to zero.
 ** Statistical analysis of persitence diagrams/landscapes
 https://www.jmlr.org/papers/volume16/bubenik15a/bubenik15a.pdf
+** General introductory papers
+https://arxiv.org/pdf/1710.04019.pdf
 * Notes: general topological analysis pipeline.
 - Perform demographic analysis.
 - Construct network using a brain atlas with varying regions. The

@@ -366,7 +366,7 @@ def evaluate_distance_functions(
             metric="landscape",
             metric_params={"p": 2, "n_layers": 5, "n_bins": 1000},
             plot_distance_matrix=True,
-            title="Landscape distance matrix between PDs",
+            title=file_prefix + "Landscape distance matrix between PDs",
             file_prefix=file_prefix + "_landscape_distance",
         )
         distance_matrices.append(distance_matrix)
@@ -377,7 +377,7 @@ def evaluate_distance_functions(
             metric="wasserstein",
             metric_params={"p": 2, "delta": 0.1},
             plot_distance_matrix=plot_distance_matrix,
-            title="Wasserstein distance matrix between PDs",
+            title=file_prefix + "Wasserstein distance matrix between PDs",
             file_prefix=file_prefix + "_wasserstein",
         )
         distance_matrices.append(distance_matrix)
@@ -388,7 +388,7 @@ def evaluate_distance_functions(
             metric="betti",
             metric_params={"p": 2, "n_bins": 1000},
             plot_distance_matrix=plot_distance_matrix,
-            title="Betti distance matrix between PDs",
+            title=file_prefix + "Betti distance matrix between PDs",
             file_prefix=file_prefix + "_betti",
         )
         distance_matrices.append(distance_matrix)
@@ -399,7 +399,7 @@ def evaluate_distance_functions(
             metric="silhouette",
             metric_params={"p": 2, "power": 1, "n_bins": 1000},
             plot_distance_matrix=plot_distance_matrix,
-            title="Silhouette distance matrix between PDs",
+            title=file_prefix + "Silhouette distance matrix between PDs",
             file_prefix=file_prefix + "_silhouette",
         )
         distance_matrices.append(distance_matrix)
@@ -410,7 +410,7 @@ def evaluate_distance_functions(
             metric="heat",
             metric_params={"p": 2, "sigma": 0.1, "n_bins": 1000},
             plot_distance_matrix=plot_distance_matrix,
-            title="Heat distance matrix between PDs",
+            title=file_prefix + "Heat distance matrix between PDs",
             file_prefix=file_prefix + "_heat",
         )
         distance_matrices.append(distance_matrix)
@@ -426,11 +426,15 @@ def evaluate_distance_functions(
                 "weight_function": None,
             },
             plot_distance_matrix=plot_distance_matrix,
-            title="Persistence image distance matrix between PDs",
+            title=file_prefix
+            + "Persistence image distance matrix between PDs",
             file_prefix=file_prefix + "_persistence_image",
         )
         distance_matrices.append(distance_matrix)
-    print(f"Computed distance matrices for {list_of_distance_functions}")
+    print(
+        f"Computed distance matrices for {list_of_distance_functions} for"
+        f" {file_prefix}"
+    )
     return distance_matrices
 
 
@@ -450,7 +454,7 @@ def compute_distplot(vectors, group_labels, title=None):
     """list_of_distance_vectors must be structured in such a way that each list
     of vectors can be plotted individually for each distance."""
     fig = ff.create_distplot(
-        np.log(vectors), group_labels, bin_size=0.1
+        [np.log(vector) for vector in vectors], group_labels, bin_size=0.1
     ).update_layout(title=title)
     fig.show()
     fig.write_html(

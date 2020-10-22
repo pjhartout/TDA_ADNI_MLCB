@@ -519,6 +519,10 @@ implemented in [[./distance_between_PIs.py][this script]]
 
 clustering of patients based on distances?
 
+** Clustering based on PD representation
+
+Using different representations of PDs, we perform some clustering
+
 * Future directions.
 - What if we do a filtration on the negative space? On the edge space
   (=filtration on the border between tissue and non-tissue?)

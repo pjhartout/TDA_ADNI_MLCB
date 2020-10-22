@@ -79,6 +79,7 @@ clustered together in topological space.
 - [[https://dl.acm.org/doi/10.1145/3307339.3342143][A Visual Analytics Framework for Analysis of Patient Trajectories]]
 About patient trajectories using mapper.
 
+** Mapper, Isomap, t-SNE
 ** Random applications gleaned from the web (general topological considerations):
    https://www.nature.com/articles/s41598-019-55818-z (traditional
 network analysis for Alzheimer's)

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """distance_between_pds.py
 
 This script assesses the distance between persistence images for CN, MCI and
@@ -193,7 +194,7 @@ def main():
             [vectors],
             group_labels = ["All patients"],
             title=distances_to_evaluate[index]
-            + "distance distribution between patches for",
+            + "distance distribution between patches for all patients",
         )
 
 

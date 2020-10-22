@@ -13,6 +13,7 @@ Functions included:
 
 TODO:
     - add docstrings
+    - remove unused imports
 """
 
 __author__ = "Philip Hartout"
@@ -454,7 +455,7 @@ def compute_distplot(vectors, group_labels, title=None):
     """list_of_distance_vectors must be structured in such a way that each list
     of vectors can be plotted individually for each distance."""
     fig = ff.create_distplot(
-        [np.log(vector) for vector in vectors], group_labels, bin_size=0.1
+        [np.log1p(vector) for vector in vectors], group_labels, bin_size=0.1
     ).update_layout(title=title)
     fig.show()
     fig.write_html(

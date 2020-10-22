@@ -7,6 +7,7 @@ AD patients using various pd representations and distance functions.
 TODO:
     - add docstrings
     - make sure PEP standards are met.
+    - remove unused imports
 """
 
 __author__ = "Philip Hartout"
@@ -98,9 +99,9 @@ def main():
         ad_patients,
     ) = utils.get_earliest_available_diagnosis(directory + diagnosis_json)
 
-    images_cn = utils.get_arrays_from_dir(image_dir, cn_patients[:10])
-    images_mci = utils.get_arrays_from_dir(image_dir, mci_patients[:10])
-    images_ad = utils.get_arrays_from_dir(image_dir, ad_patients[:10])
+    images_cn = utils.get_arrays_from_dir(image_dir, cn_patients)
+    images_mci = utils.get_arrays_from_dir(image_dir, mci_patients)
+    images_ad = utils.get_arrays_from_dir(image_dir, ad_patients)
 
     # Then we compute the PD on each image.
     diagrams_cn = utils.cubical_persistence(
@@ -117,17 +118,17 @@ def main():
     )
     diagrams_ad = utils.cubical_persistence(
         images_ad,
-        "Patche 92 of AD Patient",
+        "Patch 92 of AD Patient",
         plot_diagrams=False,
         betti_curves=False,
     )
     distances_to_evaluate = [
         "wasserstein",
         "betti",
-        # "landscape",
-        # "silhouette",
-        # "heat",
-        # "persistence_image",
+        "landscape",
+        "silhouette",
+        "heat",
+        "persistence_image",
     ]
     # Then we compute the distance between the PDs.
     distance_matrices_cn = utils.evaluate_distance_functions(
@@ -189,8 +190,8 @@ def main():
     )
     for index, vectors in enumerate(dist_vectors_all):
         utils.compute_distplot(
-            [distance_matrices_all[index]],
-            ["All patients"],
+            [vectors],
+            group_labels = ["All patients"],
             title=distances_to_evaluate[index]
             + "distance distribution between patches for",
         )

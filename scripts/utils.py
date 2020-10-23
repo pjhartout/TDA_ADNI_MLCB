@@ -88,7 +88,7 @@ import dotenv
 # Shape of a patch
 SHAPE = (1, 30, 36, 30)
 DOTENV_KEY2VAL = dotenv.dotenv_values()
-
+N_JOBS = -1 # Set number of workers when parallel processing is useful.
 
 def make_3d_scatterplot(point_cloud, title):
     df = pd.DataFrame(point_cloud).rename(columns={0: "x", 1: "y", 2: "z"})
@@ -185,7 +185,7 @@ def vr_persistent_homology(patch_pc):
         metric="euclidean",
         max_edge_length=5,
         homology_dimensions=homology_dimensions,
-        n_jobs=4,
+        n_jobs=N_JOBS,
     )
     diagrams_VietorisRips = VR.fit_transform(np.asarray(patch_pc))
     VR.plot(diagrams_VietorisRips).show()
@@ -205,7 +205,7 @@ def cubical_persistence(
         periodic_dimensions=None,
         infinity_values=None,
         reduced_homology=True,
-        n_jobs=4,
+        n_jobs=N_JOBS,
     )
     diagrams_cubical_persistence = cp.fit_transform(images)
     sc = Scaler(metric="bottleneck")
@@ -226,7 +226,7 @@ def cubical_persistence(
 
 
 def erosion_filtration(img):
-    ef = ErosionFiltration(n_iterations=None, n_jobs=4)
+    ef = ErosionFiltration(n_iterations=None, n_jobs=N_JOBS)
     diagrams_erosion = ef.fit_transformp(img)
     # BC = BettiCurve()
     # X_betti_curves = BC.fit_transform(diagrams_Erosion)
@@ -235,7 +235,7 @@ def erosion_filtration(img):
 
 
 def persistence_landscape(persistence_diagram, title):
-    pl = PersistenceLandscape(n_layers=1, n_bins=100, n_jobs=4)
+    pl = PersistenceLandscape(n_layers=1, n_bins=100, n_jobs=N_JOBS)
     persistence_landscape = pl.fit_transform(persistence_diagram)
     fig = pl.plot(persistence_landscape)
     fig.update_layout(
@@ -248,7 +248,7 @@ def persistence_landscape(persistence_diagram, title):
 
 def persistence_image(persistence_diagram, sigma, title):
     pl = PersistenceImage(
-        sigma=sigma, n_bins=100, weight_function=None, n_jobs=4
+        sigma=sigma, n_bins=100, weight_function=None, n_jobs=N_JOBS
     )
     persistence_image = pl.fit_transform(persistence_diagram)
     fig = pl.plot(persistence_image)
@@ -302,7 +302,7 @@ def compute_distance_matrix(
     file_prefix=None,
 ):
     PD = PairwiseDistance(
-        metric=metric, metric_params=metric_params, order=None, n_jobs=4
+        metric=metric, metric_params=metric_params, order=None, n_jobs=N_JOBS
     )
     X_distance = PD.fit_transform(diagrams)
     if plot_distance_matrix:
@@ -457,11 +457,21 @@ def compute_distplot(vectors, group_labels, title=None):
     of vectors can be plotted individually for each distance."""
     fig = ff.create_distplot(
         [np.log1p(vector) for vector in vectors], group_labels, bin_size=0.1
-    ).update_layout(title=title)
+    ).update_layout(title=title + " log transformed")
     fig.show()
     fig.write_html(
         DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
         + "distplot_"
         + title
-        + "_distance_vectors.html"
+        + "_distance_vectors_log_transformed.html"
+    )
+    fig = ff.create_distplot(
+        [vector for vector in vectors], group_labels, bin_size=0.1
+    ).update_layout(title=title + " not log transformed")
+    fig.show()
+    fig.write_html(
+        DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+        + "distplot_"
+        + title
+        + "_distance_vectors_not_transformed.html"
     )

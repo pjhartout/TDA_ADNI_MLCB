@@ -35,7 +35,9 @@ This summarises the early findinds I have on the paper
 - Calculate distance matrix on persistence diagram or representations thereof
 - plot distributions.
 ** What I found
-[pipeline running]
+- There seems to be topological heterogeneity within MCI patients
+  according to some distances (could potentially be mapped?).
+- Distance functions vary considerably.
 
 * Mapper
 ** Goal
@@ -51,6 +53,6 @@ This summarises the early findinds I have on the paper
 
 
 * Future directions
-** Look at robustness of above findings to data in non-MNI space
+** Look at robustness of above findings to data in non-MNI space/other preprocessing steps?
 ** Try out t-SNE/ISOMAP
 ** Look at other cool things for persistent homology?

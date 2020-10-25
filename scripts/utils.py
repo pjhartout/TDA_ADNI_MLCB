@@ -83,7 +83,7 @@ import dotenv
 # Shape of a patch
 SHAPE = (1, 30, 36, 30)
 DOTENV_KEY2VAL = dotenv.dotenv_values()
-N_JOBS = -1  # Set number of workers when parallel processing is useful.
+N_JOBS = 5  # Set number of workers when parallel processing is useful.
 
 
 def make_3d_scatterplot(point_cloud, title):

@@ -32,7 +32,7 @@ from nilearn import datasets
 from nilearn import plotting
 
 import matplotlib.pyplot as plt
-
+import seaborn as sns
 
 from pathlib import Path
 import dotenv
@@ -100,9 +100,9 @@ def main():
         ad_patients,
     ) = utils.get_earliest_available_diagnosis(directory + diagnosis_json)
 
-    images_cn = utils.get_arrays_from_dir(image_dir, cn_patients)
-    images_mci = utils.get_arrays_from_dir(image_dir, mci_patients)
-    images_ad = utils.get_arrays_from_dir(image_dir, ad_patients)
+    images_cn = utils.get_arrays_from_dir(image_dir, cn_patients[:20])
+    images_mci = utils.get_arrays_from_dir(image_dir, mci_patients[:20])
+    images_ad = utils.get_arrays_from_dir(image_dir, ad_patients[:20])
 
     # Then we compute the PD on each image.
     diagrams_cn = utils.cubical_persistence(
@@ -168,6 +168,19 @@ def main():
         utils.compute_distplot(
             vectors, group_labels, title=distances_to_evaluate[index]
         )
+        utils.compute_violinplot(
+            vectors, group_labels, title=distances_to_evaluate[index]
+        )
+        sns_plot = sns.violinplot(
+            x="variable",
+            y="value",
+            data=pd.DataFrame(vectors)
+            .T.melt()
+            .replace(to_replace=range(len(vectors)), value=group_labels),
+        )
+        sns_plot.title("Violin plot for " + distances_to_evaluate[index])
+        sns_plot.savefig("violinplot_" + distances_to_evaluate[index] + ".png")
+        sns_plot.show()
 
     # We can also conduct the same analysis to uncover heterogeneity between
     # all images regardless of diagnosis
@@ -192,10 +205,29 @@ def main():
     for index, vectors in enumerate(dist_vectors_all):
         utils.compute_distplot(
             [vectors],
-            group_labels = ["All patients"],
+            group_labels=["All patients"],
             title=distances_to_evaluate[index]
             + "distance distribution between patches for all patients",
         )
+        sns_plot = sns.violinplot(
+            x="variable",
+            y="value",
+            data=pd.DataFrame(vectors)
+            .T.melt()
+            .replace(to_replace=[0], value="All"),
+        )
+        sns_plot.title(
+            "Violin plot of the "
+            + distances_to_evaluate[index]
+            + " for all patients"
+        )
+        sns_plot.savefig(
+            "violinplot_"
+            + distances_to_evaluate[index]
+            + "_for_all_patients"
+            + ".png"
+        )
+        sns_plot.show()
 
 
 if __name__ == "__main__":

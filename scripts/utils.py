@@ -48,6 +48,7 @@ import dotenv
 import numpy as np
 import networkx as nx
 import pandas as pd
+import seaborn as sns
 
 import plotly.express as px
 import plotly.graph_objects as go
@@ -85,10 +86,12 @@ import glob
 import json
 import dotenv
 
+
 # Shape of a patch
 SHAPE = (1, 30, 36, 30)
 DOTENV_KEY2VAL = dotenv.dotenv_values()
-N_JOBS = -1 # Set number of workers when parallel processing is useful.
+N_JOBS = -1  # Set number of workers when parallel processing is useful.
+
 
 def make_3d_scatterplot(point_cloud, title):
     df = pd.DataFrame(point_cloud).rename(columns={0: "x", 1: "y", 2: "z"})

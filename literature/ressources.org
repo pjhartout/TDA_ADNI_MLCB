@@ -110,6 +110,9 @@ set to zero.
 https://www.jmlr.org/papers/volume16/bubenik15a/bubenik15a.pdf
 ** General introductory papers
 https://arxiv.org/pdf/1710.04019.pdf
+** Distance functions & giotto-tda theory
+Can be found [[https://giotto-ai.github.io/gtda-docs/latest/theory/glossary.html#wasserstein-and-bottleneck-distance][here]].
+
 * Notes: general topological analysis pipeline.
 - Perform demographic analysis.
 - Construct network using a brain atlas with varying regions. The

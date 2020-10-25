@@ -126,10 +126,10 @@ def main():
     distances_to_evaluate = [
         "wasserstein",
         "betti",
-        "landscape",
-        "silhouette",
-        "heat",
-        "persistence_image",
+        # "landscape",
+        # "silhouette",
+        # "heat",
+        # "persistence_image",
     ]
     # Then we compute the distance between the PDs.
     distance_matrices_cn = utils.evaluate_distance_functions(
@@ -165,12 +165,12 @@ def main():
     for index, vectors in enumerate(
         zip(dist_vectors_cn, dist_vectors_mci, dist_vectors_ad)
     ):
-        utils.compute_distplot(
-            vectors, group_labels, title=distances_to_evaluate[index]
-        )
-        utils.compute_violinplot(
-            vectors, group_labels, title=distances_to_evaluate[index]
-        )
+        # utils.compute_distplot(
+        #     vectors, group_labels, title=distances_to_evaluate[index]
+        # )
+        # utils.compute_violinplot(
+        #     vectors, group_labels, title=distances_to_evaluate[index]
+        # )                       
         sns_plot = sns.violinplot(
             x="variable",
             y="value",
@@ -178,9 +178,8 @@ def main():
             .T.melt()
             .replace(to_replace=range(len(vectors)), value=group_labels),
         )
-        sns_plot.title("Violin plot for " + distances_to_evaluate[index])
-        sns_plot.savefig("violinplot_" + distances_to_evaluate[index] + ".png")
-        sns_plot.show()
+        sns_plot.set_title(f"Violin plot for {distances_to_evaluate[index]}")
+        sns_plot.figure.savefig(DOTENV_KEY2VAL["GEN_FIGURES_DIR"] + "violinplot_" + distances_to_evaluate[index] + ".png")
 
     # We can also conduct the same analysis to uncover heterogeneity between
     # all images regardless of diagnosis
@@ -206,8 +205,7 @@ def main():
         utils.compute_distplot(
             [vectors],
             group_labels=["All patients"],
-            title=distances_to_evaluate[index]
-            + "distance distribution between patches for all patients",
+            title=f"{distances_to_evaluate[index]} distance distribution between patches for all patients",
         )
         sns_plot = sns.violinplot(
             x="variable",
@@ -216,19 +214,16 @@ def main():
             .T.melt()
             .replace(to_replace=[0], value="All"),
         )
-        sns_plot.title(
-            "Violin plot of the "
-            + distances_to_evaluate[index]
-            + " for all patients"
+        sns_plot.set_title(
+            f"Violin plot of the {distances_to_evaluate[index]} for all patients"
         )
-        sns_plot.savefig(
+        sns_plot.figure.savefig(
+            DOTENV_KEY2VAL["GEN_FIGURES_DIR"] +
             "violinplot_"
             + distances_to_evaluate[index]
             + "_for_all_patients"
             + ".png"
         )
-        sns_plot.show()
-
 
 if __name__ == "__main__":
     main()

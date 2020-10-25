@@ -5,13 +5,6 @@
 
 Utils module for the functions used in the exploring/ directory of this project.
 
-Functions included:
-    - data loader
-    - make a 3D scatterplot
-    - Vietoris-Rips filtration
-    - cubical persistence
-    - erosion filtration
-
 TODO:
     - add docstrings
     - remove unused imports
@@ -199,7 +192,7 @@ def vr_persistent_homology(patch_pc):
 
 
 def cubical_persistence(
-    images, title, plot_diagrams=False, betti_curves=False
+        images, title, plot_diagrams=False, betti_curves=False, scaled=False
 ):
     homology_dimensions = (0, 1, 2)
     cp = CubicalPersistence(
@@ -211,13 +204,18 @@ def cubical_persistence(
         n_jobs=N_JOBS,
     )
     diagrams_cubical_persistence = cp.fit_transform(images)
-    sc = Scaler(metric="bottleneck")
-    scaled_diagrams_cubical_persistence = sc.fit_transform(
-        diagrams_cubical_persistence
-    )
+    if scaled:
+        sc = Scaler(metric="bottleneck")
+        scaled_diagrams_cubical_persistence = sc.fit_transform(
+            diagrams_cubical_persistence
+        )
+    else:
+        scaled_diagrams_cubical_persistence = diagrams_cubical_persistence
+
     if plot_diagrams:
         fig = cp.plot(scaled_diagrams_cubical_persistence)
         fig.update_layout(title=title)
+        fig.show()
     if betti_curves:
         BC = BettiCurve()
         X_betti_curves = BC.fit_transform(scaled_diagrams_cubical_persistence)

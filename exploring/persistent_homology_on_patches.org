@@ -527,6 +527,7 @@ Load patch
 patch_cn = np.load("../data/patch_92/sub-ADNI002S0295-M00-MNI.npy")
 patch_mci = np.load("../data/patch_92/sub-ADNI128S0225-M48-MNI.npy")
 patch_ad = np.load("../data/patch_92/sub-ADNI128S0227-M48-MNI.npy")
+DOTENV_KEY2VAL = dotenv.dotenv_values()
 #+END_SRC
 
 Compute cubical persistence
@@ -619,34 +620,47 @@ fig = (
 Persistence image
 
 #+BEGIN_SRC python
-
-PI = PersistenceImage(sigma=0.1, n_bins=100, weight_function=None, n_jobs=-1)
+PI = PersistenceImage(sigma=0.05, n_bins=100, n_jobs=-1)
 pi_cn = PI.fit_transform(diagrams_cubical_persistence_cn)
-fig = (
-    PI.plot(pi_cn)
-    .update_layout(title="Persistence image for a CN patient")
-    .write_html(
-        DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
-        + file_prefix
-        + "_distance_matrix.html",
+for i in (0, 1, 2):
+    pi_cn_hi_nornalized = (pi_cn[0][i] - np.min(pi_cn[0][i])) / (
+        np.max(pi_cn[0][i]) - np.min(pi_cn[0][i])
     )
-    .show()
-)
+    fig = px.imshow(pi_cn_hi_nornalized).update_layout(
+        title=f"Persistence image for a CN patient in H_{i}"
+    )
+    fig.write_image(
+        f"../figures/exported_manually/persistence_image_cn_h_{i}.png"
+    )
+    fig.show()
+
 
 pi_mci = PI.fit_transform(diagrams_cubical_persistence_mci)
-fig = (
-    PI.plot(pi_mci)
-    .update_layout(title="Persistence image for a MCI patient")
-    .show()
-)
+for i in (0, 1, 2):
+    pi_mci_hi_nornalized = (pi_mci[0][i] - np.min(pi_mci[0][i])) / (
+        np.max(pi_mci[0][i]) - np.min(pi_mci[0][i])
+    )
+    fig = px.imshow(pi_mci_hi_nornalized).update_layout(
+        title=f"Persistence image for a MCI patient in H_{i}"
+    )
+    fig.write_image(
+        f"../figures/exported_manually/persistence_image_mci_h_{i}.png"
+    )
+    fig.show()
+
 
 pi_ad = PI.fit_transform(diagrams_cubical_persistence_ad)
-fig = (
-    PI.plot(pi_ad)
-    .update_layout(title="Persistence image for a AD patient")
-    .show()
-)
-
+for i in (0, 1, 2):
+    pi_ad_hi_nornalized = (pi_ad[0][i] - np.min(pi_ad[0][i])) / (
+        np.max(pi_ad[0][i]) - np.min(pi_ad[0][i])
+    )
+    fig = px.imshow(pi_ad_hi_nornalized).update_layout(
+        title=f"Persistence image for an AD patient in H_{i}"
+    )
+    fig.write_image(
+        f"../figures/exported_manually/persistence_image_ad_h_{i}.png"
+    )
+    fig.show()
 #+END_SRC
 
 Heat kernel
@@ -655,18 +669,43 @@ Heat kernel
 hk = HeatKernel(sigma=0.1, n_bins=100, n_jobs=None)
 
 hk_cn = hk.fit_transform(diagrams_cubical_persistence_cn)
-fig = hk.plot(hk_cn).update_layout(title="Heat kernel for a CN patient").show()
+for i in (0, 1, 2):
+    hk_cn_hi_normalized = (hk_cn[0][i] - np.min(hk_cn[0][i])) / (
+        np.max(hk_cn[0][i]) - np.min(hk_cn[0][i])
+    )
+    fig = px.imshow(hk_cn_hi_normalized).update_layout(
+        title=f"Heat kernel for a CN patient in H_{i}"
+    )
+    fig.write_image(
+        f"../figures/exported_manually/heat_kernel_cn_h_{i}.png"
+    )
+    fig.show()
 
 hk_mci = hk.fit_transform(diagrams_cubical_persistence_mci)
-fig = (
-    hk.plot(hk_mci).update_layout(title="Heat kernel for a MCI patient").show()
-)
+for i in (0, 1, 2):
+    hk_mci_hi_normalized = (hk_mci[0][i] - np.min(hk_mci[0][i])) / (
+        np.max(hk_mci[0][i]) - np.min(hk_mci[0][i])
+    )
+    fig = px.imshow(hk_mci_hi_normalized).update_layout(
+        title=f"Heat kernel for a MCI patient in H_{i}"
+    )
+    fig.write_image(
+        f"../figures/exported_manually/heat_kernel_mci_h_{i}.png"
+    )
+    fig.show()
 
 hk_ad = hk.fit_transform(diagrams_cubical_persistence_ad)
-fig = (
-    hk.plot(hk_ad).update_layout(title="Heat kernel  for a AD patient").show()
-)
-
+for i in (0, 1, 2):
+    hk_ad_hi_normalized = (hk_ad[0][i] - np.min(hk_ad[0][i])) / (
+        np.max(hk_ad[0][i]) - np.min(hk_ad[0][i])
+    )
+    fig = px.imshow(hk_ad_hi_normalized).update_layout(
+        title=f"Heat kernel for an AD patient in H_{i}"
+    )
+    fig.write_image(
+        f"../figures/exported_manually/heat_kernel_ad_h_{i}.png"
+    )
+    fig.show()
 #+END_SRC
 
 Silhouette

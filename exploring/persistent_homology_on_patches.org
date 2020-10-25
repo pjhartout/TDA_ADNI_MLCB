@@ -70,6 +70,9 @@ from gtda.diagrams import (
     Scaler,
     Filtering,
     PersistenceEntropy,
+    PersistenceImage,
+    HeatKernel,
+    Silhouette,
     BettiCurve,
     PairwiseDistance,
     PersistenceEntropy,
@@ -515,6 +518,183 @@ clustering of patients based on distances?
 ** Clustering based on PD representation
 
 Using different representations of PDs, we perform some clustering
+
+* Summary
+
+Load patch
+
+#+BEGIN_SRC python
+patch_cn = np.load("../data/patch_92/sub-ADNI002S0295-M00-MNI.npy")
+patch_mci = np.load("../data/patch_92/sub-ADNI128S0225-M48-MNI.npy")
+patch_ad = np.load("../data/patch_92/sub-ADNI128S0227-M48-MNI.npy")
+#+END_SRC
+
+Compute cubical persistence
+
+#+BEGIN_SRC python
+cp = CubicalPersistence(
+    homology_dimensions=(0, 1, 2),
+    coeff=2,
+    periodic_dimensions=None,
+    infinity_values=None,
+    reduced_homology=True,
+    n_jobs=-1,
+)
+
+diagrams_cubical_persistence_cn = cp.fit_transform(
+    patch_cn.reshape(1, 30, 36, 30)
+)
+diagrams_cubical_persistence_mci = cp.fit_transform(
+    patch_mci.reshape(1, 30, 36, 30)
+)
+diagrams_cubical_persistence_ad = cp.fit_transform(
+    patch_ad.reshape(1, 30, 36, 30)
+)
+
+#+END_SRC
+
+Plot results
+
+#+BEGIN_SRC python
+
+cp.plot(diagrams_cubical_persistence_cn).update_layout(
+    title="Persistence diagram of a CN patient"
+).show()
+cp.plot(diagrams_cubical_persistence_mci).update_layout(
+    title="Persistence diagram of a MCI patient"
+).show()
+cp.plot(diagrams_cubical_persistence_ad).update_layout(
+    title="Persistence diagram of an AD patient"
+).show()
+#+END_SRC
+
+Various representations of the PDs
+
+Persistence landscape
+#+BEGIN_SRC python
+pl = PersistenceLandscape(n_layers=1, n_bins=100, n_jobs=None)
+pl_cn = pl.fit_transform(diagrams_cubical_persistence_cn)
+pl.plot(pl_cn).update_layout(
+    title="Persistence landscape of a CN patient"
+).show()
+
+pl_mci = pl.fit_transform(diagrams_cubical_persistence_mci)
+pl.plot(pl_mci).update_layout(
+    title="Persistence landscape of a MCI patient"
+).show()
+
+
+pl_ad = pl.fit_transform(diagrams_cubical_persistence_ad)
+pl.plot(pl_ad).update_layout(
+    title="Persistence landscape of an AD patient"
+).show()
+#+END_SRC
+
+Betti curves
+
+#+BEGIN_SRC python
+BC = BettiCurve()
+betti_curves_cn = BC.fit_transform(diagrams_cubical_persistence_cn)
+fig = (
+    BC.plot(betti_curves_cn)
+    .update_layout(title="Betti curve for a CN patient")
+    .show()
+)
+
+betti_curves_mci = BC.fit_transform(diagrams_cubical_persistence_mci)
+fig = (
+    BC.plot(betti_curves_mci)
+    .update_layout(title="Betti curve for a MCI patient")
+    .show()
+)
+
+betti_curves_ad = BC.fit_transform(diagrams_cubical_persistence_ad)
+fig = (
+    BC.plot(betti_curves_ad)
+    .update_layout(title="Betti curve for a AD patient")
+    .show()
+)
+#+END_SRC
+
+Persistence image
+
+#+BEGIN_SRC python
+
+PI = PersistenceImage(sigma=0.1, n_bins=100, weight_function=None, n_jobs=-1)
+pi_cn = PI.fit_transform(diagrams_cubical_persistence_cn)
+fig = (
+    PI.plot(pi_cn)
+    .update_layout(title="Persistence image for a CN patient")
+    .write_html(
+        DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+        + file_prefix
+        + "_distance_matrix.html",
+    )
+    .show()
+)
+
+pi_mci = PI.fit_transform(diagrams_cubical_persistence_mci)
+fig = (
+    PI.plot(pi_mci)
+    .update_layout(title="Persistence image for a MCI patient")
+    .show()
+)
+
+pi_ad = PI.fit_transform(diagrams_cubical_persistence_ad)
+fig = (
+    PI.plot(pi_ad)
+    .update_layout(title="Persistence image for a AD patient")
+    .show()
+)
+
+#+END_SRC
+
+Heat kernel
+
+#+BEGIN_SRC python
+hk = HeatKernel(sigma=0.1, n_bins=100, n_jobs=None)
+
+hk_cn = hk.fit_transform(diagrams_cubical_persistence_cn)
+fig = hk.plot(hk_cn).update_layout(title="Heat kernel for a CN patient").show()
+
+hk_mci = hk.fit_transform(diagrams_cubical_persistence_mci)
+fig = (
+    hk.plot(hk_mci).update_layout(title="Heat kernel for a MCI patient").show()
+)
+
+hk_ad = hk.fit_transform(diagrams_cubical_persistence_ad)
+fig = (
+    hk.plot(hk_ad).update_layout(title="Heat kernel  for a AD patient").show()
+)
+
+#+END_SRC
+
+Silhouette
+
+#+BEGIN_SRC python
+
+sil = Silhouette(power=1.0, n_bins=100, n_jobs=None)
+
+sil_cn = sil.fit_transform(diagrams_cubical_persistence_cn)
+fig = (
+    sil.plot(sil_cn).update_layout(title="Silhouette for a CN patient").show()
+)
+
+sil_mci = sil.fit_transform(diagrams_cubical_persistence_mci)
+fig = (
+    sil.plot(sil_mci)
+    .update_layout(title="Silhouette for a MCI patient")
+    .show()
+)
+
+sil_ad = sil.fit_transform(diagrams_cubical_persistence_ad)
+fig = (
+    sil.plot(sil_ad).update_layout(title="Silhouette for a AD patient").show()
+)
+#+END_SRC
+
+
+
 
 * Future directions.
 - What if we do a filtration on the negative space? On the edge space

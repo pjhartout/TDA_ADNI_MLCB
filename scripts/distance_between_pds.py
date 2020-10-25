@@ -100,9 +100,9 @@ def main():
         ad_patients,
     ) = utils.get_earliest_available_diagnosis(directory + diagnosis_json)
 
-    images_cn = utils.get_arrays_from_dir(image_dir, cn_patients[:20])
-    images_mci = utils.get_arrays_from_dir(image_dir, mci_patients[:20])
-    images_ad = utils.get_arrays_from_dir(image_dir, ad_patients[:20])
+    images_cn = utils.get_arrays_from_dir(image_dir, cn_patients)
+    images_mci = utils.get_arrays_from_dir(image_dir, mci_patients)
+    images_ad = utils.get_arrays_from_dir(image_dir, ad_patients)
 
     # Then we compute the PD on each image.
     diagrams_cn = utils.cubical_persistence(

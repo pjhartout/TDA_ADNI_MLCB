@@ -82,6 +82,7 @@ import zipfile
 from sklearn.linear_model import LogisticRegression
 from sklearn.decomposition import PCA
 from sklearn.cluster import DBSCAN
+from sklearn.preprocessing import OneHotEncoder
 
 from skimage import io
 
@@ -115,9 +116,11 @@ def main():
     mci_patient_list = [2 for patient in range(len(mci_patients))]
     ad_patient_list = [3 for patient in range(len(ad_patients))]
 
-    labels = np.array(
+    diags = np.array(
         cn_patient_list + mci_patient_list + ad_patient_list
     ).reshape(-1, 1)
+    ohe = OneHotEncoder()
+    labels = ohe.fit_transform(diags).toarray()
 
     images = []
     for image in images_all:

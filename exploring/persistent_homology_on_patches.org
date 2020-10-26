@@ -91,7 +91,7 @@ from skimage import io
 Determine threshold for pointcloud
 
 #+BEGIN_SRC python
-patch = np.load("../data/cropped/sub-ADNI002S0295-M00-MNI.npy")
+patch = np.load("../data/patch_92/sub-ADNI002S0295-M00-MNI.npy")
 patch.shape
 #+END_SRC
 
@@ -575,20 +575,31 @@ Persistence landscape
 #+BEGIN_SRC python
 pl = PersistenceLandscape(n_layers=1, n_bins=100, n_jobs=None)
 pl_cn = pl.fit_transform(diagrams_cubical_persistence_cn)
-pl.plot(pl_cn).update_layout(
+fig = pl.plot(pl_cn).update_layout(
     title="Persistence landscape of a CN patient"
-).show()
+)
+fig.write_image(
+        f"../figures/exported_manually/persistence_landscape_cn.png"
+    )
+fig.show()
 
 pl_mci = pl.fit_transform(diagrams_cubical_persistence_mci)
-pl.plot(pl_mci).update_layout(
+fig = pl.plot(pl_mci).update_layout(
     title="Persistence landscape of a MCI patient"
-).show()
-
+)
+fig.write_image(
+        f"../figures/exported_manually/persistence_landscape_mci.png"
+    )
+fig.show()
 
 pl_ad = pl.fit_transform(diagrams_cubical_persistence_ad)
-pl.plot(pl_ad).update_layout(
+fig = pl.plot(pl_ad).update_layout(
     title="Persistence landscape of an AD patient"
-).show()
+)
+fig.write_image(
+        f"../figures/exported_manually/persistence_landscape_ad.png"
+    )
+fig.show()
 #+END_SRC
 
 Betti curves
@@ -599,22 +610,31 @@ betti_curves_cn = BC.fit_transform(diagrams_cubical_persistence_cn)
 fig = (
     BC.plot(betti_curves_cn)
     .update_layout(title="Betti curve for a CN patient")
-    .show()
 )
+fig.write_image(
+        f"../figures/exported_manually/betti_curve_cn.png"
+    )
+fig.show()
 
 betti_curves_mci = BC.fit_transform(diagrams_cubical_persistence_mci)
 fig = (
     BC.plot(betti_curves_mci)
     .update_layout(title="Betti curve for a MCI patient")
-    .show()
 )
+fig.write_image(
+        f"../figures/exported_manually/betti_curve_mci.png"
+    )
+fig.show()
 
 betti_curves_ad = BC.fit_transform(diagrams_cubical_persistence_ad)
 fig = (
     BC.plot(betti_curves_ad)
     .update_layout(title="Betti curve for a AD patient")
-    .show()
 )
+fig.write_image(
+        f"../figures/exported_manually/betti_curve_ad.png"
+    )
+fig.show()
 #+END_SRC
 
 Persistence image
@@ -731,8 +751,6 @@ fig = (
     sil.plot(sil_ad).update_layout(title="Silhouette for a AD patient").show()
 )
 #+END_SRC
-
-
 
 
 * Future directions.

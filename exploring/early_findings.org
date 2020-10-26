@@ -51,7 +51,6 @@ This summarises the early findinds I have on the paper
 - Notable outliers, containing both AD/MCI/CN patients.
 - Results are sensitive to parameters/noise.
 
-
 * Future directions
 ** Look at robustness of above findings to data in non-MNI space/other preprocessing steps?
 ** Try out t-SNE/ISOMAP

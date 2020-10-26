@@ -153,12 +153,13 @@ def main():
         verbose=True,
         n_jobs=4,
     )
-
+    plotly_params = {"node_trace": {"marker_colorscale": "Blues"}}
     fig = plot_static_mapper_graph(
         mapper_pipeline,
         images_all_projected,
         layout_dim=3,
         color_by_columns_dropdown=True,
+        plotly_params=plotly_params,
     )
 
     fig.write_html(

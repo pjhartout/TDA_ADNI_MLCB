@@ -21,6 +21,24 @@
 #+OPTIONS: ^:nil
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
+* <2020-10-26 Mon> Meeting Sarah to discuss data sources
+** Questions
+- What are the steps that have been performed in addition to fMRI
+  prep?
+- Index of other high accuracy regions?
+- Is it possible to have the patches for the images in non-MNI space?
+- Say I want to reproduce the findings of the fMRI prep with
+  different atlases, how do I do it? Where is the data/compute? Is it
+  possible to only do the last step using the T1w image already there?
+
+It's only possible to do this on the full image.
+
+TDA + CNN pipeline has been done on normalized images, but the patch
+are not among one another.
+
+Be careful when normalizing between 0 and 1, use quantiles or absolute
+mean 0 + stdev 0?
+CNN performs on average better than the RF for PIs.
 
 * <2020-10-20 Tue> Meeting progress update #3
 ** Preparations
@@ -61,8 +79,6 @@ Change of plans:
 - Maybe look at temporal regions specifically.
 - Look at DIPHA on hippocampal region?
 
-
-
 * Spark group meeting <2020-10-06 Tue>
 - What are longitudinal vs. cross-sectional pipeline for fressurfer?
 - Access to repo from Louis?
@@ -84,7 +100,6 @@ Change of plans:
 - Look at masking methods.
 ** Merel Kuijs presentation
 - Check out demographics of the dataset I use.
-
 
 * <2020-09-23 Wed> Meeting - Preliminaries
 ** Questions

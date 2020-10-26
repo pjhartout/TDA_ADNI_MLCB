@@ -100,9 +100,9 @@ def main():
         ad_patients,
     ) = utils.get_earliest_available_diagnosis(directory + diagnosis_json)
 
-    images_cn = utils.get_arrays_from_dir(image_dir, cn_patients)
-    images_mci = utils.get_arrays_from_dir(image_dir, mci_patients)
-    images_ad = utils.get_arrays_from_dir(image_dir, ad_patients)
+    images_cn = utils.get_arrays_from_dir(image_dir, cn_patients[:10])
+    images_mci = utils.get_arrays_from_dir(image_dir, mci_patients[:10])
+    images_ad = utils.get_arrays_from_dir(image_dir, ad_patients[:10])
 
     # Then we compute the PD on each image.
     diagrams_cn = utils.cubical_persistence(
@@ -165,26 +165,28 @@ def main():
     for index, vectors in enumerate(
         zip(dist_vectors_cn, dist_vectors_mci, dist_vectors_ad)
     ):
+
         # utils.compute_distplot(
         #     vectors, group_labels, title=distances_to_evaluate[index]
         # )
         # utils.compute_violinplot(
         #     vectors, group_labels, title=distances_to_evaluate[index]
-        # )                       
-        sns_plot = sns.violinplot(
-            x="variable",
-            y="value",
-            data=pd.DataFrame(vectors)
-            .T.melt()
-            .replace(to_replace=range(len(vectors)), value=group_labels),
+        # )
+        data = (
+            pd.DataFrame(vectors).T.melt()
+            # .replace(to_replace=range(len(vectors)), value=group_labels)
         )
-        sns_plot.set_title(f"Violin plot for {distances_to_evaluate[index]}")
-        sns_plot.figure.savefig(DOTENV_KEY2VAL["GEN_FIGURES_DIR"] + "violinplot_" + distances_to_evaluate[index] + ".png")
+        data.to_csv(
+            DOTENV_KEY2VAL["GEN_DATA_DIR"]
+            + "data_"
+            + distances_to_evaluate[index]
+            + ".png"
+        )
 
     # We can also conduct the same analysis to uncover heterogeneity between
     # all images regardless of diagnosis
     images_all = utils.get_arrays_from_dir(
-        image_dir, cn_patients + mci_patients + ad_patients
+        image_dir, cn_patients[:10] + mci_patients[:10] + ad_patients[:10]
     )
     diagrams_all = utils.cubical_persistence(
         images_all,
@@ -202,28 +204,15 @@ def main():
         distance_matrices_all
     )
     for index, vectors in enumerate(dist_vectors_all):
-        utils.compute_distplot(
-            [vectors],
-            group_labels=["All patients"],
-            title=f"{distances_to_evaluate[index]} distance distribution between patches for all patients",
-        )
-        sns_plot = sns.violinplot(
-            x="variable",
-            y="value",
-            data=pd.DataFrame(vectors)
-            .T.melt()
-            .replace(to_replace=[0], value="All"),
-        )
-        sns_plot.set_title(
-            f"Violin plot of the {distances_to_evaluate[index]} for all patients"
-        )
-        sns_plot.figure.savefig(
-            DOTENV_KEY2VAL["GEN_FIGURES_DIR"] +
-            "violinplot_"
+        pd.DataFrame(vectors)
+        data.to_csv(
+            DOTENV_KEY2VAL["GEN_DATA_DIR"]
+            + "data_"
             + distances_to_evaluate[index]
             + "_for_all_patients"
             + ".png"
         )
+
 
 if __name__ == "__main__":
     main()

@@ -128,8 +128,8 @@ def main():
         "betti",
         "landscape",
         "silhouette",
-        # "heat",
-        # "persistence_image",
+        "heat",
+        "persistence_image",
     ]
     # Then we compute the distance between the PDs.
     distance_matrices_cn = utils.evaluate_distance_functions(
@@ -182,8 +182,8 @@ def main():
     within_group_comparisons.to_csv(
             DOTENV_KEY2VAL["GEN_DATA_DIR"]
             + "data_"
-            + distances_to_evaluate[index]
-            + ".png"
+            + "patients_within_group"
+            + ".csv"
     )
 
     # We can also conduct the same analysis to uncover heterogeneity between
@@ -215,9 +215,8 @@ def main():
             dist_data.append(dist_data)
     dist_data.to_csv(
             DOTENV_KEY2VAL["GEN_DATA_DIR"]
-            + "data_"
-            + distances_to_evaluate[index]
-            + ".png"
+            + "data_all_patients"
+            + ".csv"
     )
 
 

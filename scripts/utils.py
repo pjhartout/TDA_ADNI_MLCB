@@ -32,7 +32,7 @@ from nilearn import datasets
 from nilearn import plotting
 
 import matplotlib.pyplot as plt
-
+from textwrap import wrap
 
 from pathlib import Path
 import dotenv
@@ -312,60 +312,22 @@ def compute_distance_matrix(
 def plot_distance_matrix(
     X_distance, title=None, file_prefix=None,
 ):
-    fig = make_subplots(
-        rows=3,
-        cols=1,
-        subplot_titles=(
-            "Distance between PDs for H_0",
-            "Distance between PDs for H_1",
-            "Distance between PDs for H_2",
-        ),
-    )
-    fig.add_trace(
-        go.Heatmap(
-            z=X_distance[:, :, 0],
-            colorbar_x=1 / 3 - 0.05,
-            colorbar_thickness=10,
-            colorscale="Greens",
-        ),
-        1,
-        1,
-    )
-    fig.add_trace(
-        go.Heatmap(
-            z=X_distance[:, :, 1],
-            colorbar_x=2 / 3 - 0.025,
-            colorbar_thickness=10,
-            colorscale="Blues",
-        ),
-        2,
-        1,
-    )
-    fig.add_trace(
-        go.Heatmap(
-            z=X_distance[:, :, 2],
-            colorbar_x=1,
-            colorbar_thickness=10,
-            colorscale="Oranges",
-        ),
-        3,
-        1,
-    )
-    fig.update_layout(title=title)
-    fig.write_html(
-        DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
-        + file_prefix
-        + "_distance_matrix.html",
-    )
-    fig.write_image(
+
+    fig, axes = plt.subplots(nrows=3, ncols=1, figsize=(8, 16))
+    plt.suptitle(title)
+    for i, ax in enumerate(axes.flat):
+        im = ax.imshow(X_distance[:, :, i], cmap="Blues")
+
+    fig.subplots_adjust(right=0.8)
+    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+    fig.colorbar(im, cax=cbar_ax)
+
+    plt.savefig(
         DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
         + file_prefix
         + "_distance_matrix.png",
-        width=1600,
-        height=625,
-        scale=1,
     )
-    fig.show()
+
     return X_distance
 
 
@@ -435,7 +397,7 @@ def evaluate_distance_functions(
         distance_matrix = compute_distance_matrix(
             diagrams,
             metric="persistence_image",
-            metric_params={
+            metric_prams={
                 "p": 2,
                 "sigma": 0.1,
                 "n_bins": 1000,
@@ -489,3 +451,31 @@ def compute_distplot(vectors, group_labels, title=None):
         + title
         + "_distance_vectors_not_transformed.html"
     )
+
+
+def plot_density_plots(metric):
+    data = (
+        pd.read_csv(f"../generated_data/data_{metric}.csv")
+        .drop(columns="Unnamed: 0")
+        .dropna()
+        .rename(columns={"value": "distance"})
+    )
+    sns.displot(
+        data=data,
+        x="distance",
+        hue="variable",
+        multiple="stack",
+        height=6,
+        aspect=0.7,
+    )
+    plt.subplots_adjust(top=0.85)
+    plt.title(
+        "\n".join(
+            wrap(
+                f"Distribution of the {metric} distances "
+                f"among diagnostic categories",
+                50,
+            )
+        )
+    )
+    plt.savefig(DOTENV_KEY2VAL["GEN_FIGURES_DIR"] + metric + "_histogram.png",)

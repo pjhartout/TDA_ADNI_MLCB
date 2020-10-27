@@ -126,10 +126,10 @@ def main():
     distances_to_evaluate = [
         "wasserstein",
         "betti",
-        # "landscape",
-        # "silhouette",
-        # "heat",
-        # "persistence_image",
+        "landscape",
+        "silhouette",
+        "heat",
+        "persistence_image",
     ]
     # Then we compute the distance between the PDs.
     distance_matrices_cn = utils.evaluate_distance_functions(
@@ -165,13 +165,6 @@ def main():
     for index, vectors in enumerate(
         zip(dist_vectors_cn, dist_vectors_mci, dist_vectors_ad)
     ):
-
-        # utils.compute_distplot(
-        #     vectors, group_labels, title=distances_to_evaluate[index]
-        # )
-        # utils.compute_violinplot(
-        #     vectors, group_labels, title=distances_to_evaluate[index]
-        # )
         data = (
             pd.DataFrame(vectors).T.melt()
             # .replace(to_replace=range(len(vectors)), value=group_labels)

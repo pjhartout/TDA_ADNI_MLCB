@@ -86,7 +86,7 @@ DOTENV_KEY2VAL = dotenv.dotenv_values()
 def main():
 
     directory = DOTENV_KEY2VAL["DATA_DIR"]
-    image_dir = directory + "/patch_92/"
+    image_dir = directory + "/patch_91/"
     diagnosis_json = "collected_diagnoses_complete.json"
 
     if not os.path.exists(DOTENV_KEY2VAL["GEN_FIGURES_DIR"]):
@@ -100,11 +100,11 @@ def main():
         ad_patients,
     ) = utils.get_earliest_available_diagnosis(directory + diagnosis_json)
 
-    images_cn = utils.get_arrays_from_dir(image_dir, cn_patients[:10])
-    images_mci = utils.get_arrays_from_dir(image_dir, mci_patients[:10])
-    images_ad = utils.get_arrays_from_dir(image_dir, ad_patients[:10])
+    images_cn = utils.get_arrays_from_dir(image_dir, cn_patients)
+    images_mci = utils.get_arrays_from_dir(image_dir, mci_patients)
+    images_ad = utils.get_arrays_from_dir(image_dir, ad_patients)
 
-    # Then we compute the PD on each image.
+    Then we compute the PD on each image.
     diagrams_cn = utils.cubical_persistence(
         images_cn,
         "Patch 92 of CN patients",
@@ -128,8 +128,8 @@ def main():
         "betti",
         "landscape",
         "silhouette",
-        "heat",
-        "persistence_image",
+        # "heat",
+        # "persistence_image",
     ]
     # Then we compute the distance between the PDs.
     distance_matrices_cn = utils.evaluate_distance_functions(
@@ -152,34 +152,44 @@ def main():
     )
 
     # We can plot the different distances between them.
-    dist_vectors_cn = utils.get_distance_vector_from_matrices(
+    dist_vectors_cn = utils.get_distance_vectors_from_matrices(
         distance_matrices_cn
     )
-    dist_vectors_mci = utils.get_distance_vector_from_matrices(
+    dist_vectors_mci = utils.get_distance_vectors_from_matrices(
         distance_matrices_mci
     )
-    dist_vectors_ad = utils.get_distance_vector_from_matrices(
+    dist_vectors_ad = utils.get_distance_vectors_from_matrices(
         distance_matrices_ad
     )
     group_labels = ["CN", "MCI", "AD"]
+    within_group_comparisons = pd.DataFrame()
     for index, vectors in enumerate(
         zip(dist_vectors_cn, dist_vectors_mci, dist_vectors_ad)
     ):
-        data = (
-            pd.DataFrame(vectors).T.melt()
-            # .replace(to_replace=range(len(vectors)), value=group_labels)
-        )
-        data.to_csv(
+        dist_data = pd.DataFrame()
+        for i, distance_vector in enumerate(vectors):
+            # Now we loop through each of the diagnoses
+            diag_data = (
+                pd.DataFrame(distance_vector).T.melt()
+                # .replace(to_replace=range(len(vectors)), value=group_labels)
+            )
+            diag_data["diagnosis"] = group_labels[i]
+            dist_data = dist_data.append(diag_data)
+        dist_data["distance"] = distances_to_evaluate[index]
+        within_group_comparisons = within_group_comparisons.append(dist_data)
+    within_group_comparisons = within_group_comparisons.rename(columns={
+        "variable":"homology dimension"})
+    within_group_comparisons.to_csv(
             DOTENV_KEY2VAL["GEN_DATA_DIR"]
             + "data_"
             + distances_to_evaluate[index]
             + ".png"
-        )
+    )
 
     # We can also conduct the same analysis to uncover heterogeneity between
     # all images regardless of diagnosis
     images_all = utils.get_arrays_from_dir(
-        image_dir, cn_patients[:10] + mci_patients[:10] + ad_patients[:10]
+        image_dir, cn_patients + mci_patients + ad_patients
     )
     diagrams_all = utils.cubical_persistence(
         images_all,
@@ -193,18 +203,22 @@ def main():
         plot_distance_matrix=True,
         file_prefix="All ",
     )
-    dist_vectors_all = utils.get_distance_vector_from_matrices(
+    dist_vectors_all = utils.get_distance_vectors_from_matrices(
         distance_matrices_all
     )
     for index, vectors in enumerate(dist_vectors_all):
-        pd.DataFrame(vectors)
-        data.to_csv(
+        # Loop through distances
+        all_groups = pd.DataFrame()
+        for i, distance_vector in enumerate(vectors):
+            dist_data = pd.DataFrame(vectors).T.melt()
+            dist_data["distance"] = distances_to_evaluate[index]
+            dist_data.append(dist_data)
+    dist_data.to_csv(
             DOTENV_KEY2VAL["GEN_DATA_DIR"]
             + "data_"
             + distances_to_evaluate[index]
-            + "_for_all_patients"
             + ".png"
-        )
+    )
 
 
 if __name__ == "__main__":

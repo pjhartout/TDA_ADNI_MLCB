@@ -104,7 +104,7 @@ def main():
     images_mci = utils.get_arrays_from_dir(image_dir, mci_patients)
     images_ad = utils.get_arrays_from_dir(image_dir, ad_patients)
 
-    Then we compute the PD on each image.
+    # Then we compute the PD on each image.
     diagrams_cn = utils.cubical_persistence(
         images_cn,
         "Patch 92 of CN patients",

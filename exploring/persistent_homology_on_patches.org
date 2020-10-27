@@ -86,6 +86,10 @@ import zipfile
 
 from sklearn.linear_model import LogisticRegression
 from skimage import io
+from plotly.subplots import make_subplots
+
+
+DOTENV_KEY2VAL = dotenv.dotenv_values()
 #+END_SRC
 
 Determine threshold for pointcloud
@@ -752,6 +756,51 @@ fig = (
 )
 #+END_SRC
 
+* Postprocessing server generated data
+
+#+BEGIN_SRC python
+import sys
+sys.path.insert(1, '/home/pjh/Documents/Git/TDA_ADNI_MLCB/scripts/')
+import utils
+distances_to_evaluate = [
+        "wasserstein",
+        "betti",
+        "landscape",
+        "silhouette",
+        "heat",
+        "persistence_image",
+]
+X_distance = np.load("../generated_data/distance_matrices_cn.npy")
+for i, metric in enumerate(distances_to_evaluate):
+    utils.plot_distance_matrix(X_distance=X_distance[i, :, :, :], title=f"Pairwise {metric} distance for CN patients", file_prefix=metric + "_cn")
+
+X_distance = np.load("../generated_data/distance_matrices_mci.npy")
+for i, metric in enumerate(distances_to_evaluate):
+    utils.plot_distance_matrix(X_distance=X_distance[i, :, :, :], title=f"Pairwise {metric} distance for MCI patients", file_prefix=metric + "_mci")
+
+X_distance = np.load("../generated_data/distance_matrices_ad.npy")
+for i, metric in enumerate(distances_to_evaluate):
+    utils.plot_distance_matrix(X_distance=X_distance[i, :, :, :], title=f"Pairwise {metric} distance for AD patients", file_prefix=metric + "_ad")
+#+END_SRC
+
+Violin plots
+
+#+BEGIN_SRC python
+import sys
+sys.path.insert(1, '/home/pjh/Documents/Git/TDA_ADNI_MLCB/scripts/')
+import utils
+distances_to_evaluate = [
+        "wasserstein",
+        "betti",
+        "landscape",
+        "silhouette",
+        "heat",
+        "persistence_image",
+]
+for i in distances_to_evaluate:
+    utils.plot_density_plots(i)
+
+#+END_SRC
 
 * Future directions.
 - What if we do a filtration on the negative space? On the edge space

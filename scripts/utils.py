@@ -8,6 +8,8 @@ Utils module for the functions used in the exploring/ directory of this project.
 TODO:
     - add docstrings
     - remove unused imports
+    - make architectural distinction between plottling utils vs. non-plotting utils
+    - see how tracing to patient can be implemented based on indices of matrix
 """
 
 __author__ = "Philip Hartout"
@@ -82,8 +84,9 @@ import dotenv
 
 # Shape of a patch
 SHAPE = (1, 30, 36, 30)
+HOMOLOGY_DIMENSIONS = (0, 1, 2)
 DOTENV_KEY2VAL = dotenv.dotenv_values()
-N_JOBS = 5  # Set number of workers when parallel processing is useful.
+N_JOBS = 6  # Set number of workers when parallel processing is useful.
 
 
 def make_3d_scatterplot(point_cloud, title):
@@ -416,15 +419,16 @@ def evaluate_distance_functions(
     return distance_matrices
 
 
-def get_distance_vector_from_matrices(distance_matrices):
+def get_distance_vectors_from_matrices(distance_matrices):
+    """returns the upper triangular matrices of the distance matrices in each
+    homology dimension."""
     distance_vectors = []
     for distance_matrix in distance_matrices:
-        upper_triangular_distance_matrix = np.triu(distance_matrix)
-        distance_vectors.append(
-            upper_triangular_distance_matrix[
-                upper_triangular_distance_matrix > 0
-            ]
-        )
+        vector_for_distance_metric = []
+        for i in HOMOLOGY_DIMENSIONS:
+            vector_for_distance_metric.append(distance_matrix[:,:,
+            i][np.triu_indices(len(distance_matrix[:,:,i]), k=1)])
+        distance_vectors.append(vector_for_distance_metric)
     return distance_vectors
 
 

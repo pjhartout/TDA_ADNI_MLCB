@@ -144,7 +144,7 @@ def next_slice(ax):
 
 
 def remove_keymap_conflicts(new_keys_set):
-    for prop in plt.rcParams:
+    for distanceprop in plt.rcParams:
         if prop.startswith("keymap."):
             keys = plt.rcParams[prop]
             remove_list = set(keys) & new_keys_set
@@ -192,7 +192,7 @@ def vr_persistent_homology(patch_pc):
 
 
 def cubical_persistence(
-        images, title, plot_diagrams=False, betti_curves=False, scaled=False
+    images, title, plot_diagrams=False, betti_curves=False, scaled=False
 ):
     homology_dimensions = (0, 1, 2)
     cp = CubicalPersistence(
@@ -306,53 +306,66 @@ def compute_distance_matrix(
         metric=metric, metric_params=metric_params, order=None, n_jobs=N_JOBS
     )
     X_distance = PD.fit_transform(diagrams)
-    if plot_distance_matrix:
-        fig = make_subplots(
-            rows=1,
-            cols=3,
-            subplot_titles=(
-                "Distance between PDs for H_0",
-                "Distance between PDs for H_1",
-                "Distance between PDs for H_2",
-            ),
-        )
-        fig.add_trace(
-            go.Heatmap(
-                z=X_distance[:, :, 0],
-                colorbar_x=1 / 3 - 0.05,
-                colorbar_thickness=10,
-                colorscale="Greens",
-            ),
-            1,
-            1,
-        )
-        fig.add_trace(
-            go.Heatmap(
-                z=X_distance[:, :, 1],
-                colorbar_x=2 / 3 - 0.025,
-                colorbar_thickness=10,
-                colorscale="Blues",
-            ),
-            1,
-            2,
-        )
-        fig.add_trace(
-            go.Heatmap(
-                z=X_distance[:, :, 2],
-                colorbar_x=1,
-                colorbar_thickness=10,
-                colorscale="Oranges",
-            ),
-            1,
-            3,
-        )
-        fig.update_layout(title=title)
-        fig.write_html(
-            DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
-            + file_prefix
-            + "_distance_matrix.html",
-        )
-        fig.show()
+    return X_distance
+
+
+def plot_distance_matrix(
+    X_distance, title=None, file_prefix=None,
+):
+    fig = make_subplots(
+        rows=3,
+        cols=1,
+        subplot_titles=(
+            "Distance between PDs for H_0",
+            "Distance between PDs for H_1",
+            "Distance between PDs for H_2",
+        ),
+    )
+    fig.add_trace(
+        go.Heatmap(
+            z=X_distance[:, :, 0],
+            colorbar_x=1 / 3 - 0.05,
+            colorbar_thickness=10,
+            colorscale="Greens",
+        ),
+        1,
+        1,
+    )
+    fig.add_trace(
+        go.Heatmap(
+            z=X_distance[:, :, 1],
+            colorbar_x=2 / 3 - 0.025,
+            colorbar_thickness=10,
+            colorscale="Blues",
+        ),
+        2,
+        1,
+    )
+    fig.add_trace(
+        go.Heatmap(
+            z=X_distance[:, :, 2],
+            colorbar_x=1,
+            colorbar_thickness=10,
+            colorscale="Oranges",
+        ),
+        3,
+        1,
+    )
+    fig.update_layout(title=title)
+    fig.write_html(
+        DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+        + file_prefix
+        + "_distance_matrix.html",
+    )
+    fig.write_image(
+        DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+        + file_prefix
+        + "_distance_matrix.png",
+        width=1600,
+        height=625,
+        scale=1,
+    )
+    fig.show()
     return X_distance
 
 

@@ -22,7 +22,7 @@
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
-* <2020-10-27 Tue> Meeting SNSF
+* <2020-10-27 Tue> Meeting Spark group
 Look into normalization.
 It's only possible to do this on the full image.
 

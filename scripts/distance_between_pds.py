@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 """distance_between_pds.py
 
 This script assesses the distance between persistence images for CN, MCI and

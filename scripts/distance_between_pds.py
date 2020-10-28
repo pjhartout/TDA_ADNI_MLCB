@@ -131,9 +131,9 @@ def main():
         "wasserstein",
         "betti",
         "landscape",
-        # "silhouette",
-        # "heat",
-        # "persistence_image",
+        "silhouette",
+        "heat",
+        "persistence_image",
     ]
     # Then we compute the distance between the PDs.
     distance_matrices_cn = utils.evaluate_distance_functions(

@@ -48,10 +48,8 @@ DOTENV_KEY2VAL = dotenv.dotenv_values()
 N_JOBS = 6  # Set number of workers when parallel processing is useful.
 
 
-
 def prepare_image(directory, threshold):
     patch = np.load(directory)
-    patch.shape
     binarized_patch_ad = np.where(patch > threshold, 1, 0)
     return binarized_patch_ad, patch
 
@@ -145,11 +143,11 @@ def persistence_landscape(persistence_diagram, title):
 
 
 def persistence_image(persistence_diagram, sigma, title):
-    pl = PersistenceImage(
+    pi = PersistenceImage(
         sigma=sigma, n_bins=100, weight_function=None, n_jobs=N_JOBS
     )
-    persistence_image = pl.fit_transform(persistence_diagram)
-    fig = pl.plot(persistence_image)
+    persistence_image = pi.fit_transform(persistence_diagram)
+    fig = pi.plot(persistence_image)
     fig.update_layout(title=title).show()
     return persistence_image
 
@@ -298,11 +296,13 @@ def get_distance_vectors_from_matrices(distance_matrices):
     for distance_matrix in distance_matrices:
         vector_for_distance_metric = []
         for i in HOMOLOGY_DIMENSIONS:
-            vector_for_distance_metric.append(distance_matrix[:,:,
-            i][np.triu_indices(len(distance_matrix[:,:,i]), k=1)])
+            vector_for_distance_metric.append(
+                distance_matrix[:, :, i][
+                    np.triu_indices(len(distance_matrix[:, :, i]), k=1)
+                ]
+            )
         distance_vectors.append(vector_for_distance_metric)
     return distance_vectors
-
 
 
 def plot_density_plots(metric):

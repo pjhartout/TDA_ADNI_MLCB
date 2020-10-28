@@ -400,7 +400,7 @@ def evaluate_distance_functions(
         distance_matrix = compute_distance_matrix(
             diagrams,
             metric="persistence_image",
-            metric_prams={
+            metric_params={
                 "p": 2,
                 "sigma": 0.1,
                 "n_bins": 1000,

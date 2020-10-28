@@ -127,11 +127,11 @@ def main():
         "wasserstein",
         "betti",
         "landscape",
-        "silhouette",
-        "heat",
-        "persistence_image",
+        # "silhouette",
+        # "heat",
+        # "persistence_image",
     ]
-    # Then we compute the distance between the PDs.
+    Then we compute the distance between the PDs.
     distance_matrices_cn = utils.evaluate_distance_functions(
         diagrams_cn,
         distances_to_evaluate,
@@ -189,7 +189,7 @@ def main():
     # We can also conduct the same analysis to uncover heterogeneity between
     # all images regardless of diagnosis
     images_all = utils.get_arrays_from_dir(
-        image_dir, cn_patients + mci_patients + ad_patients
+        image_dir, cn_patients[:10] + mci_patients[:10] + ad_patients[:10]
     )
     diagrams_all = utils.cubical_persistence(
         images_all,
@@ -206,14 +206,14 @@ def main():
     dist_vectors_all = utils.get_distance_vectors_from_matrices(
         distance_matrices_all
     )
+    all_groups = pd.DataFrame()
     for index, vectors in enumerate(dist_vectors_all):
         # Loop through distances
-        all_groups = pd.DataFrame()
-        for i, distance_vector in enumerate(vectors):
-            dist_data = pd.DataFrame(vectors).T.melt()
-            dist_data["distance"] = distances_to_evaluate[index]
-            dist_data.append(dist_data)
-    dist_data.to_csv(
+        dist_data = pd.DataFrame(vectors).T.melt()
+        dist_data["distance"] = distances_to_evaluate[index]
+        all_groups = all_groups.append(dist_data)
+    all_groups = all_groups.rename(columns={"variable":"homology dimension"})
+    all_groups.to_csv(
             DOTENV_KEY2VAL["GEN_DATA_DIR"]
             + "data_all_patients"
             + ".csv"

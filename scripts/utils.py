@@ -6,8 +6,6 @@
 Utils module for the functions used in the exploring/ directory of this project.
 
 TODO:
-    - add docstrings
-    - make architectural distinction between plottling utils vs. non-plotting utils
     - see how tracing to patient can be implemented based on indices of matrix
 """
 

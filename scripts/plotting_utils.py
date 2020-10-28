@@ -5,7 +5,6 @@
 This module contains all the plotting utilities for the repository.
 
 TODO:
-    - add docstrings
     - see how tracing to patient can be implemented based on indices of matrix
 """
 

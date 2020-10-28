@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
-"""mapper_patches.py
 
-This is an implementation of mapper for the patches.
+"""mapper_patches.py
+This is a very handwavy implementation of the mapper pipeline for patch data.
 
 TODO:
-    - add docstrings
-    - make sure PEP standards are met.
     - check if the parameters can be tweaked for higher dimensions of the PCA.
+    - Are there other useful knobs to turn? Use persistence data as input?
 """
 
 __author__ = "Philip Hartout"

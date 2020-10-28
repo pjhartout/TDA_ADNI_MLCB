@@ -5,6 +5,10 @@
 This script assesses the distance between persistence images for CN, MCI and
 AD patients using various pd representations and distance functions.
 
+This script only generates the data for the analysis. The plotting functions are
+found in the utils.py and the actually plotting happends in the org file called
+persistent_homology_on_patches.org under "Postprocessing server generated data"
+
 TODO:
     - add docstrings
     - make sure PEP standards are met.

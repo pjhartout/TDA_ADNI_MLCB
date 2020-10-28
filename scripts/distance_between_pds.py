@@ -131,7 +131,7 @@ def main():
         # "heat",
         # "persistence_image",
     ]
-    Then we compute the distance between the PDs.
+    # Then we compute the distance between the PDs.
     distance_matrices_cn = utils.evaluate_distance_functions(
         diagrams_cn,
         distances_to_evaluate,
@@ -189,7 +189,7 @@ def main():
     # We can also conduct the same analysis to uncover heterogeneity between
     # all images regardless of diagnosis
     images_all = utils.get_arrays_from_dir(
-        image_dir, cn_patients[:10] + mci_patients[:10] + ad_patients[:10]
+        image_dir, cn_patients + mci_patients + ad_patients
     )
     diagrams_all = utils.cubical_persistence(
         images_all,

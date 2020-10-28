@@ -13,81 +13,26 @@ TODO:
 __author__ = "Philip Hartout"
 __email__ = "philip.hartout@protonmail.com"
 
-
-import nibabel
-import nibabel as nib  # Useful to load data
-
-import nilearn
-from nilearn import datasets
-from nilearn.regions import RegionExtractor
-from nilearn import plotting
-from nilearn.image import index_img
-from nilearn.plotting import find_xyz_cut_coords
-from nilearn.input_data import NiftiMapsMasker
-from nilearn.connectome import ConnectivityMeasure
-from nilearn.regions import RegionExtractor
-from nilearn import plotting
-from nilearn.image import index_img
-from nilearn import datasets
-from nilearn import plotting
-
 import matplotlib.pyplot as plt
 
 
-from pathlib import Path
 import dotenv
-import seaborn as sns
 
 import numpy as np
-import networkx as nx
 import pandas as pd
 
 import plotly.express as px
-import plotly.graph_objects as go
-import plotly.figure_factory as ff
 
-import gtda
-from gtda.images import ImageToPointCloud, ErosionFiltration
-from gtda.homology import VietorisRipsPersistence
-from gtda.diagrams import (
-    PersistenceEntropy,
-    PersistenceLandscape,
-    PersistenceImage,
-)
-from gtda.pipeline import Pipeline
-from gtda.plotting import plot_diagram, plot_point_cloud, plot_heatmap
-from gtda.homology import CubicalPersistence
-from gtda.diagrams import (
-    Scaler,
-    Filtering,
-    PersistenceEntropy,
-    BettiCurve,
-    PairwiseDistance,
-)
-from gtda.mapper import make_mapper_pipeline
 from gtda.mapper import (
     CubicalCover,
     make_mapper_pipeline,
     Projection,
     plot_static_mapper_graph,
-    plot_interactive_mapper_graph,
 )
 
-
-import os
-import tempfile
-from urllib.request import urlretrieve
-import zipfile
-
-from sklearn.linear_model import LogisticRegression
 from sklearn.decomposition import PCA
 from sklearn.cluster import DBSCAN
 from sklearn.preprocessing import OneHotEncoder
-
-from skimage import io
-
-import glob
-import json
 
 # Import utils library
 import utils

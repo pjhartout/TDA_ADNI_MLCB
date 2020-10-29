@@ -47,6 +47,32 @@ HOMOLOGY_DIMENSIONS = (0, 1, 2)
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 N_JOBS = 6  # Set number of workers when parallel processing is useful.
 
+def get_arrays_from_dir(directory, filelist):
+    """This function gets the appropriate images given a list of files in one
+    array.
+
+    Args:
+        directory (str): directory where filelist is located
+        filelist (list): list of files in directory to be loaded
+
+    Returns:
+        np.ndarray: numpy array of snape (n_sampels, n_length, n_width,
+        homology_dim) of images.
+    """
+
+    filelist = [directory + file for file in filelist]
+    images = []
+    for arr in filelist:
+        try:
+            images.append(np.load(arr))
+        except FileNotFoundError:
+            print(
+                f"Patient {arr} had no corresponding array available (no "
+                f"MRI was performed at the time of diagnosis)"
+            )
+    return np.stack(images)
+
+
 
 def prepare_image(directory, threshold):
     patch = np.load(directory)
@@ -150,20 +176,6 @@ def persistence_image(persistence_diagram, sigma, title):
     fig = pi.plot(persistence_image)
     fig.update_layout(title=title).show()
     return persistence_image
-
-
-def get_arrays_from_dir(directory, filelist):
-    filelist = [directory + file for file in filelist]
-    images = []
-    for arr in filelist:
-        try:
-            images.append(np.load(arr))
-        except FileNotFoundError:
-            print(
-                f"Patient {arr} had no corresponding array available (no "
-                f"MRI was performed at the time of diagnosis)"
-            )
-    return np.asarray(images)
 
 
 def get_earliest_available_diagnosis(path_to_diags):

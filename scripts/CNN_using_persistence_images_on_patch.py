@@ -34,31 +34,6 @@ DOTENV_KEY2VAL = dotenv.dotenv_values()
 tf.random.set_seed(42)
 
 
-def get_arrays_from_dir(directory, filelist):
-    """This function gets the appropriate images given a list of files in one
-    array.
-
-    Args:
-        directory (str): directory where filelist is located
-        filelist (list): list of files in directory to be loaded
-
-    Returns:
-        np.ndarray: numpy array of snape (n_sampels, n_length, n_width,
-        homology_dim) of images.
-    """
-
-    filelist = [directory + file for file in filelist]
-    images = []
-    for arr in filelist:
-        try:
-            images.append(np.load(arr))
-        except FileNotFoundError:
-            print(
-                f"Patient {arr} had no corresponding array available (no "
-                f"MRI was performed at the time of diagnosis)"
-            )
-    return np.stack(images)
-
 def make_model(input_shape, num_classes):
     """Makes a keras model.
 
@@ -104,8 +79,8 @@ def main():
     ) = utils.get_earliest_available_diagnosis(diagnosis_json)
 
     # For now we only get images for CN and MCI patients
-    images_cn = get_arrays_from_dir(persistence_image_location, cn_patients)
-    images_ad = get_arrays_from_dir(persistence_image_location, ad_patients)
+    images_cn = utils.get_arrays_from_dir(persistence_image_location, cn_patients)
+    images_ad = utils.get_arrays_from_dir(persistence_image_location, ad_patients)
     # Concatenate both arrays
     labels = np.array(
         [0 for i in range(images_cn.shape[0])]  # Labels for CN is 0

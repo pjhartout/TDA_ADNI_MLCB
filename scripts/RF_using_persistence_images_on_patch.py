@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""CNN_using_persistence_images_on_patch.py
+"""RF_using_persistence_images_on_patch.py
 
-The aim of this script is to perform the training of a CNN using persistence
-images as a input. This script is heavily inspired from this script
-https://github.com/BorgwardtLab/ADNI_MRI_Analysis/blob/mixed_CNN/mixed_CNN/run_Sarah.py.
+The aim of this script is to perform the training of a RF using persistence
+images as a input.
 """
 
 __author__ = "Philip Hartout"
@@ -73,22 +72,8 @@ import utils
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 
 
-def get_arrays_from_dir(directory, filelist):
-    filelist = [directory + file for file in filelist]
-    images = []
-    for arr in filelist:
-        try:
-            images.append(np.load(arr))
-        except FileNotFoundError:
-            print(
-                f"Patient {arr} had no corresponding array available (no "
-                f"MRI was performed at the time of diagnosis)"
-            )
-    return np.stack(images)
-
-
 def main():
-    # This defines where we are in the machien
+    # This defines where we are in the machine
     diagnosis_json = (
         DOTENV_KEY2VAL["DATA_DIR"] + "/collected_diagnoses_complete.json"
     )
@@ -108,8 +93,8 @@ def main():
     ) = utils.get_earliest_available_diagnosis(diagnosis_json)
 
     # For now we only get images for CN and MCI patients
-    images_cn = get_arrays_from_dir(persistence_image_location, cn_patients)
-    images_ad = get_arrays_from_dir(persistence_image_location, ad_patients)
+    images_cn = utils.get_arrays_from_dir(persistence_image_location, cn_patients)
+    images_ad = utils.get_arrays_from_dir(persistence_image_location, ad_patients)
     # Concatenate both arrays
     labels = np.array(
         [0 for i in range(images_cn.shape[0])]  # Labels for CN is 0

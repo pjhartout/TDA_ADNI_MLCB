@@ -5,6 +5,11 @@
 The aim of this script is to perform the training of a CNN using persistence
 images as a input. This script is heavily inspired from this script
 https://github.com/BorgwardtLab/ADNI_MRI_Analysis/blob/mixed_CNN/mixed_CNN/run_Sarah.py.
+
+To get real time information into the model training and structure, run
+$ tensorboard --logdir logs/fit
+
+once this script has been started.
 """
 
 __author__ = "Philip Hartout"
@@ -30,6 +35,18 @@ tf.random.set_seed(42)
 
 
 def get_arrays_from_dir(directory, filelist):
+    """This function gets the appropriate images given a list of files in one
+    array.
+
+    Args:
+        directory (str): directory where filelist is located
+        filelist (list): list of files in directory to be loaded
+
+    Returns:
+        np.ndarray: numpy array of snape (n_sampels, n_length, n_width,
+        homology_dim) of images.
+    """
+
     filelist = [directory + file for file in filelist]
     images = []
     for arr in filelist:
@@ -42,16 +59,15 @@ def get_arrays_from_dir(directory, filelist):
             )
     return np.stack(images)
 
-
-def scheduler(epoch, lr):
-    if epoch < 10:
-        return lr
-    else:
-        return lr * tf.math.exp(-0.1)
-
-
 def make_model(input_shape, num_classes):
-    """ This implements the Xception network architecture
+    """Makes a keras model.
+
+    Args:
+        input_shape (tuple): input shape of the neural network
+        num_classes (int): number of classes involved
+
+    Returns:
+        keral.Model: model ready to be trained
     """
     inputs = keras.Input(shape=input_shape)
 
@@ -155,6 +171,7 @@ def main():
     #  Model evaluation
     ############################################################################
 
+    # Mosly already included into the traing procedure.
 
 if __name__ == "__main__":
     main()

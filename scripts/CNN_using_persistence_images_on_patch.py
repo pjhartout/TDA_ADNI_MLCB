@@ -115,9 +115,9 @@ def main():
 
     epochs = 300
 
-    tensorboad_logs = "logs/fit"
-    if os.path.exists(tensorboad_logs):
-        shutil.rmtree(tensorboad_logs)
+    tensorboard_logs = "logs/fit"
+    if os.path.exists(tensorboard_logs):
+        shutil.rmtree(tensorboard_logs)
 
     log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     callbacks = [

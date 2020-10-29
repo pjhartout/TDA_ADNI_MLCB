@@ -219,9 +219,9 @@ def main():
         all_groups = all_groups.append(dist_data)
     all_groups = all_groups.rename(columns={"variable":"homology dimension"})
     all_groups.to_csv(
-            DOTENV_KEY2VAL["GEN_DATA_DIR"]
-            + "data_all_patients"
-            + ".csv"
+        DOTENV_KEY2VAL["GEN_DATA_DIR"]
+        + "data_all_patients"
+        + ".csv"
     )
 
 

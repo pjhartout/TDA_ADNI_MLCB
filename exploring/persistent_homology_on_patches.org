@@ -802,6 +802,12 @@ for i in distances_to_evaluate:
 
 #+END_SRC
 
+
+#+BEGIN_SRC python
+import utils
+
+#+END_SRC
+
 * Future directions.
 - What if we do a filtration on the negative space? On the edge space
   (=filtration on the border between tissue and non-tissue?)

@@ -26,6 +26,7 @@ import shutil
 import utils
 
 DOTENV_KEY2VAL = dotenv.dotenv_values()
+tf.random.set_seed(42)
 
 
 def get_arrays_from_dir(directory, filelist):
@@ -54,51 +55,15 @@ def make_model(input_shape, num_classes):
     """
     inputs = keras.Input(shape=input_shape)
 
-    # Entry block
-    # x = layers.Conv2D(32, 3, strides=2, padding="same")(inputs)
-    # x = layers.Dropout(0.5)(x)
-    # x = layers.BatchNormalization()(x)
-    # x = layers.Activation("relu")(x)
-
-    x = layers.Conv2D(50, 3, padding="same")(inputs)
-    x = layers.Dropout(0.5)(x)
+    x = layers.Conv2D(100, kernel_size=5, padding="valid", activation="relu")(
+        inputs
+    )
     x = layers.BatchNormalization()(x)
     x = layers.Activation("relu")(x)
 
-    # previous_block_activation = x  # Set aside residual
-
-    # for size in [128, 256, 512, 728]:
-    #     x = layers.Activation("relu")(x)
-    #     x = layers.SeparableConv2D(size, 3, padding="same")(x)
-    #     x = layers.BatchNormalization()(x)
-
-    #     x = layers.Activation("relu")(x)
-    #     x = layers.SeparableConv2D(size, 3, padding="same")(x)
-    #     x = layers.BatchNormalization()(x)
-
-    #     x = layers.MaxPooling2D(3, strides=2, padding="same")(x)
-
-    #     # Project residual
-    #     residual = layers.Conv2D(size, 1, strides=2, padding="same")(
-    #         previous_block_activation
-    #     )
-    #     x = layers.add([x, residual])  # Add back residual
-    #     previous_block_activation = x  # Set aside next residual
-
-    # x = layers.SeparableConv2D(1024, 3, padding="same")(x)
-    # x = layers.BatchNormalization()(x)
-    # x = layers.Activation("relu")(x)
-
-    x = layers.GlobalAveragePooling2D()(x)
-    if num_classes == 2:
-        activation = "sigmoid"
-        units = 1
-    else:
-        activation = "softmax"
-        units = num_classes
-
-    x = layers.Dropout(0.5)(x)
-    outputs = layers.Dense(units, activation=activation)(x)
+    x = layers.GlobalMaxPooling2D()(x)
+    x = layers.Dropout(0.2)(x)
+    outputs = layers.Dense(1, activation="sigmoid")(x)
     return keras.Model(inputs, outputs)
 
 
@@ -157,7 +122,7 @@ def main():
     #  Model definition
     ############################################################################
 
-    epochs = 100
+    epochs = 300
 
     tensorboad_logs = "logs/fit"
     if os.path.exists(tensorboad_logs):
@@ -170,7 +135,7 @@ def main():
     ]
     model.compile(
         optimizer=keras.optimizers.Adam(
-            learning_rate=0.01,
+            learning_rate=0.05,
             beta_1=0.9,
             beta_2=0.999,
             epsilon=1e-07,

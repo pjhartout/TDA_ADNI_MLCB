@@ -3,7 +3,7 @@
 """CNN_using_persistence_images_on_patch.py
 
 The aim of this script is to perform the training of a CNN using persistence
-images as a input. This script is heavily inspired from this script
+images as a input. This script is inspired from this script:
 https://github.com/BorgwardtLab/ADNI_MRI_Analysis/blob/mixed_CNN/mixed_CNN/run_Sarah.py.
 
 To get real time information into the model training and structure, run

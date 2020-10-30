@@ -27,8 +27,8 @@ N_JOBS = -1  # Set number of workers when parallel processing is useful.
 
 def main():
     path_to_diags = "../data/collected_diagnoses_complete.json"
-    patients = ["sub-ADNI029S0878"]
-    progr = ["mci_ad"]
+    patients = ["sub-ADNI029S0878", "sub-ADNI011S0023"]
+    progr = ["mci_ad", "cn"]
     with open(path_to_diags) as f:
         diagnoses = json.load(f)
 

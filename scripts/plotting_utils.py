@@ -120,38 +120,6 @@ def remove_keymap_conflicts(new_keys_set):
             for key in remove_list:
                 keys.remove(key)
 
-def plot_distance_matrix(
-    X_distance, title=None, file_prefix=None,
-):
-    """Plots and saves the distance matrix for each of the homology dimensions
-
-    Args:
-        X_distance (np.ndarray): array containing the distance data in each
-            of the homology dimensions
-        title (str): title of the plot
-        file_prefix: prefix of the file, useful when calling the function on
-            different data in a row.
-
-    Returns:
-        None
-    """
-
-    fig, axes = plt.subplots(nrows=3, ncols=1, figsize=(8, 16))
-    plt.suptitle(title)
-    for i, ax in enumerate(axes.flat):
-        im = ax.imshow(X_distance[:, :, i], cmap="Blues")
-
-    fig.subplots_adjust(right=0.8)
-    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
-    fig.colorbar(im, cax=cbar_ax)
-
-    plt.savefig(
-        DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
-        + file_prefix
-        + "_distance_matrix.png",
-    )
-
-
 
 def distplot(vectors, group_labels, title=None):
     """Get log transformed and non log-transformed distplot of the vectors

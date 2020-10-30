@@ -27,3 +27,38 @@
 * Goal
 Take pairwise distance for one patient and track if over time and see
 how it evolves. Where is the biggest difference on average?
+
+
+* Imports
+#+BEGIN_SRC python
+
+#+END_SRC
+
+* Wrangling
+
+
+Let's take a patient with an evolving diagnosis over time.
+
+Not a single patient evolves from CN - MCI - AD in the dataset.
+
+CP
+#+BEGIN_SRC python
+
+#+END_SRC
+
+Compute pairwise distance
+#+BEGIN_SRC python
+#+END_SRC
+
+
+#+BEGIN_SRC python
+directory =
+metrics
+for metric in metrics:
+     pairwise_distance = PairwiseDistance(metric='betti', metric_params=None, order=None, n_jobs=-1)
+     X_distance = pairwise_distance.fit_transform(diagrams_cubical_persistence)
+    utils.plot_distance_matrix(X_distance, title="Progression of a patient over time", file_prefix="time")
+#+END_SRC
+
+
+use X_distance as input for matrices.

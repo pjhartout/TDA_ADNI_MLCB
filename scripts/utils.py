@@ -39,7 +39,7 @@ from gtda.diagrams import (
 
 import json
 import dotenv
-
+import os
 
 # Shape of a patch
 SHAPE = (1, 30, 36, 30)
@@ -343,3 +343,46 @@ def plot_density_plots(metric):
         )
     )
     plt.savefig(DOTENV_KEY2VAL["GEN_FIGURES_DIR"] + metric + "_histogram.png",)
+
+
+def plot_distance_matrix(
+    X_distance, title=None, file_prefix=None,
+):
+    """Plots and saves the distance matrix for each of the homology dimensions
+
+    Args:
+        X_distance (np.ndarray): array containing the distance data in each
+            of the homology dimensions
+        title (str): title of the plot
+        file_prefix: prefix of the file, useful when calling the function on
+            different data in a row.
+
+    Returns:
+        None
+    """
+
+    fig, axes = plt.subplots(nrows=3, ncols=1, figsize=(8, 16))
+    plt.suptitle(title)
+    for i, ax in enumerate(axes.flat):
+        im = ax.imshow(X_distance[:, :, i], cmap="Blues")
+
+    fig.subplots_adjust(right=0.8)
+    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+    fig.colorbar(im, cax=cbar_ax)
+
+    plt.savefig(
+        DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+        + file_prefix
+        + "_distance_matrix.png",
+    )
+
+
+def make_dir(directory):
+    """Makes directory and handles errors
+    """
+    try:
+        os.mkdir(directory)
+    except OSError:
+        print("Creation of the directory %s failed" % directory)
+    else:
+        print("Successfully created the directory %s " % directory)

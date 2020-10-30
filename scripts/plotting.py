@@ -66,6 +66,9 @@ import textwrap
 
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 N_JOBS = 1
+SAMPLE_REP = False
+DISTPLOT_PD_DISTANCES = False
+EVOLUTION_TIME_SERIES = True
 
 
 def generate_sample_representations(paths_to_patches, labels):
@@ -231,34 +234,57 @@ def generate_displot_of_pd_distances(path_to_pd_pairwise_distances):
             plt.close("all")
 
 
+def plot_evolution_time_series(path_to_timeseries):
+    """
+    This takes the distance matrix, extract the first column and plots it as
+    a time series for each patients for which this has been computed in
+    scripts/patient_evolution.py
+    """
+    metrics = [
+        "wasserstein",
+        "betti",
+        "landscape",
+        "silhouette",
+        "heat",
+        "persistence_image",
+    ]
+    for metric in metrics:
+        arrays = []
+        for root, dirs, files in os.walk(path_to_timeseries):
+            # loop through files to find relevant ones for metric
+            for file in files:
+                if metric in file:
+                    arrays.append(np.load(path_to_timeseries + file))
+
+        arrays = np.stack(arrays)
+        for dim in arrays.shape[1]:
+            # loop through homology dimensions & slice through the array.
+            arrays
+
+
 def main():
     # First, we want to generate a typical representation of the data for each
     # diagnostic category
-    try:
-        os.mkdir(DOTENV_KEY2VAL["GEN_FIGURES_DIR"])
-    except OSError:
-        print(
-            "Creation of the directory %s failed"
-            % DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+    utils.make_dir(DOTENV_KEY2VAL["GEN_FIGURES_DIR"])
+
+    if SAMPLE_REP:
+        generate_sample_representations(
+            [
+                "../data/patch_91/sub-ADNI002S0295-M00-MNI.npy",
+                "../data/patch_91/sub-ADNI128S0225-M48-MNI.npy",
+                "../data/patch_91/sub-ADNI128S0227-M48-MNI.npy",
+            ],
+            ["CN", "MCI", "AD"],
         )
-    else:
-        print(
-            "Successfully created the directory %s "
-            % DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+    if DISTPLOT_PD_DISTANCES:
+        generate_displot_of_pd_distances(
+            "../generated_data/data_patients_within_group.csv"
         )
 
-    generate_sample_representations(
-        [
-            "../data/patch_91/sub-ADNI002S0295-M00-MNI.npy",
-            "../data/patch_91/sub-ADNI128S0225-M48-MNI.npy",
-            "../data/patch_91/sub-ADNI128S0227-M48-MNI.npy",
-        ],
-        ["CN", "MCI", "AD"],
-    )
-
-    generate_displot_of_pd_distances(
-        "../generated_data/data_patients_within_group.csv"
-    )
+    if EVOLUTION_TIME_SERIES:
+        plot_evolution_time_series(
+            DOTENV_KEY2VAL["GEN_DATA_DIR"] + "/temporal_evolution/"
+        )
 
 
 if __name__ == "__main__":

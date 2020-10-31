@@ -95,7 +95,7 @@ DOTENV_KEY2VAL = dotenv.dotenv_values()
 Determine threshold for pointcloud
 
 #+BEGIN_SRC python
-patch = np.load("../data/patch_92/sub-ADNI002S0295-M00-MNI.npy")
+patch = np.load("../data/patch_91/sub-ADNI002S0295-M00-MNI.npy")
 patch.shape
 #+END_SRC
 

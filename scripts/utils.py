@@ -376,7 +376,6 @@ def plot_distance_matrix(
         + "_distance_matrix.png",
     )
 
-
 def make_dir(directory):
     """Makes directory and handles errors
     """

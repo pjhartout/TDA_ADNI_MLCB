@@ -3,7 +3,6 @@
 """plotting.py
 
 This script aims to produce all the figures in this repository.
-
 """
 
 import nibabel
@@ -66,6 +65,7 @@ import textwrap
 
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 N_JOBS = 1
+HOMOLOGY_DIMENSIONS = (0, 1, 2)
 SAMPLE_REP = False
 DISTPLOT_PD_DISTANCES = False
 EVOLUTION_TIME_SERIES = True
@@ -137,14 +137,17 @@ def generate_sample_representations(paths_to_patches, labels):
                     )
                     plt.savefig(
                         sample_rep_dir
-                        + f"{representation_names[j].replace(' ', '_')}_{labels[i]}_h_{image}.png"
+                        + f"{representation_names[j].replace(' ', '_')}"
+                          f"_{labels[i]}_h_{image}.png"
                     )
             else:
                 rep.plot(vectorial_representation).update_layout(
-                    title=f"{representation_names[j]} representation of a {labels[i]} patient"
+                    title=f"{representation_names[j]} representation of a"
+                          f" {labels[i]} patient"
                 ).write_image(
                     sample_rep_dir
-                    + f"{representation_names[j].replace(' ', '_')}_{labels[i]}.png"
+                    + f"{representation_names[j].replace(' ', '_')}"
+                      f"_{labels[i]}.png"
                 )
         print(f"Done plotting {labels[i]} sample")
 
@@ -234,7 +237,7 @@ def generate_displot_of_pd_distances(path_to_pd_pairwise_distances):
             plt.close("all")
 
 
-def plot_evolution_time_series(path_to_timeseries):
+def plot_evolution_time_series(path_to_distance_matrices):
     """
     This takes the distance matrix, extract the first column and plots it as
     a time series for each patients for which this has been computed in
@@ -249,17 +252,36 @@ def plot_evolution_time_series(path_to_timeseries):
         "persistence_image",
     ]
     for metric in metrics:
-        arrays = []
-        for root, dirs, files in os.walk(path_to_timeseries):
+        # patients here means the collection of pairwise distances for each
+        # patient
+
+        patients = pd.DataFrame()
+        for root, dirs, files in os.walk(path_to_distance_matrices):
             # loop through files to find relevant ones for metric
             for file in files:
                 if metric in file:
-                    arrays.append(np.load(path_to_timeseries + file))
-
-        arrays = np.stack(arrays)
-        for dim in arrays.shape[1]:
-            # loop through homology dimensions & slice through the array.
-            arrays
+                    X_distance = np.load(path_to_distance_matrices + file)
+                    for h_dim in HOMOLOGY_DIMENSIONS:
+                        sample = pd.DataFrame(X_distance[0, :, h_dim]).melt()
+                        sample["metric"] = metric
+                        sample["homology_dimension"] = h_dim
+                        sample["file"] = "_".join(file.split("_", 6)[4:])
+                        sample = sample.drop(columns=["variable"])
+                        patients = patients.append(sample)
+        patients = patients.reset_index()
+        for h_dim in patients["homology_dimension"].unique():
+            hdim_patients = patients.loc[
+                patients["homology_dimension"] == h_dim
+            ]
+            sns.lineplot(x="index", y="value", hue="file", data=hdim_patients)
+            plt.title(
+                f"{metric.replace('_', ' ').capitalize()} distance from baseline for "
+                f"patients over time in {h_dim}."
+            )
+            plt.savefig(
+                DOTENV_KEY2VAL["GEN_FIGURES_DIR"] + "/temporal_evolution/" + metric + str(h_dim) + ".png"
+            )
+            plt.close("all")
 
 
 def main():

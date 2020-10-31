@@ -13,11 +13,12 @@ __email__ = "philip.hartout@protonmail.com"
 import numpy as np
 import json
 import dotenv
+import collections
 
 from gtda.homology import CubicalPersistence
 from gtda.diagrams import PairwiseDistance
-from tqdm import tqdm
 import utils
+
 
 SHAPE = (1, 30, 36, 30)
 HOMOLOGY_DIMENSIONS = (0, 1, 2)
@@ -31,6 +32,9 @@ def main():
     progr = ["mci_ad", "cn"]
     with open(path_to_diags) as f:
         diagnoses = json.load(f)
+
+    # Sort diagnoses key
+    diagnoses = collections.OrderedDict(sorted(diagnoses.items()))
 
     # Where the data comes from
     data_dir = DOTENV_KEY2VAL["DATA_DIR"] + "/patch_91/"

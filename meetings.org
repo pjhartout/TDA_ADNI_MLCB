@@ -21,7 +21,46 @@
 #+OPTIONS: ^:nil
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
-
+* <2020-11-03 Tue> Written Update
+Hi Bastian,
+Just a short (editing this, maybe it's not so short after all ...:sweat_smile: ) weekly update here since we don't have a meeting today:
+1. I tied up the loose ends with my pairwise distances script (turns
+  out there were quite a lot of inconsistencies in the data generation
+  process, luckily the conclusions don't really change).
+2. I discussed the project at length with Felix on Friday, we came up
+   with the idea of computing the distance of each image to the
+   "average" of the vectorial representation of the data in each
+   homology dimension and then color each points according to the
+   MMSE and other neuropsychological test scores to see if there are borderline
+   cases that were different than the normal score within the category
+   and whether we see this in the topological representation as well.
+3. I wanted to use other representations than the PIs for the
+   classification tasks, such as betti curves and persistence
+   landscapes, to see if there are any improvements. With my PIs, I
+   got a score of approx. 70% on an unseen validation with both RFs
+   and CNNs, the latter I'm sure could be optimized, but given this
+   was not really the priority of this internship, I kind of left it
+   at that. The current CNN implementation is simple, it goes along
+   the lines of
+inputs = keras.Input(shape=input_shape)
+x = layers.Conv2D(100, kernel_size=5, padding="valid", activation="relu")(
+    inputs
+)
+x = layers.BatchNormalization()(x)
+x = layers.Activation("relu")(x)
+x = layers.GlobalMaxPooling2D()(x)
+x = layers.Dropout(0.2)(x)
+outputs = layers.Dense(1, activation="sigmoid")(x)
+return keras.Model(inputs, outputs)
+4. As soon as I'm done with these two tasks (calculating distance from
+   average vectorial representation in a homology dimension + using
+   different features as inputs and tuning the models a little bit), I
+   will start formalizing everything in written form to have
+   everything well structured.
+5. As always, the code and updates are in
+   https://github.com/pjhartout/TDA_ADNI_MLCB, where the scripts
+   directory contains most of the "formal" scripts I use to run and
+   plot the data.
 * <2020-10-27 Tue> Meeting Spark group
 Look into normalization.
 It's only possible to do this on the full image.

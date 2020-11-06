@@ -61,8 +61,8 @@ def compute_pl_distance(
             )
         diffs.append(patient_dist_from_avg)
     diffs = np.array(diffs)
-    with open(dest_dir, "wb") as f:
-        np.save(f, diffs)
+    # with open(dest_dir + ".npy", "wb") as f:
+    #     np.save(f, diffs)
     diffs = pd.DataFrame(diffs, columns=["H_0", "H_1", "H_2"])
     file_names = np.array(file_names)
     outliers = pd.DataFrame()
@@ -70,12 +70,10 @@ def compute_pl_distance(
     for col in diffs.columns:
         outliers[col] = list(
             file_names[
-                np.array(diffs[diffs[col] > diffs[col].quantile(0.90)].index)
+                np.array(diffs.nlargest(378, columns=col).index)
             ]
         )
-    return outliers.to_csv(
-        dest_dir + f"topological_outliers_{patient_category}.csv"
-    )
+    outliers.to_csv(dest_dir + f"_{patient_category}.csv", index=False)
 
 
 def compute_category(patient_list, patient_category, image_dir, dest_dir):
@@ -87,7 +85,7 @@ def compute_category(patient_list, patient_category, image_dir, dest_dir):
         pls,
         average_pl,
         1,
-        dest_dir + patient_category + "_landscape_difference_from_avg.npy",
+        dest_dir + patient_category + "_landscape_difference_from_avg",
         file_names,
         patient_category,
     )
@@ -106,7 +104,7 @@ def main():
         mci_patients,
         ad_patients,
     ) = utils.get_all_available_diagnoses(diagnosis_json)
-    compute_category(cn_patients[:10], "CN", image_dir, gen_data_dir)
+    compute_category(cn_patients, "CN", image_dir, gen_data_dir)
     compute_category(mci_patients, "MCI", image_dir, gen_data_dir)
     compute_category(ad_patients, "AD", image_dir, gen_data_dir)
 

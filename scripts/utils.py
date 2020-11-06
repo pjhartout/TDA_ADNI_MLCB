@@ -47,6 +47,7 @@ HOMOLOGY_DIMENSIONS = (0, 1, 2)
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 N_JOBS = 6  # Set number of workers when parallel processing is useful.
 
+
 def get_arrays_from_dir(directory, filelist):
     """This function gets the appropriate images given a list of files in one
     array.
@@ -71,7 +72,6 @@ def get_arrays_from_dir(directory, filelist):
                 f"MRI was performed at the time of diagnosis)"
             )
     return np.stack(images)
-
 
 
 def prepare_image(directory, threshold):
@@ -127,24 +127,25 @@ def cubical_persistence(
     diagrams_cubical_persistence = cp.fit_transform(images)
     if scaled:
         sc = Scaler(metric="bottleneck")
-        scaled_diagrams_cubical_persistence = sc.fit_transform(
+        diagrams_cubical_persistence = sc.fit_transform(
             diagrams_cubical_persistence
         )
     else:
         scaled_diagrams_cubical_persistence = diagrams_cubical_persistence
 
     if plot_diagrams:
-        fig = cp.plot(scaled_diagrams_cubical_persistence)
+        fig = cp.plot(diagrams_cubical_persistence)
         fig.update_layout(title=title)
         fig.show()
     if betti_curves:
         BC = BettiCurve()
-        X_betti_curves = BC.fit_transform(scaled_diagrams_cubical_persistence)
+        X_betti_curves = BC.fit_transform(diagrams_cubical_persistence)
         fig = BC.plot(X_betti_curves)
         fig.update_layout(title=title)
         fig.show()
-    print(f"Computed CP for {title}")
-    return scaled_diagrams_cubical_persistence
+    if title is not None:
+        print(f"Computed CP for {title}")
+    return diagrams_cubical_persistence
 
 
 def erosion_filtration(img):
@@ -156,15 +157,18 @@ def erosion_filtration(img):
     return diagrams_erosion
 
 
-def persistence_landscape(persistence_diagram, title):
+def persistence_landscape(
+    persistence_diagram, title=None, plot_landscape=False
+):
     pl = PersistenceLandscape(n_layers=1, n_bins=100, n_jobs=N_JOBS)
     persistence_landscape = pl.fit_transform(persistence_diagram)
-    fig = pl.plot(persistence_landscape)
-    fig.update_layout(
-        title=title,
-        xaxis_title="Filtration parameter value",
-        yaxis_title="Persistence",
-    ).show()
+    if plot_landscape:
+        fig = pl.plot(persistence_landscape)
+        fig.update_layout(
+            title=title,
+            xaxis_title="Filtration parameter value",
+            yaxis_title="Persistence",
+        ).show()
     return persistence_landscape
 
 
@@ -195,6 +199,7 @@ def get_earliest_available_diagnosis(path_to_diags):
             ad_patients.append(format_patient(patient, diagnoses))
     return cn_patients, mci_patients, ad_patients
 
+
 def get_all_available_diagnoses(path_to_diags):
     """Gets diagnosis at all available timepoint"""
     cn_images = []
@@ -215,8 +220,10 @@ def get_all_available_diagnoses(path_to_diags):
                 ad_images.append(format_patient_timepoint(patient, timepoint))
                 counts = counts + 1
             else:
-                print(f"Unknown diagnosis ({diagnoses[patient][timepoint]}) "
-                      f"specified for patient {patient}")
+                print(
+                    f"Unknown diagnosis ({diagnoses[patient][timepoint]}) "
+                    f"specified for patient {patient}"
+                )
     return cn_images, mci_images, ad_images
 
 
@@ -404,6 +411,7 @@ def plot_distance_matrix(
         + file_prefix
         + "_distance_matrix.png",
     )
+
 
 def make_dir(directory):
     """Makes directory and handles errors

@@ -5,61 +5,23 @@
 This script aims to produce all the figures in this repository.
 """
 
-import nibabel
-import nibabel as nib  # Useful to load data
-
-import nilearn
-from nilearn import datasets
-from nilearn.regions import RegionExtractor
-from nilearn import plotting
-from nilearn.image import index_img
-from nilearn.plotting import find_xyz_cut_coords
-from nilearn.input_data import NiftiMapsMasker
-from nilearn.connectome import ConnectivityMeasure
-from nilearn.regions import RegionExtractor
-from nilearn import plotting
-from nilearn.image import index_img
-from nilearn import datasets
-from nilearn import plotting
-
 import matplotlib.pyplot as plt
-
-
-from pathlib import Path
 import dotenv
-from tqdm import tqdm
 
 import numpy as np
-import networkx as nx
 import pandas as pd
 
-import plotly.express as px
-import plotly.graph_objects as go
-
-import gtda
-from gtda.images import ImageToPointCloud, ErosionFiltration
-from gtda.homology import VietorisRipsPersistence
-from gtda.diagrams import PersistenceEntropy, PersistenceLandscape
-from gtda.pipeline import Pipeline
-from gtda.plotting import plot_diagram, plot_point_cloud, plot_heatmap
 from gtda.homology import CubicalPersistence
 from gtda.diagrams import (
-    Scaler,
-    Filtering,
-    PersistenceEntropy,
     PersistenceImage,
     HeatKernel,
     Silhouette,
     BettiCurve,
-    PairwiseDistance,
-    PersistenceEntropy,
     PersistenceLandscape,
 )
 
 import os
-import zipfile
 import seaborn as sns
-import sys
 import utils
 import textwrap
 
@@ -68,7 +30,8 @@ N_JOBS = 1
 HOMOLOGY_DIMENSIONS = (0, 1, 2)
 SAMPLE_REP = False
 DISTPLOT_PD_DISTANCES = False
-EVOLUTION_TIME_SERIES = True
+EVOLUTION_TIME_SERIES = False
+DIVERGENCE_BETWEEN_PDS = True
 
 
 def generate_sample_representations(paths_to_patches, labels):
@@ -138,16 +101,16 @@ def generate_sample_representations(paths_to_patches, labels):
                     plt.savefig(
                         sample_rep_dir
                         + f"{representation_names[j].replace(' ', '_')}"
-                          f"_{labels[i]}_h_{image}.png"
+                        f"_{labels[i]}_h_{image}.png"
                     )
             else:
                 rep.plot(vectorial_representation).update_layout(
                     title=f"{representation_names[j]} representation of a"
-                          f" {labels[i]} patient"
+                    f" {labels[i]} patient"
                 ).write_image(
                     sample_rep_dir
                     + f"{representation_names[j].replace(' ', '_')}"
-                      f"_{labels[i]}.png"
+                    f"_{labels[i]}.png"
                 )
         print(f"Done plotting {labels[i]} sample")
 
@@ -279,9 +242,38 @@ def plot_evolution_time_series(path_to_distance_matrices):
                 f"patients over time in {h_dim}."
             )
             plt.savefig(
-                DOTENV_KEY2VAL["GEN_FIGURES_DIR"] + "/temporal_evolution/" + metric + str(h_dim) + ".png"
+                DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+                + "/temporal_evolution/"
+                + metric
+                + str(h_dim)
+                + ".png"
             )
             plt.close("all")
+
+
+def plot_deviation_from_avg_pl(path_to_distance_matrices, figures):
+    """
+    This takes the distance matrix, extract the first column and plots it as
+    a time series for each patients for which this has been computed in
+    scripts/patient_evolution.py
+    """
+    utils.make_dir(figures + "/distance_from_avg/")
+    for root, dirs, files in os.walk(path_to_distance_matrices):
+        for file in files:
+            if "landscape_difference" in file:
+                distances = np.load(path_to_distance_matrices + file)
+                distances = pd.DataFrame(
+                    distances, columns=["H_0", "H_1", "H_2"]
+                ).melt()
+                sns.displot(
+                    data=distances, x="value", hue="variable", kde=True
+                )
+                patient_type = file.split("_")[0]
+                plt.title(
+                    f"distance from the average persistence landscape"
+                    f"representation for {patient_type}."
+                )
+                plt.savefig(figures + "distribution_distance_from_avg_{}.png")
 
 
 def main():
@@ -306,6 +298,11 @@ def main():
     if EVOLUTION_TIME_SERIES:
         plot_evolution_time_series(
             DOTENV_KEY2VAL["GEN_DATA_DIR"] + "/temporal_evolution/"
+        )
+    if DIVERGENCE_BETWEEN_PDS:
+        plot_deviation_from_avg_pl(
+            DOTENV_KEY2VAL["GEN_DATA_DIR"] + "/distance_from_average/",
+            DOTENV_KEY2VAL["GEN_FIGURES_DIR"],
         )
 
 

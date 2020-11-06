@@ -407,7 +407,7 @@ def main():
                 tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1),
                 tf.keras.callbacks.EarlyStopping(
                     monitor="val_loss",
-                    min_delta=0.01,
+                    min_delta=0.001,
                     patience=2,
                     verbose=0,
                     mode="auto",

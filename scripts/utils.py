@@ -195,9 +195,38 @@ def get_earliest_available_diagnosis(path_to_diags):
             ad_patients.append(format_patient(patient, diagnoses))
     return cn_patients, mci_patients, ad_patients
 
+def get_all_available_diagnoses(path_to_diags):
+    """Gets diagnosis at all available timepoint"""
+    cn_images = []
+    mci_images = []
+    ad_images = []
+    with open(path_to_diags) as f:
+        diagnoses = json.load(f)
+    counts = 0
+    for patient in list(diagnoses.keys()):
+        for timepoint in list(diagnoses[patient].keys()):
+            if diagnoses[patient][timepoint] == "CN":
+                counts = counts + 1
+                cn_images.append(format_patient_timepoint(patient, timepoint))
+            elif diagnoses[patient][timepoint] == "MCI":
+                mci_images.append(format_patient_timepoint(patient, timepoint))
+                counts = counts + 1
+            elif diagnoses[patient][timepoint] == "AD":
+                ad_images.append(format_patient_timepoint(patient, timepoint))
+                counts = counts + 1
+            else:
+                print(f"Unknown diagnosis ({diagnoses[patient][timepoint]}) "
+                      f"specified for patient {patient}")
+    return cn_images, mci_images, ad_images
+
 
 def format_patient(patient, diagnoses):
     patient = patient + "-" + list(diagnoses[patient].keys())[0] + "-MNI.npy"
+    return patient.replace("-ses", "")
+
+
+def format_patient_timepoint(patient, timepoint):
+    patient = patient + "-" + timepoint + "-MNI.npy"
     return patient.replace("-ses", "")
 
 

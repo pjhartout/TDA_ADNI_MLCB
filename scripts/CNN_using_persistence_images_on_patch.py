@@ -28,6 +28,7 @@ import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -286,9 +287,17 @@ def get_partitions(partitions_location):
     for root, dirs, files in os.walk(partitions_location):
         for file in files:
             if file.split("_")[0] == "partition":
-                partition.append(np.load(partitions_location + file, allow_pickle=True).item())
+                partition.append(
+                    np.load(
+                        partitions_location + file, allow_pickle=True
+                    ).item()
+                )
             elif file.split("_")[0] == "labels":
-                labels.append(np.load(partitions_location + file, allow_pickle=True).item())
+                labels.append(
+                    np.load(
+                        partitions_location + file, allow_pickle=True
+                    ).item()
+                )
             else:
                 print(f"File {file} is neither partition nor labels file")
     return partition, labels
@@ -457,6 +466,19 @@ def main():
     for hist in histories:
         last_acc.append(hist.history["accuracy"][-1])
     print(f"The mean validation accuracy over the  folds is {np.mean(last_acc)}")
+    ############################################################################
+    #  Model evaluation
+    ############################################################################
+    # Here we actually extract the id of the samples that are misclassified
+    y_pred = model.predict(X_train)
+    difference = np.round(y_train - y_pred)
+    index = np.nonzero(difference)
+    df_misclassified = pd.DataFrame(
+        np.array(partitions[0]["train"])[index[0]]
+    )
+    df_misclassified.to_csv(
+        DOTENV_KEY2VAL["GEN_DATA_DIR"] + "misclassification.csv"
+    )
 
 
 if __name__ == "__main__":

@@ -90,7 +90,7 @@ def main():
         cn_patients,
         mci_patients,
         ad_patients,
-    ) = utils.get_earliest_available_diagnosis(diagnosis_json)
+    ) = utils.get_all_available_diagnoses(diagnosis_json)
 
     # For now we only get images for CN and MCI patients
     images_cn = utils.get_arrays_from_dir(persistence_image_location, cn_patients)
@@ -139,7 +139,7 @@ def main():
     search = GridSearchCV(
         RandomForestClassifier(),
         param_grid=params,
-        cv=5,
+        cv=10,
         scoring=make_scorer(balanced_accuracy_score),
         n_jobs=-1,
         verbose=2,

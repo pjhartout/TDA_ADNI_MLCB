@@ -21,6 +21,14 @@
 #+OPTIONS: ^:nil
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
+
+* <2020-11-10 Tue> Spark meeting
+- Two threads, one is classifier, others is topological outliers. knot
+these two together by predicting which samples will be misclassified.
+- Louis - which paper is being replicated? What other data?
+- Bastian - date for presentation, temporary deadline, and deadline
+  report.
+
 * <2020-11-03 Tue> Written Update
 Hi Bastian,
 Just a short (editing this, maybe it's not so short after all ...:sweat_smile: ) weekly update here since we don't have a meeting today:

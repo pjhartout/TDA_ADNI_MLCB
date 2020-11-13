@@ -44,7 +44,7 @@ print("DEVICE INFO")
 
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 tf.random.set_seed(42)
-
+N_BINS = 100
 # physical_devices = tf.config.experimental.list_physical_devices('GPU')
 # tf.config.experimental.set_memory_growth(physical_devices[0], True)
 # gpus = tf.config.experimental.list_physical_devices("GPU")
@@ -231,30 +231,31 @@ def make_model(input_shape):
         keral.Model: model ready to be trained
     """
     inputs = keras.Input(shape=input_shape)
-    x_conv_result = []
-    for i in range(inputs.shape[3]):
-        if i != inputs.shape[3]:
-            x = layers.Conv2D(
-                5,
-                kernel_size=10,
-                strides=(5, 5),
-                padding="valid",
-                activation="relu",
-            )(inputs[:, :, :, i : i + 1])
-        else:
-            x = layers.Conv2D(
-                5,
-                kernel_size=10,
-                strides=(5, 5),
-                padding="valid",
-                activation="relu",
-            )(inputs[:, :, :, i:])
-        x = layers.BatchNormalization()(x)
-        x_conv_result.append(
-            layers.GlobalMaxPooling2D()(tf.reshape(x, (-1, -1, 100, 100)))
-        )
 
-    x = layers.Dense(600, activation="relu")(tf.concat(x_conv_result, 1))
+    tower_1 = layers.Conv2D(2, 4, padding="same", activation="relu")(
+        inputs[:, :, :, 0:1]
+    )
+    tower_1 = layers.BatchNormalization()(tower_1)
+    tower_1 = layers.MaxPooling2D()(tower_1)
+
+    tower_2 = layers.Conv2D(2, 4, padding="same", activation="relu")(
+        inputs[:, :, :, 1:2]
+    )
+    tower_2 = layers.BatchNormalization()(tower_2)
+    tower_2 = layers.MaxPooling2D()(tower_2)
+
+    tower_3 = layers.Conv2D(2, 4, padding="same", activation="relu")(
+        inputs[:, :, :, 2:]
+    )
+    tower_3 = layers.BatchNormalization()(tower_3)
+    tower_3 = layers.MaxPooling2D()(tower_3)
+
+    merged = layers.concatenate([tower_1, tower_2, tower_3], axis=1)
+    merged = layers.Flatten()(merged)
+    x = layers.Dense(500, activation="relu")(merged)
+    x = layers.Dropout(0.5)(x)
+    x = layers.Dense(500, activation="relu")(merged)
+    x = layers.Dropout(0.5)(x)
     outputs = layers.Dense(1, activation="sigmoid")(x)
     return keras.Model(inputs, outputs)
 
@@ -273,10 +274,9 @@ def make_simpler_model(input_shape):
     x = layers.Conv2D(
         20, kernel_size=10, strides=(1, 1), padding="valid", activation="relu"
     )(inputs)
-    x = layers.BatchNormalization()(x)
     x = layers.GlobalMaxPooling2D()(x)
     x = layers.BatchNormalization()(x)
-    x = layers.Dense(100, activation="relu")(x)
+    x = layers.Dense(50, activation="relu")(x)
     outputs = layers.Dense(1, activation="sigmoid")(x)
     return keras.Model(inputs, outputs)
 
@@ -345,7 +345,7 @@ def main():
 
                 X_train, y_train = (
                     np.stack(X_train_lst, axis=0).reshape(
-                        len(X_train_lst), 100, 100, 3
+                        len(X_train_lst), N_BINS, N_BINS, 3
                     ),
                     np.vstack(y_train_lst),
                 )
@@ -359,7 +359,7 @@ def main():
 
                 X_val, y_val = (
                     np.stack(X_val_lst, axis=0).reshape(
-                        len(X_val_lst), 100, 100, 3
+                        len(X_val_lst), N_BINS, N_BINS, 3
                     ),
                     np.vstack(y_val_lst),
                 )
@@ -395,8 +395,16 @@ def main():
             #  Model definition
             ############################################################################
 
-            model = make_simpler_model(input_shape=(100, 100, 3))
-            keras.utils.plot_model(model, show_shapes=True)
+            model = make_model(input_shape=(N_BINS, N_BINS, 3))
+            tf.keras.utils.plot_model(
+                model,
+                to_file="model.png",
+                show_shapes=True,
+                show_layer_names=True,
+                rankdir="TB",
+                expand_nested=True,
+                dpi=96,
+            )
 
             ############################################################################
             #  Model training
@@ -413,19 +421,21 @@ def main():
             )
             callbacks = [
                 # keras.callbacks.ModelCheckpoint("save_at_{epoch}.h5"),
-                tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1),
+                tf.keras.callbacks.TensorBoard(
+                    log_dir=log_dir, histogram_freq=1
+                ),
                 tf.keras.callbacks.EarlyStopping(
                     monitor="val_loss",
-                    min_delta=0.001,
-                    patience=2,
+                    min_delta=0.00001,
+                    patience=10,
                     verbose=0,
                     mode="auto",
                     baseline=None,
-                    restore_best_weights=False,
+                    restore_best_weights=True,
                 ),
             ]
             lr = keras.optimizers.schedules.ExponentialDecay(
-                0.01, decay_steps=100, decay_rate=0.6, staircase=True
+                0.01, decay_steps=30, decay_rate=0.6, staircase=True
             )
             model.compile(
                 optimizer=keras.optimizers.Adam(
@@ -438,22 +448,22 @@ def main():
                 loss="binary_crossentropy",
                 metrics=[
                     keras.metrics.BinaryAccuracy(name="accuracy"),
-                    keras.metrics.TruePositives(name="tp"),
-                    keras.metrics.FalsePositives(name="fp"),
-                    keras.metrics.TrueNegatives(name="tn"),
-                    keras.metrics.FalseNegatives(name="fn"),
+                    # keras.metrics.TruePositives(name="tp"),
+                    # keras.metrics.FalsePositives(name="fp"),
+                    # keras.metrics.TrueNegatives(name="tn"),
+                    # keras.metrics.FalseNegatives(name="fn"),
                     keras.metrics.Precision(name="precision"),
                     keras.metrics.Recall(name="recall"),
                     keras.metrics.AUC(name="auc"),
                 ],
                 # run_eagerly=True,
             )
-            history =  model.fit(
+            history = model.fit(
                 X_train,
                 y_train,
                 epochs=epochs,
                 callbacks=callbacks,
-                batch_size=32,
+                batch_size=16,
                 validation_data=(X_val, y_val),
             )
             histories.append(history)
@@ -463,9 +473,32 @@ def main():
             # Mosly already included into the training procedure.
     # Stepping back out of the partitions loop
     last_acc = []
+    last_val_acc = []
+    last_val_prec = []
+    last_val_rec = []
+    last_val_auc = []
     for hist in histories:
         last_acc.append(hist.history["accuracy"][-1])
-    print(f"The mean validation accuracy over the  folds is {np.mean(last_acc)}")
+        last_val_acc.append(hist.history["val_accuracy"][-1])
+        last_val_prec.append(hist.history["val_precision"][-1])
+        last_val_rec.append(hist.history["val_recall"][-1])
+        last_val_auc.append(hist.history["val_auc"][-1])
+    print(
+        f"The mean training accuracy over the folds is {np.mean(last_acc)}, pm {np.std(last_acc)}"
+    )
+    print(
+        f"The mean validation accuracy over the folds is {np.mean(last_val_acc)}, pm {np.std(last_val_acc)}"
+    )
+    print(
+        f"The mean validation precision over the folds is {np.mean(last_val_prec)}, pm {np.std(last_val_prec)}"
+    )
+    print(
+        f"The mean validation recall over the folds is {np.mean(last_val_rec)}, pm {np.std(last_val_rec)}"
+    )
+    print(
+        f"The mean validation auc over the folds is {np.mean(last_val_auc)}, pm {np.std(last_val_auc)}"
+    )
+
     ############################################################################
     #  Model evaluation
     ############################################################################
@@ -473,9 +506,7 @@ def main():
     y_pred = model.predict(X_train)
     difference = np.round(y_train - y_pred)
     index = np.nonzero(difference)
-    df_misclassified = pd.DataFrame(
-        np.array(partitions[0]["train"])[index[0]]
-    )
+    df_misclassified = pd.DataFrame(np.array(partitions[0]["train"])[index[0]])
     df_misclassified.to_csv(
         DOTENV_KEY2VAL["GEN_DATA_DIR"] + "misclassification.csv"
     )

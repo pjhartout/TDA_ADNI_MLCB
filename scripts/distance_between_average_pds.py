@@ -73,19 +73,23 @@ def compute_pl_distance(
                 np.array(diffs.nlargest(378, columns=col).index)
             ]
         )
-    outliers.to_csv(dest_dir + f"_{patient_category}.csv", index=False)
+    outliers.to_csv(dest_dir + f"outliers_{patient_category}.csv", index=False)
+    diffs.to_csv(dest_dir + f"distance_from_average_pl_{patient_category}.csv",
+                 index=False)
 
 
 def compute_category(patient_list, patient_category, image_dir, dest_dir):
     # Compute average
     pls, average_pl, file_names = compute_average_pl(patient_list, image_dir)
+    with open(dest_dir + f"average_pl_{patient_category}.npy", "wb") as f:
+         np.save(f, average_pl)
 
     # Compute distance to average
     compute_pl_distance(
         pls,
         average_pl,
         1,
-        dest_dir + patient_category + "_landscape_difference_from_avg",
+        dest_dir,
         file_names,
         patient_category,
     )

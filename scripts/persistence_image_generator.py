@@ -84,7 +84,7 @@ import utils
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 N_JOBS = -1
 HOMOLOGY_DIMENSIONS = (0, 1, 2)
-
+N_BINS = 100
 
 def get_all_available_patches(path_to_patches):
     """Obtains all array data in given path_to_patches and tracks loaded files.
@@ -128,7 +128,7 @@ def cubical_persistence(patch):
 
 def get_persistence_images(persistence_diagram):
     pi = PersistenceImage(
-        sigma=0.05, n_bins=100, weight_function=None, n_jobs=N_JOBS
+        sigma=0.01, n_bins=N_BINS, weight_function=None, n_jobs=N_JOBS
     )
     print("Computed persistence images")
     return pi.fit_transform(persistence_diagram)

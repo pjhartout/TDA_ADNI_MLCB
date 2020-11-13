@@ -24,14 +24,21 @@ import os
 import seaborn as sns
 import utils
 import textwrap
+from plotly.subplots import make_subplots
+from plotly.graph_objects import Figure, Scatter
+
 
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 N_JOBS = 1
 HOMOLOGY_DIMENSIONS = (0, 1, 2)
 SAMPLE_REP = False
 DISTPLOT_PD_DISTANCES = False
+AVERAGE_PL = False
+PLOT_DISTANCE_FROM_AVERAGE_PL = True
 EVOLUTION_TIME_SERIES = False
-DIVERGENCE_BETWEEN_PDS = True
+DIVERGENCE_BETWEEN_PDS = False
+SCALE = 5  # resolution of exported images
+VEC_SIZE = 100
 
 
 def generate_sample_representations(paths_to_patches, labels):
@@ -56,9 +63,10 @@ def generate_sample_representations(paths_to_patches, labels):
         diagrams_cubical_persistence = cp.fit_transform(
             patch.reshape(1, 30, 36, 30)
         )
-        cp.plot(diagrams_cubical_persistence).update_layout(
-            title=f"Persistence diagram of a {labels[i]} patient"
-        ).write_image(sample_rep_dir + f"persistence_diagram_cn.png")
+        cp.plot(diagrams_cubical_persistence).write_image(
+            sample_rep_dir + f"persistence_diagram_{labels[i]}.png",
+            scale=SCALE,
+        )
 
         representation_names = [
             "Persistence landscape",
@@ -72,16 +80,18 @@ def generate_sample_representations(paths_to_patches, labels):
             # Have not found a better way of doing this yet.
             if rep == "Persistence landscape":
                 rep = PersistenceLandscape(
-                    n_layers=1, n_bins=100, n_jobs=N_JOBS
+                    n_layers=1, n_bins=VEC_SIZE, n_jobs=N_JOBS
                 )
             elif rep == "Betti curve":
                 rep = BettiCurve()
             elif rep == "Persistence image":
-                rep = PersistenceImage(sigma=0.05, n_bins=100, n_jobs=N_JOBS)
+                rep = PersistenceImage(
+                    sigma=0.01, n_bins=VEC_SIZE, n_jobs=N_JOBS
+                )
             elif rep == "Heat kernel":
-                rep = HeatKernel(sigma=0.1, n_bins=100, n_jobs=N_JOBS)
+                rep = HeatKernel(sigma=0.1, n_bins=VEC_SIZE, n_jobs=N_JOBS)
             elif rep == "Silhouette":
-                rep = Silhouette(power=1.0, n_bins=100, n_jobs=N_JOBS)
+                rep = Silhouette(power=1.0, n_bins=VEC_SIZE, n_jobs=N_JOBS)
 
             vectorial_representation = rep.fit_transform(
                 diagrams_cubical_persistence
@@ -91,13 +101,13 @@ def generate_sample_representations(paths_to_patches, labels):
                 for image in range(vectorial_representation.shape[1]):
                     plt.imshow(
                         vectorial_representation[0:, image, :, :].reshape(
-                            100, 100
+                            VEC_SIZE, VEC_SIZE
                         )
                     )
-                    plt.title(
-                        f"{representation_names[j]} representation of a "
-                        f"{labels[i]} patient in h_{image}"
-                    )
+                    # plt.title(
+                    #     f"{representation_names[j]} representation of a "
+                    #     f"{labels[i]} patient in h_{image}"
+                    # )
                     plt.savefig(
                         sample_rep_dir
                         + f"{representation_names[j].replace(' ', '_')}"
@@ -105,12 +115,12 @@ def generate_sample_representations(paths_to_patches, labels):
                     )
             else:
                 rep.plot(vectorial_representation).update_layout(
-                    title=f"{representation_names[j]} representation of a"
-                    f" {labels[i]} patient"
+                    title=None
                 ).write_image(
                     sample_rep_dir
                     + f"{representation_names[j].replace(' ', '_')}"
-                    f"_{labels[i]}.png"
+                    f"_{labels[i]}.png",
+                    scale=SCALE,
                 )
         print(f"Done plotting {labels[i]} sample")
 
@@ -238,8 +248,8 @@ def plot_evolution_time_series(path_to_distance_matrices):
             ]
             sns.lineplot(x="index", y="value", hue="file", data=hdim_patients)
             plt.title(
-                f"{metric.replace('_', ' ').capitalize()} distance from baseline for "
-                f"patients over time in {h_dim}."
+                f"{metric.replace('_', ' ').capitalize()} distance from baseline"
+                f" for patients over time in {h_dim}."
             )
             plt.savefig(
                 DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
@@ -276,6 +286,36 @@ def plot_deviation_from_avg_pl(path_to_distance_matrices, figures):
                 plt.savefig(figures + "distribution_distance_from_avg_{}.png")
 
 
+def plot_average_persistence_landscapes(image_dir, patient_types):
+    """
+    This function computes the average persistence landscape of the diagnostic
+    categories and plots them
+    """
+    for i, pl in enumerate(image_dir):
+        pl = np.load(DOTENV_KEY2VAL["GEN_DATA_DIR"] + pl)
+        ax = pd.DataFrame(pl).T.plot()
+        ax.legend(["$H_0$", "$H_1$", "$H_2$"])
+        plt.savefig(
+            DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+            + "/average_pls/"
+            + f"average_pl_{patient_types[i]}.png"
+        )
+
+
+def plot_distance_from_average_pl(distance_files, patient_types):
+    for distances, patient_type in zip(distance_files, patient_types):
+        distances = pd.read_csv(
+            DOTENV_KEY2VAL["GEN_DATA_DIR"] + distances
+        )
+        for i in range(len(HOMOLOGY_DIMENSIONS)):
+            sns.displot(distances.iloc[:,i])
+            plt.savefig(
+                DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+                + "/average_pls/"
+                + f"average_pl_{patient_type}_H_{i}.png"
+            )
+
+
 def main():
     # First, we want to generate a typical representation of the data for each
     # diagnostic category
@@ -290,6 +330,28 @@ def main():
             ],
             ["CN", "MCI", "AD"],
         )
+
+    if AVERAGE_PL:
+        utils.make_dir(DOTENV_KEY2VAL["GEN_FIGURES_DIR"] + "/average_pls/")
+        plot_average_persistence_landscapes(
+            [
+                "/distance_from_average/average_pl_CN.npy",
+                "/distance_from_average/average_pl_MCI.npy",
+                "/distance_from_average/average_pl_AD.npy",
+            ],
+            ["CN", "MCI", "AD"],
+        )
+
+    if PLOT_DISTANCE_FROM_AVERAGE_PL:
+        plot_distance_from_average_pl(
+            [
+                "/distance_from_average/distance_from_average_pl_CN.csv",
+                "/distance_from_average/distance_from_average_pl_MCI.csv",
+                "/distance_from_average/distance_from_average_pl_AD.csv",
+            ],
+            ["CN", "MCI", "AD"],
+        )
+
     if DISTPLOT_PD_DISTANCES:
         generate_displot_of_pd_distances(
             "../generated_data/data_patients_within_group.csv"

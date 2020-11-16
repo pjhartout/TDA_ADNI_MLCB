@@ -32,10 +32,10 @@ DOTENV_KEY2VAL = dotenv.dotenv_values()
 N_JOBS = 1
 HOMOLOGY_DIMENSIONS = (0, 1, 2)
 SAMPLE_REP = False
-DISTPLOT_PD_DISTANCES = False
+# DISTPLOT_PD_DISTANCES = False
 AVERAGE_PL = False
-PLOT_DISTANCE_FROM_AVERAGE_PL = True
-EVOLUTION_TIME_SERIES = False
+PLOT_DISTANCE_FROM_AVERAGE_PL = False
+PATIENT_EVOLUTION = True
 DIVERGENCE_BETWEEN_PDS = False
 SCALE = 5  # resolution of exported images
 VEC_SIZE = 100
@@ -304,16 +304,62 @@ def plot_average_persistence_landscapes(image_dir, patient_types):
 
 def plot_distance_from_average_pl(distance_files, patient_types):
     for distances, patient_type in zip(distance_files, patient_types):
-        distances = pd.read_csv(
-            DOTENV_KEY2VAL["GEN_DATA_DIR"] + distances
-        )
+        distances = pd.read_csv(DOTENV_KEY2VAL["GEN_DATA_DIR"] + distances)
         for i in range(len(HOMOLOGY_DIMENSIONS)):
-            sns.displot(distances.iloc[:,i])
+            sns.displot(distances.iloc[:, i])
             plt.savefig(
                 DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
                 + "/average_pls/"
                 + f"average_pl_{patient_type}_H_{i}.png"
             )
+
+
+def plot_patient_evolution(generated_distance_data):
+    """
+    Function to deal with output of patient_evolution.py
+
+    Args:
+        generated_distance_data:
+
+    Returns:
+
+    """
+    X_distance = []
+    available_timepoints = []
+    for root, dirs, files in os.walk(generated_distance_data):
+        for file in files:
+            X_distance.append(
+                np.load(generated_distance_data + file, allow_pickle=True)
+            )
+            # Search for the available labels
+            patient_id = file.split("_")[3]
+            timepoints_for_patient = []
+            for root, dirs, files in os.walk(DOTENV_KEY2VAL["DATA_DIR"] +
+                                             "/patch_91/"):
+                for file in files:
+                    if patient_id in file:
+                        timepoints_for_patient.append(file.split("-")[2])
+            timepoints_for_patient.sort()
+            available_timepoints.append(timepoints_for_patient)
+
+    v_min = min(np.min(distance) for distance in X_distance)
+    v_max = max(np.max(distance) for distance in X_distance)
+    for root, dirs, files in os.walk(generated_distance_data):
+        for i, file in enumerate(files):
+            X_distance = np.load(
+                generated_distance_data + file, allow_pickle=True
+            )
+            for j in HOMOLOGY_DIMENSIONS:
+                ax = sns.heatmap(X_distance[:, :, j], vmin=v_min, vmax=v_max)
+                ax.set_xticklabels(available_timepoints[i])
+                ax.set_yticklabels(available_timepoints[i])
+                plt.savefig(
+                    DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+                    + "/temporal_evolution/"
+                    + f"landscape_distance_for_{file.split('_')[3]}_h_{j}.png"
+                )
+                plt.close("all")
+
 
 
 def main():
@@ -352,15 +398,16 @@ def main():
             ["CN", "MCI", "AD"],
         )
 
-    if DISTPLOT_PD_DISTANCES:
-        generate_displot_of_pd_distances(
-            "../generated_data/data_patients_within_group.csv"
-        )
+    # if DISTPLOT_PD_DISTANCES:
+    #     generate_displot_of_pd_distances(
+    #         "../generated_data/data_patients_within_group.csv"
+    #     )
 
-    if EVOLUTION_TIME_SERIES:
-        plot_evolution_time_series(
+    if PATIENT_EVOLUTION:
+        plot_patient_evolution(
             DOTENV_KEY2VAL["GEN_DATA_DIR"] + "/temporal_evolution/"
         )
+
     if DIVERGENCE_BETWEEN_PDS:
         plot_deviation_from_avg_pl(
             DOTENV_KEY2VAL["GEN_DATA_DIR"] + "/distance_from_average/",

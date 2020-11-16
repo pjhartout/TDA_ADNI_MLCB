@@ -14,7 +14,7 @@ import numpy as np
 import json
 import dotenv
 import collections
-
+import seaborn as sns
 from gtda.homology import CubicalPersistence
 from gtda.diagrams import PairwiseDistance
 import utils
@@ -89,35 +89,19 @@ def main():
         )
         diagrams_cubical_persistence = cp.fit_transform(patches)
 
-        metrics = [
-            "wasserstein",
-            "betti",
-            "landscape",
-            "silhouette",
-            "heat",
-            "persistence_image",
-        ]
-        for metric in metrics:
-            print(metric)
-            pairwise_distance = PairwiseDistance(
-                metric=metric, metric_params=None, order=None, n_jobs=-1
-            )
-            X_distance = pairwise_distance.fit_transform(
-                diagrams_cubical_persistence
-            )
-            utils.plot_distance_matrix(
-                X_distance,
-                title="Progression of a patient over time of patient patient",
-                file_prefix=temporal_progression_dir
-                + f"time_progression_patient_{patient}_{progr[i]}_{metric}",
-            )
-            with open(
-                DOTENV_KEY2VAL["GEN_DATA_DIR"]
-                + time_series_dir
-                + f"distance_data_patient_{patient}_{progr[i]}_{metric}.npy",
-                "wb",
-            ) as f:
-                np.save(f, X_distance)
+        pl_dist = PairwiseDistance(
+            metric="landscape", metric_params=None, order=None, n_jobs=-1
+        )
+        X_distance = pl_dist.fit_transform(
+            diagrams_cubical_persistence
+        )
+        with open(
+            DOTENV_KEY2VAL["GEN_DATA_DIR"]
+            + time_series_dir
+            + f"distance_data_patient_{patient}_{progr[i]}_landscape.npy",
+            "wb",
+        ) as f:
+            np.save(f, X_distance)
 
 
 if __name__ == "__main__":

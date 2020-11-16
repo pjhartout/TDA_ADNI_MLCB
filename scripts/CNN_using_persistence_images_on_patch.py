@@ -260,27 +260,6 @@ def make_model(input_shape):
     return keras.Model(inputs, outputs)
 
 
-def make_simpler_model(input_shape):
-    """Makes a keras model.
-
-    Args:
-        input_shape (tuple): input shape of the neural network
-        num_classes (int): number of classes involved
-
-    Returns:
-        keral.Model: model ready to be trained
-    """
-    inputs = keras.Input(shape=input_shape)
-    x = layers.Conv2D(
-        20, kernel_size=10, strides=(1, 1), padding="valid", activation="relu"
-    )(inputs)
-    x = layers.GlobalMaxPooling2D()(x)
-    x = layers.BatchNormalization()(x)
-    x = layers.Dense(50, activation="relu")(x)
-    outputs = layers.Dense(1, activation="sigmoid")(x)
-    return keras.Model(inputs, outputs)
-
-
 def get_partitions(partitions_location):
     partition = []
     labels = []
@@ -506,7 +485,18 @@ def main():
     y_pred = model.predict(X_train)
     difference = np.round(y_train - y_pred)
     index = np.nonzero(difference)
-    df_misclassified = pd.DataFrame(np.array(partitions[0]["train"])[index[0]])
+    y_pred = model.predict(X_val)
+    difference = np.round(y_val - y_pred)
+    index_2 = np.nonzero(difference)
+    df_misclassified_train = pd.DataFrame(
+        np.array(partitions[0]["train"])[index[0]]
+    )
+    df_misclassified_val = pd.DataFrame(
+        np.array(partitions[0]["validation"])[index_2[0]]
+    )
+    df_misclassified = pd.concat(
+        [df_misclassified_train, df_misclassified_val]
+    )
     df_misclassified.to_csv(
         DOTENV_KEY2VAL["GEN_DATA_DIR"] + "misclassification.csv"
     )

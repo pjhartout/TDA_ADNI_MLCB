@@ -169,11 +169,11 @@ distance of each PL computed from the PD available for a diagnostic category wit
 \end{description}
 
 \subsection{Model architecture}
-For the ML classification task of classifying AD vs CN patients, we used a parallel CNN network, followed by one dense layers containing 500 neurons and with dropout rates of 50\% at training time together. The output of the last dense layer is redirected to a single sigmoid neuron for prediction. The model was trained using an exponential decay learning rate scheduler and early stopping, which monitored the validation loss. All of the layers and utilities to train the neural network were provided by the Keras library ~\citep{chollet2015keras} and are available on the \href{https://github.com/pjhartout/TDA_ADNI_MLCB}{repository}, and a depiction of the computation graph is shown in Figure ~\ref{fig:model_arch}.
+For the ML classification task of classifying AD vs CN patients, we used a parallel CNN network, followed by one dense layers containing 500 neurons and with dropout rates of 50\% at training time together. The output of the last dense layer is redirected to a single sigmoid neuron for prediction. The model was trained using an exponential decay learning rate scheduler and early stopping, which monitored the validation loss. All of the layers and utilities to train the neural network were provided by the Keras library ~\citep{chollet2015keras} and are available on the \href{https://github.com/pjhartout/TDA_ADNI_MLCB}{repository}, and a depiction of the computation graph is shown in Figure ~\ref{fig:model_arch}. We also note that the model was trained on commodity hardware, i.e. a Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz for less than a minute per model, highlighting the computational efficiency of the approach.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\textwidth]{figures/model.png}
+  \includegraphics[width=0.9\textwidth]{figures/model.png}
   \caption{Computation graph to predict the phenotype of a given set of persistent images.}
   \label{fig:model_arch}
 \end{figure}
@@ -203,39 +203,39 @@ We start by examining an example of the persistence diagram, image and landscape
 
 \begin{figure}
   \centering
-  \begin{subfigure}{0.3\textwidth}
+  \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_CN_h_0.png}
     \caption{PI of a CN patient in $H_0$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
+  \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_MCI_h_0.png}
     \caption{PI of a MCI patient in $H_0$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
+  \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_AD_h_0.png}
     \caption{PI of an AD patient in $H_0$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
+  \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_CN_h_1.png}
     \caption{PI of a CN patient in $H_1$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
+  \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_MCI_h_1.png}
     \caption{PI of a MCI patient in $H_1$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
+  \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_AD_h_1.png}
     \caption{PI of an AD patient in $H_1$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
+  \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_CN_h_2.png}
     \caption{PI of an CN patient in $H_2$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
+  \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_MCI_h_2.png}
     \caption{PI of an MCI patient in $H_2$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
+  \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_AD_h_2.png}
     \caption{PI of an AD patient in $H_2$}
   \end{subfigure}
@@ -269,78 +269,199 @@ In this report, we trained the deep learning model three times on three differen
 
 \subsubsection{Between patients}
 
-We now present our findings regarding the distribution of the distances between the PL of each image with respect to the average PL for each diagnostic category. The representative PL for each diagnostic category is shown in Figure \ref{fig:average_pls}, and the distribution of the $l^1$ norm between each patient and these average PLs is shown in Figure \ref{fig:displots_average_pl}. As we can see, while the average PLs do not differ too much from one another in each of the homological dimensions, we see that some images seem to have a far greater distance to this average PL than the majority of PLs.
+We now present our findings regarding the distribution of the distances between the PL of each image with respect to the median PL for each diagnostic category. The representative PL for each diagnostic category is shown in Figure \ref{fig:median_pls}, and the distribution of the $l^1$ norm between each patient and these median PLs is shown in Figure \ref{fig:displots_median_pl}. As we can see, while the median PLs do not differ too much from one another in each of the homological dimensions, we see that some images seem to have a far greater distance to this median PL than the majority of PLs.
 
 \begin{figure}
   \centering
-  \begin{subfigure}{0.3\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_pls/average_pl_CN.png}
-    \caption{Average PL for CN subjects}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_CN.png}
+    \caption{Median PL for CN subjects}
   \end{subfigure}
   \hfill
-  \begin{subfigure}{0.3\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_pls/average_pl_MCI.png}
-    \caption{Average PL for MCI subjects}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_MCI.png}
+    \caption{Median PL for MCI subjects}
   \end{subfigure}
   \hfill
-  \begin{subfigure}{0.3\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_pls/average_pl_AD.png}
-    \caption{Average PL for AD subjects}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD.png}
+    \caption{Median PL for AD subjects}
   \end{subfigure}
-  \caption{Average persistence landscapes for each of the diagnostic categories.}
-  \label{fig:average_pls}
+  \caption{Median persistence landscapes for each of the diagnostic categories.}
+  \label{fig:median_pls}
 \end{figure}
 
 
 \begin{figure}
   \centering
-  \begin{subfigure}{0.3\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_pls/average_pl_CN_H_0.png}
-    \caption{$l^1$ norm for CN PLs in $H_0$}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_CN_H_0.png}
+    \caption{$L^1$ norm for CN PLs in $H_0$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_pls/average_pl_MCI_H_0.png}
-    \caption{$l^1$ norm for MCI PLs in $H_0$}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_MCI_H_0.png}
+    \caption{$L^1$ norm for MCI PLs in $H_0$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_pls/average_pl_AD_H_0.png}
-    \caption{$l^1$ norm for AD PLs in $H_0$}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD_H_0.png}
+    \caption{$L^1$ norm for AD PLs in $H_0$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_pls/average_pl_CN_H_1.png}
-    \caption{$l^1$ norm for CN PLs in $H_1$}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_CN_H_1.png}
+    \caption{$L^1$ norm for CN PLs in $H_1$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_pls/average_pl_MCI_H_1.png}
-    \caption{$l^1$ norm for MCI PLs in $H_1$}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_MCI_H_1.png}
+    \caption{$L^1$ norm for MCI PLs in $H_1$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_pls/average_pl_AD_H_1.png}
-    \caption{$l^1$ norm for AD PLs in $H_1$}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD_H_1.png}
+    \caption{$L^1$ norm for AD PLs in $H_1$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_pls/average_pl_CN_H_2.png}
-    \caption{$l^1$ norm for CN PLs in $H_2$}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_CN_H_2.png}
+    \caption{$L^1$ norm for CN PLs in $H_2$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_pls/average_pl_MCI_H_2.png}
-    \caption{$l^1$ norm for MCI PLs in $H_2$}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_MCI_H_2.png}
+    \caption{$L^1$ norm for MCI PLs in $H_2$}
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_pls/average_pl_AD_H_2.png}
-    \caption{$l^1$ norm for AD PLs in $H_2$}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD_H_2.png}
+    \caption{$L^1$ norm for AD PLs in $H_2$}
   \end{subfigure}
-  \caption{Histogram showing the distribution of the $l^1$ norm taken between the average PL for a diagnostic categories in all homological dimesions.}
-  \label{fig:displots_average_pl}
+  \caption{Histogram showing the distribution of the $L^1$ norm taken between the median PL for a diagnostic categories in all homological dimesions.}
+  \label{fig:displots_median_pl}
 \end{figure}
+
+\begin{table}
+\centering
+\begin{tabular}{lrrrrrr}
+\toprule
+{} &  Mean &  Median &  Standard deviation &   Q3 &   Max &  Skewness \\
+\midrule
+CN $H_0$ & 2.16 & 2.00 & 0.78 & 2.50 & 7.41 & 1.78 \\
+CN $H_1$ & 2.61 & 2.27 & 1.17 & 2.93 & 9.47 & 1.92 \\
+CN $H_2$ & 2.38 & 2.23 & 0.88 & 2.79 & 7.19 & 1.39 \\
+MCI $H_0$ & 2.24 & 2.04 & 0.82 & 2.55 & 6.21 & 1.71 \\
+MCI $H_1$ & 2.57 & 2.19 & 1.29 & 2.80 & 11.87 & 2.57 \\
+MCI $H_2$ & 2.40 & 2.27 & 0.83 & 2.82 & 6.55 & 1.18 \\
+AD $H_0$ & 2.40 & 2.18 & 0.96 & 2.77 & 7.77 & 1.97 \\
+AD $H_1$ & 2.47 & 2.13 & 1.15 & 2.77 & 9.28 & 2.10 \\
+AD $H_2$ & 2.36 & 2.20 & 0.80 & 2.75 & 8.39 & 1.64 \\
+  \bottomrule
+  \vspace{6pt}
+\end{tabular}
+\caption{Summary statistics of the distribution of distances shown in Figure \ref{fig:displots_median_pl}}
+\label{tab::stats_median_pl}
+\end{table}
+
 
 \subsubsection{Within patients}
 
-As indicated in section \label{sec:tda_setup}, we can compute the distance between various PLs associated to the different timepoints available to a single patient to evaluate the topological distance between each of these timepoints, hence obtaining a representation of the topological evolution of that particular patient. The results of a patient stabilizing over time.
+As indicated in section \label{sec:tda_setup}, we can compute the distance between various PLs associated to the different timepoints available to a single patient to evaluate the distance between each of these topological representations at these timepoints, hence obtaining a representation of the topological evolution of that particular patient.
 
-\subsection{Topological outliers and misclassified subjects}
+We find interesting qualitative results, with distance varying widely from one patient to the next. For instance, if we take a CN patient diagnosed as such throughout the time that that patient, has been monitored, we see relatively low distances between that patients and other timepoints, see Figure \ref{fig:patient_evolution_stable} for an example. However, this trend drastically changes when taking a patient who transitions from an MCI diagnosis to an AD diagnosis, as can be seen in Figure ~\ref{fig:patient_evolution_mci_ad}. Note that the colorscale is the same for Figures \ref{fig:patient_evolution_stable} and \ref{fig:patient_evolution_mci_ad}. However, these effects do not generalize: if we take the average distance for each homological dimension for each patient and compare the distribution of averages for patients who do change diagnoses versus those who don't, we don't see any quantitative difference, as can be seen in Figure \ref{fig:kde_intra_patient}. Surprisingly, however, we see that taking the average Wasserstein distance for each patient, a bimodal -- similar for both deteriorating and stable patients -- distribution arises, but dissapears as we let $p\to\infty$ as we recover the bottleneck distance. Additionally, while no significant differences are observes, we do see slight rightwards shifts in each mode for both Wasserstein and the $L^1$ norm of the persistent landscape, indicating a potential shift among some of the observed datapoints.
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI011S0023_h_0.png}
+  \hfill \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI011S0023_h_1.png}
+  \hfill \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI011S0023_h_2.png}
+  \caption{Topological evolution of a subject with an unchanging CN diagnosis.}
+  \label{fig:patient_evolution_stable}
+\end{figure}
+
+\begin{figure}
+  \centering
+    \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI029S0878_h_0.png}
+    \hfill \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI029S0878_h_1.png}
+    \hfill \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI029S0878_h_2.png}
+    \caption{Topological evolution of a patient who transitions from MCI to AD in the course of the observation. For this particular case, the change in diagnosis occurred at $t=24$, i.e. 24 months after the baseline diagnosis, which also corresponds with the highest distance from that baseline.}
+    \label{fig:patient_evolution_mci_ad}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/temporal_evolution/wasserstein_H_0_dist_diag_change.png}
+    \caption{Wasserstein distance with $p=2$ in $H_0$}
+  \end{subfigure}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/temporal_evolution/wasserstein_H_1_dist_diag_change.png}
+    \caption{Wasserstein distance with $p=2$ in $H_1$}
+  \end{subfigure}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/temporal_evolution/wasserstein_H_2_dist_diag_change.png}
+    \caption{Wasserstein distance with $p=2$ in $H_2$}
+  \end{subfigure}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/temporal_evolution/bottleneck_H_0_dist_diag_change.png}
+    \caption{Bottleneck distance with $p=2$ in $H_0$}
+  \end{subfigure}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/temporal_evolution/bottleneck_H_1_dist_diag_change.png}
+    \caption{Bottleneck distance with $p=2$ in $H_1$}
+  \end{subfigure}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/temporal_evolution/bottleneck_H_2_dist_diag_change.png}
+    \caption{Bottleneck distance with $p=2$ in $H_2$}
+  \end{subfigure}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/temporal_evolution/landscape_H_0_dist_diag_change.png}
+    \caption{$L^{1}$ landscape distance with 1 layer in $H_0$}
+  \end{subfigure}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/temporal_evolution/landscape_H_1_dist_diag_change.png}
+    \caption{$L^{1}$ landscape distance with 1 layer in $H_1$}
+  \end{subfigure}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/temporal_evolution/landscape_H_2_dist_diag_change.png}
+    \caption{$L^{1}$ landscape distance with 1 layer in $H_2$}
+  \end{subfigure}
+  \caption{Kernel density estimation of the average average distance between each image timepoint for each patient. The orange curve represents all those patients who have had at least one change in diagnosis over the course of the disease, whereas patients who haven't are within the blue curve.}
+  \label{fig:kde_intra_patient}
+\end{figure}
+
+\subsection{Topological outliers and misclassified samples.}
+
+The distribution of distances with respect to the average persistent landscape was plotted for the patients who were correctly classified, and for those who were not correctly classified. The results are shown in Figure~\ref{fig:outlier_misclassified}. We also examined the proportion of patients who switched diagnosis in the whole ADNI dataset. We found that 70\% (64) of the misclassified patients had only one diagnosis versus 71\% (323) in the whole dataset.
+
+\begin{figure}
+  \centering
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/misclassification_distance/distribution_distance_misclassified_CN_H_0.png}
+    \caption{Distance from median CN PL inn $H_0$}
+  \end{subfigure}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/misclassification_distance/distribution_distance_misclassified_CN_H_1.png}
+    \caption{Distance from median CN PL inn $H_1$}
+  \end{subfigure}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/misclassification_distance/distribution_distance_misclassified_CN_H_2.png}
+    \caption{Distance from median CN PL inn $H_2$}
+  \end{subfigure}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/misclassification_distance/distribution_distance_misclassified_AD_H_0.png}
+    \caption{Distance from median AD PL inn $H_0$}
+  \end{subfigure}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/misclassification_distance/distribution_distance_misclassified_AD_H_1.png}
+    \caption{Distance from median AD PL inn $H_1$}
+  \end{subfigure}
+  \begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{figures/misclassification_distance/distribution_distance_misclassified_AD_H_2.png}
+    \caption{Distance from median AD PL inn $H_2$}
+  \end{subfigure}
+    \caption{Kernel density estimation of distribution of the distance between the AD and CN median persistence image for images which have and haven't been misclassified.}
+  \label{fig:outlier_misclassified}
+\end{figure}
 
 \section{Discussion}\label{sec:discussion}
+
+
 
 \clearpage
 \bibliographystyle{unsrtnat}

@@ -19,11 +19,12 @@ from gtda.diagrams import (
     BettiCurve,
     PersistenceLandscape,
 )
-
+from scipy.stats import kurtosis, skew
 import os
 import seaborn as sns
 import utils
 import textwrap
+import json
 from plotly.subplots import make_subplots
 from plotly.graph_objects import Figure, Scatter
 
@@ -33,10 +34,12 @@ N_JOBS = 1
 HOMOLOGY_DIMENSIONS = (0, 1, 2)
 SAMPLE_REP = False
 # DISTPLOT_PD_DISTANCES = False
-AVERAGE_PL = False
-PLOT_DISTANCE_FROM_AVERAGE_PL = False
-PATIENT_EVOLUTION = True
-DIVERGENCE_BETWEEN_PDS = False
+MEDIAN_PL = False
+# AVERAGE_PL_MULTI = False
+PLOT_DISTANCE_FROM_MEDIAN_PL = True
+PATIENT_EVOLUTION = False
+PATIENT_EVOLUTION_AVERAGE = True
+DIVERGENCE_BETWEEN_PDS = True
 SCALE = 5  # resolution of exported images
 VEC_SIZE = 100
 
@@ -276,7 +279,11 @@ def plot_deviation_from_avg_pl(path_to_distance_matrices, figures):
                     distances, columns=["H_0", "H_1", "H_2"]
                 ).melt()
                 sns.displot(
-                    data=distances, x="value", hue="variable", kde=True
+                    data=distances,
+                    x="value",
+                    hue="variable",
+                    kind="kde",
+                    fill=True,
                 )
                 patient_type = file.split("_")[0]
                 plt.title(
@@ -297,21 +304,64 @@ def plot_average_persistence_landscapes(image_dir, patient_types):
         ax.legend(["$H_0$", "$H_1$", "$H_2$"])
         plt.savefig(
             DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
-            + "/average_pls/"
-            + f"average_pl_{patient_types[i]}.png"
+            + "/median_pls/"
+            + f"median_pl_{patient_types[i]}.png"
         )
 
 
-def plot_distance_from_average_pl(distance_files, patient_types):
+# def plot_average_persistence_landscapes_multi_layer(pl_dir, patient_types):
+#     """
+#     This function computes the average persistence landscape of the diagnostic
+#     categories and plots them
+#     """
+#     for i, pl in enumerate(image_dir):
+#         pl = np.load(DOTENV_KEY2VAL["GEN_DATA_DIR"] + pl)
+#         ax = pd.DataFrame(pl).T.plot()
+#         for i in len(pl.shape[0]):
+#             ax.legend(["$H_0$", "$H_1$", "$H_2$"])
+#             plt.savefig(
+#                 DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+#                 + "/average_pls/"
+#                 + f"average_pl_{patient_types[i]}.pang"
+#             )
+
+
+def plot_distance_from_median_pl(distance_files, patient_types):
+    distance_stats_df = pd.DataFrame()
     for distances, patient_type in zip(distance_files, patient_types):
         distances = pd.read_csv(DOTENV_KEY2VAL["GEN_DATA_DIR"] + distances)
+        distances = distances.set_index("Unnamed: 0")
         for i in range(len(HOMOLOGY_DIMENSIONS)):
-            sns.displot(distances.iloc[:, i])
+            distance_data = distances.iloc[:, i]
+            print(f"-------- {patient_type} H_{i} --------")
+            distance_stats_dict = dict()
+            distance_stats_dict["Mean"] = np.mean(distance_data)
+            distance_stats_dict["Median"] = np.median(distance_data)
+            distance_stats_dict["Standard deviation"] = np.std(distance_data)
+            distance_stats_dict["Q3"] = np.quantile(distance_data, 0.75)
+            distance_stats_dict["Max"] = np.max(distance_data)
+            #            distance_stats_dict["kurtosis"] = kurtosis(distance_data)
+            distance_stats_dict["Skewness"] = skew(distance_data)
+            distance_stats_df_entry = pd.DataFrame.from_dict(
+                distance_stats_dict, orient="index"
+            )
+            distance_stats_df_entry.columns = [f"{patient_type} $H_{i}$"]
+            distance_stats_df = distance_stats_df.append(
+                distance_stats_df_entry.T
+            )
+            ax = sns.displot(distance_data)
+            ax.set(ylim=(0, 135))  # Finetuned to the data
+            ax.set(xlim=(0, 12))
             plt.savefig(
                 DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
-                + "/average_pls/"
-                + f"average_pl_{patient_type}_H_{i}.png"
+                + "/median_pls/"
+                + f"median_pl_{patient_type}_H_{i}.png"
             )
+    distance_stats_df.to_latex(
+        DOTENV_KEY2VAL["GEN_DATA_DIR"] + "output_distance_statistics.tex",
+        float_format="{:0.2f}".format,
+        escape=False,
+    )
 
 
 def plot_patient_evolution(generated_distance_data):
@@ -334,8 +384,7 @@ def plot_patient_evolution(generated_distance_data):
             # Search for the available labels
             patient_id = file.split("_")[3]
             timepoints_for_patient = []
-            for root, dirs, files in os.walk(DOTENV_KEY2VAL["DATA_DIR"] +
-                                             "/patch_91/"):
+            for root, dirs, files in os.walk(DOTENV_KEY2VAL["DATA_DIR"]):
                 for file in files:
                     if patient_id in file:
                         timepoints_for_patient.append(file.split("-")[2])
@@ -351,8 +400,8 @@ def plot_patient_evolution(generated_distance_data):
             )
             for j in HOMOLOGY_DIMENSIONS:
                 ax = sns.heatmap(X_distance[:, :, j], vmin=v_min, vmax=v_max)
-                ax.set_xticklabels(available_timepoints[i])
-                ax.set_yticklabels(available_timepoints[i])
+                # ax.set_xticklabels(available_timepoints[i])
+                # ax.set_yticklabels(available_timepoints[i])
                 plt.savefig(
                     DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
                     + "/temporal_evolution/"
@@ -360,6 +409,78 @@ def plot_patient_evolution(generated_distance_data):
                 )
                 plt.close("all")
 
+
+def plot_patient_evolution_average(generated_distance_data):
+    # Get whether or not a patient has "switched diagnosis"
+    with open(
+        DOTENV_KEY2VAL["DATA_DIR"] + "collected_diagnoses_complete.json"
+    ) as f:
+        diagnoses = json.load(f)
+    for patient in diagnoses.keys():
+        diagnoses[patient] = [str(x) for x in diagnoses[patient].values()]
+
+    for patient in diagnoses.keys():
+        diagnoses[patient] = len(
+            set([str(x) for x in diagnoses[patient] if x != "nan"])
+        )
+
+    distance_data = pd.DataFrame()
+    distances_to_evaluate = [
+        "bottleneck",
+        "wasserstein",
+        "betti",
+        "landscape",
+        "silhouette",
+        "heat",
+        "persistence_image",
+    ]
+    for distance in distances_to_evaluate:
+        for root, dirs, files in os.walk(generated_distance_data):
+            for patient_file in files:
+                if (
+                    "patient_evolution_distance_data_patient" in patient_file
+                    and distance in patient_file
+                ):
+                    data_patient = np.load(
+                        generated_distance_data + patient_file
+                    )
+                    patient_id = patient_file.split("_")[5:6][0]
+                    data_patient_processed = pd.DataFrame()
+                    data_patient_processed["index"] = [patient_id]
+                    data_patient_processed = data_patient_processed.set_index(
+                        "index"
+                    )
+                    if diagnoses[patient_id] >= 2:
+                        data_patient_processed["diagnosis_changed"] = True
+                    else:
+                        data_patient_processed["diagnosis_changed"] = False
+                    for i in HOMOLOGY_DIMENSIONS:
+                        data_patient_processed[f"H_{i}"] = np.nanmean(
+                            data_patient[:, :, i]
+                        )
+                    distance_data = distance_data.append(
+                        data_patient_processed
+                    )
+
+        for i in HOMOLOGY_DIMENSIONS:
+            # Loop through files and then decide
+            legend_name = "Diagnosis change"
+            ax = sns.displot(
+                distance_data,
+                x=f"H_{i}",
+                hue="diagnosis_changed",
+                # bins=50,
+                kind="kde",
+                fill=True,
+            )
+            ax._legend.set_title(legend_name)
+            # ax.set_title("Title")
+            plt.savefig(
+                DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+                + "/temporal_evolution/"
+                + f"{distance}_H_{i}_dist_diag_change.png"
+            )
+            plt.close("all")
 
 
 def main():
@@ -377,8 +498,8 @@ def main():
             ["CN", "MCI", "AD"],
         )
 
-    if AVERAGE_PL:
-        utils.make_dir(DOTENV_KEY2VAL["GEN_FIGURES_DIR"] + "/average_pls/")
+    if MEDIAN_PL:
+        utils.make_dir(DOTENV_KEY2VAL["GEN_FIGURES_DIR"] + "/median_pls/")
         plot_average_persistence_landscapes(
             [
                 "/distance_from_average/average_pl_CN.npy",
@@ -388,8 +509,21 @@ def main():
             ["CN", "MCI", "AD"],
         )
 
-    if PLOT_DISTANCE_FROM_AVERAGE_PL:
-        plot_distance_from_average_pl(
+    # if AVERAGE_PL_MULTI:
+    #     plot_average_persistence_landscapes_multi_layer(
+    #         [
+    #             DOTENV_KEY2VAL["DATA_DIR"]
+    #             + "/patch_91/sub-ADNI002S0295-M00-MNI.npy",
+    #             DOTENV_KEY2VAL["DATA_DIR"]
+    #             + "/patch_91/sub-ADNI128S0225-M48-MNI.npy",
+    #             DOTENV_KEY2VAL["DATA_DIR"]
+    #             + "/patch_91/sub-ADNI128S0227-M48-MNI.npy",
+    #         ],
+    #         ["CN", "MCI", "AD"],
+    #     )
+
+    if PLOT_DISTANCE_FROM_MEDIAN_PL:
+        plot_distance_from_median_pl(
             [
                 "/distance_from_average/distance_from_average_pl_CN.csv",
                 "/distance_from_average/distance_from_average_pl_MCI.csv",
@@ -405,6 +539,12 @@ def main():
 
     if PATIENT_EVOLUTION:
         plot_patient_evolution(
+            DOTENV_KEY2VAL["GEN_DATA_DIR"]
+            + "/temporal_evolution/per_patient_data/"
+        )
+
+    if PATIENT_EVOLUTION_AVERAGE:
+        plot_patient_evolution_average(
             DOTENV_KEY2VAL["GEN_DATA_DIR"] + "/temporal_evolution/"
         )
 

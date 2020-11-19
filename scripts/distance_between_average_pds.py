@@ -40,7 +40,7 @@ def compute_average_pl(patient_list, image_dir):
         images, None, plot_diagrams=False, betti_curves=False, scaled=False
     )
     pls = utils.persistence_landscape(pis)
-    return pls, np.mean(pls, axis=0), file_names
+    return pls, np.median(pls, axis=0), file_names
 
 
 def compute_pl_distance(
@@ -70,12 +70,13 @@ def compute_pl_distance(
     for col in diffs.columns:
         outliers[col] = list(
             file_names[
-                np.array(diffs.nlargest(378, columns=col).index)
+                np.array(diffs.nlargest(140, columns=col).index)
             ]
         )
     outliers.to_csv(dest_dir + f"outliers_{patient_category}.csv", index=False)
+    diffs.index = file_names
     diffs.to_csv(dest_dir + f"distance_from_average_pl_{patient_category}.csv",
-                 index=False)
+                 index=True)
 
 
 def compute_category(patient_list, patient_category, image_dir, dest_dir):

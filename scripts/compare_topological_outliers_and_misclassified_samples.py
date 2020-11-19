@@ -12,8 +12,6 @@ import dotenv
 import random
 import datetime
 import os
-
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import numpy as np
 import pandas as pd
 from itertools import islice
@@ -30,7 +28,7 @@ def main():
     list_of_df = []
     for root, dirs, files in os.walk(gen_data_dir, topdown=False):
         for file in files:
-            if "MCI" not in file:
+            if "MCI" not in file and "outliers" in file:
                 df = pd.read_csv(gen_data_dir + file)
                 df = df.values
                 list_of_df.append(list(df.reshape(df.shape[0] * 3, 1)))

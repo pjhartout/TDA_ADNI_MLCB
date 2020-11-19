@@ -1,0 +1,101 @@
+#+BIND: org-export-use-babel nil
+#+TITLE: Outliers and misclassified samples
+#+AUTHOR: Philip Hartout
+#+EMAIL: <philip.hartout@protonmail.com>
+#+DATE: November 16, 2020
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS:[a4paper,12pt,twoside]
+#+LaTeX_HEADER:\usepackage[usenames,dvipsnames,figures]{xcolor}
+#+LaTeX_HEADER:\usepackage[autostyle]{csquotes}
+#+LaTeX_HEADER:\usepackage[final]{pdfpages}
+#+LaTeX_HEADER:\usepackage[top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}
+#+LATEX_HEADER_EXTRA:\hypersetup{colorlinks=false, linkcolor=black, citecolor=black, filecolor=black, urlcolor=black}
+#+LATEX_HEADER_EXTRA:\newtheorem{definition}{Definition}[section]
+#+LATEX_HEADER_EXTRA:\pagestyle{fancy}
+#+LATEX_HEADER_EXTRA:\setlength{\headheight}{25pt}
+#+LATEX_HEADER_EXTRA:\lhead{\textbf{Philip Hartout}}
+#+LATEX_HEADER_EXTRA:\rhead{\textbf{}}
+#+LATEX_HEADER_EXTRA:\rfoot{}
+#+MACRO: NEWLINE @@latex:\\@@ @@html:<br>@@
+#+PROPERTY: header-args :exports both :session python_emacs_session :cache :results value
+#+OPTIONS: ^:nil
+#+TODO: TODO IN-PROGRESS WAITING | DONE CANCELED
+#+STARTUP: latexpreview
+#+LATEX_COMPILER: pdflatexorg-mode restarted
+
+The goal here is to identify causes for misclassification
+
+#+BEGIN_SRC python :session python_emacs_session
+import dotenv
+import random
+import datetime
+import os
+import numpy as np
+import pandas as pd
+from itertools import islice
+import pydot
+import shutil
+import json
+from itertools import chain
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+DOTENV_KEY2VAL = dotenv.dotenv_values()
+#+END_SRC
+
+Let's load the files
+
+#+BEGIN_SRC python :session python_emacs_session
+df = pd.read_csv(DOTENV_KEY2VAL["GEN_DATA_DIR"] + "misclassification.csv", usecols=[1])
+#+END_SRC
+
+#+BEGIN_SRC python :session python_emacs_session
+list_of_patients = df["0"].to_list()
+list_of_patients = [i.split("-")[1:2][0] for i in list_of_patients]
+list_of_patients = set(list_of_patients)
+print(len(list_of_patients))
+#+END_SRC
+
+#+BEGIN_SRC python :session python_emacs_session
+with open(DOTENV_KEY2VAL["DATA_DIR"] + "collected_diagnoses_complete.json") as f:
+      diagnoses = json.load(f)
+
+for patient in diagnoses.keys():
+      diagnoses[patient] = [str(x) for x in diagnoses[patient].values()]
+
+for patient in diagnoses.keys():
+      diagnoses[patient] = [str(x) for x in diagnoses[patient] if x != "nan"]
+#+END_SRC
+
+#+BEGIN_SRC python :session python_emacs_session
+list_of_diag_lengths = []
+for i in list(list_of_patients):
+      list_of_diag_lengths.append(len(set(diagnoses["sub-" + i])))
+#+END_SRC
+
+This plots the distribution of patients who are misclassified
+#+BEGIN_SRC python :session python_emacs_session
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.distplot(list_of_diag_lengths)
+plt.show()
+#+END_SRC
+
+The plot of the overall distribution is the following
+#+BEGIN_SRC python :session python_emacs_session
+all_diags = []
+for diagnosis in list(diagnoses.keys()):
+      all_diags.append(len(list(set(diagnoses[diagnosis]))))
+#+END_SRC
+
+#+BEGIN_SRC python :session python_emacs_session
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.distplot(all_diags)
+plt.show()
+#+END_SRC
+
+#+BEGIN_SRC python :session python_emacs_session
+pd.DataFrame(list_of_diag_lengths).value_counts()/len(list_of_diag_lengths)
+pd.DataFrame(all_diags).value_counts()/len(all_diags)
+#+END_SRC

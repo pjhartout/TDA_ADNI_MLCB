@@ -1,0 +1,75 @@
+#+BIND: org-export-use-babel nil
+#+TITLE: Multilayer PL
+#+AUTHOR: Philip Hartout
+#+EMAIL: <philip.hartout@protonmail.com>
+#+DATE: November 18, 2020
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS:[a4paper,12pt,twoside]
+#+LaTeX_HEADER:\usepackage[usenames,dvipsnames,figures]{xcolor}
+#+LaTeX_HEADER:\usepackage[autostyle]{csquotes}
+#+LaTeX_HEADER:\usepackage[final]{pdfpages}
+#+LaTeX_HEADER:\usepackage[top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}
+#+LATEX_HEADER_EXTRA:\hypersetup{colorlinks=false, linkcolor=black, citecolor=black, filecolor=black, urlcolor=black}
+#+LATEX_HEADER_EXTRA:\newtheorem{definition}{Definition}[section]
+#+LATEX_HEADER_EXTRA:\pagestyle{fancy}
+#+LATEX_HEADER_EXTRA:\setlength{\headheight}{25pt}
+#+LATEX_HEADER_EXTRA:\lhead{\textbf{Philip Hartout}}
+#+LATEX_HEADER_EXTRA:\rhead{\textbf{}}
+#+LATEX_HEADER_EXTRA:\rfoot{}
+#+MACRO: NEWLINE @@latex:\\@@ @@html:<br>@@
+#+PROPERTY: header-args :exports both :session python_emacs_session :cache :results value
+#+OPTIONS: ^:nil
+#+TODO: TODO IN-PROGRESS WAITING | DONE CANCELED
+#+STARTUP: latexpreview
+#+LATEX_COMPILER: pdflatexorg-mode restarted
+
+This code is to compute a multilayer pl
+
+#+BEGIN_SRC python :session python_emacs_session
+
+import matplotlib.pyplot as plt
+from textwrap import wrap
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+import plotly.graph_objects as go
+import plotly.figure_factory as ff
+
+import gtda
+from gtda.images import ErosionFiltration
+from gtda.homology import VietorisRipsPersistence
+from gtda.diagrams import (
+    PersistenceLandscape,
+    PersistenceImage,
+)
+from gtda.homology import CubicalPersistence
+from gtda.diagrams import (
+    Scaler,
+    BettiCurve,
+    PairwiseDistance,
+)
+
+import json
+import dotenv
+import os
+
+#+END_SRC
+
+#+BEGIN_SRC python :session python_emacs_session
+data = np.load("../data/patch_91/sub-ADNI002S0295-M00-MNI.npy")
+data = data.reshape(1, 30, 36, 30)
+homology_dimensions = (0, 1, 2)
+cp = CubicalPersistence(
+homology_dimensions=homology_dimensions,
+coeff=2,
+periodic_dimensions=None,
+infinity_values=None,
+reduced_homology=True,
+n_jobs=-1,
+)
+pd = cp.fit_transform(data)
+pl = PersistenceLandscape(n_layers=5, n_bins=800, n_jobs=-1)
+persistence_landscape = pl.fit_transform_plot(pd)
+#+END_SRC

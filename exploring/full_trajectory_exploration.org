@@ -1,0 +1,34 @@
+#+BIND: org-export-use-babel nil
+#+TITLE: Full trajectory information
+#+AUTHOR: Philip Hartout
+#+EMAIL: <philip.hartout@protonmail.com>
+#+DATE: November 19, 2020
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS:[a4paper,12pt,twoside]
+#+LaTeX_HEADER:\usepackage[usenames,dvipsnames,figures]{xcolor}
+#+LaTeX_HEADER:\usepackage[autostyle]{csquotes}
+#+LaTeX_HEADER:\usepackage[final]{pdfpages}
+#+LaTeX_HEADER:\usepackage[top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}
+#+LATEX_HEADER_EXTRA:\hypersetup{colorlinks=false, linkcolor=black, citecolor=black, filecolor=black, urlcolor=black}
+#+LATEX_HEADER_EXTRA:\newtheorem{definition}{Definition}[section]
+#+LATEX_HEADER_EXTRA:\pagestyle{fancy}
+#+LATEX_HEADER_EXTRA:\setlength{\headheight}{25pt}
+#+LATEX_HEADER_EXTRA:\lhead{\textbf{Philip Hartout}}
+#+LATEX_HEADER_EXTRA:\rhead{\textbf{}}
+#+LATEX_HEADER_EXTRA:\rfoot{}
+#+MACRO: NEWLINE @@latex:\\@@ @@html:<br>@@
+#+PROPERTY: header-args :exports both :session python_emacs_session :cache :results value
+#+OPTIONS: ^:nil
+#+TODO: TODO IN-PROGRESS WAITING | DONE CANCELED
+#+STARTUP: latexpreview
+#+LATEX_COMPILER: pdflatexorg-mode restarted
+
+
+
+
+#+BEGIN_SRC python :session python_emacs_session
+
+import numpy as np
+
+array = np.load(""sub-ADNI005S0223")
+#+END_SRC

@@ -311,145 +311,145 @@ def main():
     inits = 3
     partitions, labels = get_partitions(partitions_location)
     histories = []
-    for partition, label in zip(partitions, labels):
-        for i in range(inits):
-            # Make sure there aren't the same patients in train and test
-            X_train_lst = []
-            y_train_lst = []
-            for image in partition["train"]:
-                X_train_lst.append(
-                    np.load(persistence_image_location + image + ".npy")
-                )
-                y_train_lst.append(label[image])
+    # for partition, label in zip(partitions, labels):
+    #     for i in range(inits):
+    # Make sure there aren't the same patients in train and test
+    X_train_lst = []
+    y_train_lst = []
+    for image in partitions[0]["train"]:
+        X_train_lst.append(
+            np.load(persistence_image_location + image + ".npy")
+        )
+        y_train_lst.append(labels[0][image])
 
-                X_train, y_train = (
-                    np.stack(X_train_lst, axis=0).reshape(
-                        len(X_train_lst), N_BINS, N_BINS, 3
-                    ),
-                    np.vstack(y_train_lst),
-                )
-            X_val_lst = []
-            y_val_lst = []
-            for image in partition["validation"]:
-                X_val_lst.append(
-                    np.load(persistence_image_location + image + ".npy")
-                )
-                y_val_lst.append(label[image])
+        X_train, y_train = (
+            np.stack(X_train_lst, axis=0).reshape(
+                len(X_train_lst), N_BINS, N_BINS, 3
+            ),
+            np.vstack(y_train_lst),
+        )
+    X_val_lst = []
+    y_val_lst = []
+    for image in partitions[0]["validation"]:
+        X_val_lst.append(
+            np.load(persistence_image_location + image + ".npy")
+        )
+        y_val_lst.append(labels[0][image])
 
-                X_val, y_val = (
-                    np.stack(X_val_lst, axis=0).reshape(
-                        len(X_val_lst), N_BINS, N_BINS, 3
-                    ),
-                    np.vstack(y_val_lst),
-                )
+        X_val, y_val = (
+            np.stack(X_val_lst, axis=0).reshape(
+                len(X_val_lst), N_BINS, N_BINS, 3
+            ),
+            np.vstack(y_val_lst),
+        )
 
-            # group_kfold = GroupKFold(n_splits=2)
+    # group_kfold = GroupKFold(n_splits=2)
 
-            # groups = list(map(lambda x: str(x.split("-")[1:2][0]), image_labels.keys()))
-            # mapping = {}
-            # for i, patient in enumerate(set(groups)):
-            #     mapping[patient] = i
-            # groups = [mapping[patient] for patient in groups]
+    # groups = list(map(lambda x: str(x.split("-")[1:2][0]), image_labels.keys()))
+    # mapping = {}
+    # for i, patient in enumerate(set(groups)):
+    #     mapping[patient] = i
+    # groups = [mapping[patient] for patient in groups]
 
-            # for train_index, test_index in group_kfold.split(
-            #     X, y, groups
-            # ):
-            #     X_train, X_test = X[train_index,:,:,:], X[test_index,:,:,:]
-            #     y_train, y_test = y[train_index], y[test_index]
+    # for train_index, test_index in group_kfold.split(
+    #     X, y, groups
+    # ):
+    #     X_train, X_test = X[train_index,:,:,:], X[test_index,:,:,:]
+    #     y_train, y_test = y[train_index], y[test_index]
 
-            # X_train, X_test, y_train, y_test = train_test_split(
-            #     ,
-            #     ,
-            #     test_size=100,
-            #     random_state=42,
-            # )
-            # list(training_generator.take(2).as_numpy_iterator())
+    # X_train, X_test, y_train, y_test = train_test_split(
+    #     ,
+    #     ,
+    #     test_size=100,
+    #     random_state=42,
+    # )
+    # list(training_generator.take(2).as_numpy_iterator())
 
-            # validation_generator = DataGenerator(
-            #     partition["validation"], image_labels, **params
-            # )
+    # validation_generator = DataGenerator(
+    #     partition["validation"], image_labels, **params
+    # )
 
-            # next(train_data_generator)
-            ############################################################################
-            #  Model definition
-            ############################################################################
+    # next(train_data_generator)
+    ############################################################################
+    #  Model definition
+    ############################################################################
 
-            model = make_model(input_shape=(N_BINS, N_BINS, 3))
-            tf.keras.utils.plot_model(
-                model,
-                to_file="model.png",
-                show_shapes=True,
-                show_layer_names=True,
-                rankdir="TB",
-                expand_nested=True,
-                dpi=96,
-            )
+    model = make_model(input_shape=(N_BINS, N_BINS, 3))
+    tf.keras.utils.plot_model(
+        model,
+        to_file="model.png",
+        show_shapes=True,
+        show_layer_names=True,
+        rankdir="TB",
+        expand_nested=True,
+        dpi=96,
+    )
 
-            ############################################################################
-            #  Model training
-            ############################################################################
+    ############################################################################
+    #  Model training
+    ############################################################################
 
-            epochs = 100
+    epochs = 100
 
-            tensorboard_logs = "logs/fit"
-            if os.path.exists(tensorboard_logs):
-                shutil.rmtree(tensorboard_logs)
+    tensorboard_logs = "logs/fit"
+    if os.path.exists(tensorboard_logs):
+        shutil.rmtree(tensorboard_logs)
 
-            log_dir = "logs/fit/" + datetime.datetime.now().strftime(
-                "%Y%m%d-%H%M%S"
-            )
-            callbacks = [
-                # keras.callbacks.ModelCheckpoint("save_at_{epoch}.h5"),
-                tf.keras.callbacks.TensorBoard(
-                    log_dir=log_dir, histogram_freq=1
-                ),
-                tf.keras.callbacks.EarlyStopping(
-                    monitor="val_loss",
-                    min_delta=0.00001,
-                    patience=10,
-                    verbose=0,
-                    mode="auto",
-                    baseline=None,
-                    restore_best_weights=True,
-                ),
-            ]
-            lr = keras.optimizers.schedules.ExponentialDecay(
-                0.01, decay_steps=30, decay_rate=0.6, staircase=True
-            )
-            model.compile(
-                optimizer=keras.optimizers.Adam(
-                    learning_rate=lr,
-                    beta_1=0.9,
-                    beta_2=0.999,
-                    epsilon=1e-07,
-                    amsgrad=False,
-                ),
-                loss="binary_crossentropy",
-                metrics=[
-                    keras.metrics.BinaryAccuracy(name="accuracy"),
-                    # keras.metrics.TruePositives(name="tp"),
-                    # keras.metrics.FalsePositives(name="fp"),
-                    # keras.metrics.TrueNegatives(name="tn"),
-                    # keras.metrics.FalseNegatives(name="fn"),
-                    keras.metrics.Precision(name="precision"),
-                    keras.metrics.Recall(name="recall"),
-                    keras.metrics.AUC(name="auc"),
-                ],
-                # run_eagerly=True,
-            )
-            history = model.fit(
-                X_train,
-                y_train,
-                epochs=epochs,
-                callbacks=callbacks,
-                batch_size=16,
-                validation_data=(X_val, y_val),
-            )
-            histories.append(history)
-            ############################################################################
-            #  Model evaluation
-            ############################################################################
-            # Mosly already included into the training procedure.
+    log_dir = "logs/fit/" + datetime.datetime.now().strftime(
+        "%Y%m%d-%H%M%S"
+    )
+    callbacks = [
+        # keras.callbacks.ModelCheckpoint("save_at_{epoch}.h5"),
+        tf.keras.callbacks.TensorBoard(
+            log_dir=log_dir, histogram_freq=1
+        ),
+        tf.keras.callbacks.EarlyStopping(
+            monitor="val_loss",
+            min_delta=0.00001,
+            patience=10,
+            verbose=0,
+            mode="auto",
+            baseline=None,
+            restore_best_weights=True,
+        ),
+    ]
+    lr = keras.optimizers.schedules.ExponentialDecay(
+        0.01, decay_steps=30, decay_rate=0.6, staircase=True
+    )
+    model.compile(
+        optimizer=keras.optimizers.Adam(
+            learning_rate=lr,
+            beta_1=0.9,
+            beta_2=0.999,
+            epsilon=1e-07,
+            amsgrad=False,
+        ),
+        loss="binary_crossentropy",
+        metrics=[
+            keras.metrics.BinaryAccuracy(name="accuracy"),
+            # keras.metrics.TruePositives(name="tp"),
+            # keras.metrics.FalsePositives(name="fp"),
+            # keras.metrics.TrueNegatives(name="tn"),
+            # keras.metrics.FalseNegatives(name="fn"),
+            keras.metrics.Precision(name="precision"),
+            keras.metrics.Recall(name="recall"),
+            keras.metrics.AUC(name="auc"),
+        ],
+        # run_eagerly=True,
+    )
+    history = model.fit(
+        X_train,
+        y_train,
+        epochs=epochs,
+        callbacks=callbacks,
+        batch_size=16,
+        validation_data=(X_val, y_val),
+    )
+    histories.append(history)
+    ############################################################################
+    #  Model evaluation
+    ############################################################################
+    # Mosly already included into the training procedure.
     # Stepping back out of the partitions loop
     last_acc = []
     last_val_acc = []

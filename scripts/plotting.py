@@ -27,7 +27,7 @@ import textwrap
 import json
 from plotly.subplots import make_subplots
 from plotly.graph_objects import Figure, Scatter
-
+from scipy.stats import mannwhitneyu
 
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 N_JOBS = 1
@@ -36,7 +36,7 @@ SAMPLE_REP = False
 # DISTPLOT_PD_DISTANCES = False
 MEDIAN_PL = False
 # AVERAGE_PL_MULTI = False
-PLOT_DISTANCE_FROM_MEDIAN_PL = True
+PLOT_DISTANCE_FROM_MEDIAN_PL = False
 PATIENT_EVOLUTION = False
 PATIENT_EVOLUTION_AVERAGE = True
 DIVERGENCE_BETWEEN_PDS = True
@@ -481,7 +481,14 @@ def plot_patient_evolution_average(generated_distance_data):
                 + f"{distance}_H_{i}_dist_diag_change.png"
             )
             plt.close("all")
-
+            # Mann-Whitney U test
+            x = distance_data[f"H_{i}"].loc[distance_data[
+                                                "diagnosis_changed"] == True]
+            y = distance_data[f"H_{i}"].loc[distance_data[
+                                                "diagnosis_changed"] == False]
+            if distance in ["wasserstein", "bottleneck", "landscape"]:
+                print(f"For {distance} in H_{i}, the Mann-Whitney U yields"
+                      f" {mannwhitneyu(x,y).pvalue}")
 
 def main():
     # First, we want to generate a typical representation of the data for each

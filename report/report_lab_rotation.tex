@@ -460,7 +460,7 @@ The distribution of distances with respect to the average persistent landscape w
 
 \section{Discussion}\label{sec:discussion}
 
-Here, we discuss our findings and their significance. First, we discuss how the qualitative differences in persistence images seen across patients translates to overall competitive classification performance results; we then move onto discuss our findings regarding the distributions of distances across the dataset and within patients. Finally, we outline some limitations and further research avenues to be explored in the future.
+Here, we discuss our findings and their significance. First, we discuss how the qualitative differences in persistence images seen across patients translates to overall competitive classification performance results; we then move onto discuss our findings regarding the distributions of distances among diagnostic categories and within patients. Finally, we outline some limitations and further research avenues to be explored in the future.
 
 \subsection{Persistence images \& classification}
 
@@ -484,9 +484,13 @@ More specifically, some coarseness was deliberately introduced by extracting onl
 
 Finally, our classification task does not cover the full spectrum of all of the possible diagnoses a patient coming to a memory clinic might present. Importantly, our model was not trained to classify patients who have a case of MCI, which is neither AD nor CN, but in between. It is possible that the discriminatory power of the features used in this report might not enable the full fledged classification task required in the clinic. Further studies need to also assess the saliency of the PI obtained from the temporal patch in question for a better assessment of the clinical usefulness of persistent homology in classifying the various categories of patients.
 
+Despite these limitations, it is important to point out that the approach outlined here was specifically aimed at analysing  MRI images obtained from patients with Alzheimer's disease, it could also be applied to any other neurodegenerative disorder. Other prevalent neurodegenerative disorders include Parkinson's disease, dementia with Lewy bodies, and genetically inherited diseases like Huntington's disease, which all have distinct atrophy patterns and, hence, topological signatures. Adaptations would be required, such as adapting the choice of patch of interest -- as an example, it might be more relevant to look at the basal ganglia for Huntington's disease.
+
+Additionally, we note that a clustering using topological descriptors could be used to more finely delineate subtypes of AD and various stages of progression. For instance, using deep clustering techniques and embeddings using persistence images as inputs could yield useful insights into the various stages of progression and subtypes of dementia. These more sensitive methods could then, once fine-tuned, hopefully also track preclinical stages of AD, when atrophy is present but does not results in cognitive decline due to the presence of a cognitive reserve \citep{scarmeas2004cognitive, van2017neuroimaging}. The identification of patient populations at risk of developing the disease could then form the target of any potential preventive treatment.
+
 \section{Conclusion}
 
-In this report we have shown that PIs computed from a patch in the temporal lobe are salient for classifying CN and AD subjects. Additionally, we show that the distribution of distances among the patients in each of the diagnostic category is skewed, indicating the presence of topological outliers, but, overall, does not affect the classification performance. Finally, we show a significant, but not substantial, increase in distance among images belonging to a given patient who deteriorates towards Alzheimer's disease versus patients who do not.
+In this report we have shown that PIs computed from a patch in the temporal lobe are salient for classifying CN and AD subjects. Additionally, we show that the distribution of distances among the patients in each of the diagnostic category is skewed, indicating the presence of topological outliers, but, overall, does not affect the classification performance. Finally, we show a significant, but not substantial, increase in distance among images belonging to a given patient who deteriorates towards Alzheimer's disease versus patients who do not. Although promising, all of these topology-driven approaches need further development to maximize the information that can be extracted from MRI images.
 
 \clearpage
 \bibliographystyle{unsrtnat}

@@ -293,7 +293,7 @@ def plot_deviation_from_avg_pl(path_to_distance_matrices, figures):
                 plt.savefig(figures + "distribution_distance_from_avg_{}.png")
 
 
-def plot_average_persistence_landscapes(image_dir, patient_types):
+def plot_median_persistence_landscapes(image_dir, patient_types):
     """
     This function computes the average persistence landscape of the diagnostic
     categories and plots them
@@ -307,23 +307,6 @@ def plot_average_persistence_landscapes(image_dir, patient_types):
             + "/median_pls/"
             + f"median_pl_{patient_types[i]}.png"
         )
-
-
-# def plot_average_persistence_landscapes_multi_layer(pl_dir, patient_types):
-#     """
-#     This function computes the average persistence landscape of the diagnostic
-#     categories and plots them
-#     """
-#     for i, pl in enumerate(image_dir):
-#         pl = np.load(DOTENV_KEY2VAL["GEN_DATA_DIR"] + pl)
-#         ax = pd.DataFrame(pl).T.plot()
-#         for i in len(pl.shape[0]):
-#             ax.legend(["$H_0$", "$H_1$", "$H_2$"])
-#             plt.savefig(
-#                 DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
-#                 + "/average_pls/"
-#                 + f"average_pl_{patient_types[i]}.pang"
-#             )
 
 
 def plot_distance_from_median_pl(distance_files, patient_types):
@@ -507,7 +490,7 @@ def main():
 
     if MEDIAN_PL:
         utils.make_dir(DOTENV_KEY2VAL["GEN_FIGURES_DIR"] + "/median_pls/")
-        plot_average_persistence_landscapes(
+        plot_median_persistence_landscapes(
             [
                 "/distance_from_average/average_pl_CN.npy",
                 "/distance_from_average/average_pl_MCI.npy",
@@ -515,19 +498,6 @@ def main():
             ],
             ["CN", "MCI", "AD"],
         )
-
-    # if AVERAGE_PL_MULTI:
-    #     plot_average_persistence_landscapes_multi_layer(
-    #         [
-    #             DOTENV_KEY2VAL["DATA_DIR"]
-    #             + "/patch_91/sub-ADNI002S0295-M00-MNI.npy",
-    #             DOTENV_KEY2VAL["DATA_DIR"]
-    #             + "/patch_91/sub-ADNI128S0225-M48-MNI.npy",
-    #             DOTENV_KEY2VAL["DATA_DIR"]
-    #             + "/patch_91/sub-ADNI128S0227-M48-MNI.npy",
-    #         ],
-    #         ["CN", "MCI", "AD"],
-    #     )
 
     if PLOT_DISTANCE_FROM_MEDIAN_PL:
         plot_distance_from_median_pl(
@@ -538,11 +508,6 @@ def main():
             ],
             ["CN", "MCI", "AD"],
         )
-
-    # if DISTPLOT_PD_DISTANCES:
-    #     generate_displot_of_pd_distances(
-    #         "../generated_data/data_patients_within_group.csv"
-    #     )
 
     if PATIENT_EVOLUTION:
         plot_patient_evolution(

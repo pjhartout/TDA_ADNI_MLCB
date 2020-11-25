@@ -32,14 +32,14 @@ from scipy.stats import mannwhitneyu
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 N_JOBS = 1
 HOMOLOGY_DIMENSIONS = (0, 1, 2)
-SAMPLE_REP = False
+SAMPLE_REP = True
 # DISTPLOT_PD_DISTANCES = False
 MEDIAN_PL = False
 # AVERAGE_PL_MULTI = False
 PLOT_DISTANCE_FROM_MEDIAN_PL = False
 PATIENT_EVOLUTION = False
-PATIENT_EVOLUTION_AVERAGE = True
-DIVERGENCE_BETWEEN_PDS = True
+PATIENT_EVOLUTION_AVERAGE = False
+DIVERGENCE_BETWEEN_PDS = False
 SCALE = 5  # resolution of exported images
 VEC_SIZE = 100
 
@@ -89,10 +89,10 @@ def generate_sample_representations(paths_to_patches, labels):
                 rep = BettiCurve()
             elif rep == "Persistence image":
                 rep = PersistenceImage(
-                    sigma=0.01, n_bins=VEC_SIZE, n_jobs=N_JOBS
+                    sigma=0.001, n_bins=VEC_SIZE, n_jobs=N_JOBS
                 )
             elif rep == "Heat kernel":
-                rep = HeatKernel(sigma=0.1, n_bins=VEC_SIZE, n_jobs=N_JOBS)
+                rep = HeatKernel(sigma=0.001, n_bins=VEC_SIZE, n_jobs=N_JOBS)
             elif rep == "Silhouette":
                 rep = Silhouette(power=1.0, n_bins=VEC_SIZE, n_jobs=N_JOBS)
 
@@ -100,7 +100,7 @@ def generate_sample_representations(paths_to_patches, labels):
                 diagrams_cubical_persistence
             )
 
-            if representation_names[j] in ["Persistence image"]:
+            if representation_names[j] in ["Persistence image", "Heat kernel"]:
                 for image in range(vectorial_representation.shape[1]):
                     plt.imshow(
                         vectorial_representation[0:, image, :, :].reshape(

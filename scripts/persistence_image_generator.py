@@ -128,7 +128,7 @@ def cubical_persistence(patch):
 
 def get_persistence_images(persistence_diagram):
     pi = PersistenceImage(
-        sigma=0.01, n_bins=N_BINS, weight_function=None, n_jobs=N_JOBS
+        sigma=0.001, n_bins=N_BINS, weight_function=None, n_jobs=N_JOBS
     )
     print("Computed persistence images")
     return pi.fit_transform(persistence_diagram)

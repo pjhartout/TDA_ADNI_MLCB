@@ -113,9 +113,9 @@ def make_model(input_shape):
     merged = layers.concatenate([tower_1, tower_2, tower_3], axis=1)
     merged = layers.Flatten()(merged)
     x = layers.Dense(500, activation="relu")(merged)
-    x = layers.Dropout(0.5)(x)
+    x = layers.Dropout(0.6)(x)
     x = layers.Dense(500, activation="relu")(merged)
-    x = layers.Dropout(0.5)(x)
+    x = layers.Dropout(0.6)(x)
     outputs = layers.Dense(1, activation="sigmoid")(x)
     return keras.Model(inputs, outputs)
 

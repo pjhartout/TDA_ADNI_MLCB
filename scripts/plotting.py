@@ -34,14 +34,15 @@ N_JOBS = 1
 HOMOLOGY_DIMENSIONS = (0, 1, 2)
 SAMPLE_REP = True
 # DISTPLOT_PD_DISTANCES = False
-MEDIAN_PL = False
+MEDIAN_PL = True
 # AVERAGE_PL_MULTI = False
-PLOT_DISTANCE_FROM_MEDIAN_PL = False
-PATIENT_EVOLUTION = False
-PATIENT_EVOLUTION_AVERAGE = False
-DIVERGENCE_BETWEEN_PDS = False
+PLOT_DISTANCE_FROM_MEDIAN_PL = True
+PATIENT_EVOLUTION = True
+PATIENT_EVOLUTION_AVERAGE = True
+DIVERGENCE_BETWEEN_PDS = True
 SCALE = 5  # resolution of exported images
 VEC_SIZE = 100
+N_LAYERS = 50
 
 
 def generate_sample_representations(paths_to_patches, labels):
@@ -66,10 +67,11 @@ def generate_sample_representations(paths_to_patches, labels):
         diagrams_cubical_persistence = cp.fit_transform(
             patch.reshape(1, 30, 36, 30)
         )
-        cp.plot(diagrams_cubical_persistence).write_image(
-            sample_rep_dir + f"persistence_diagram_{labels[i]}.png",
-            scale=SCALE,
-        )
+        for h_dim in HOMOLOGY_DIMENSIONS:
+            cp.plot(diagrams_cubical_persistence, homology_dimensions=[h_dim]).write_image(
+                sample_rep_dir + f"persistence_diagram_{labels[i]}_H_{h_dim}.png",
+                scale=SCALE,
+            )
 
         representation_names = [
             "Persistence landscape",
@@ -83,7 +85,7 @@ def generate_sample_representations(paths_to_patches, labels):
             # Have not found a better way of doing this yet.
             if rep == "Persistence landscape":
                 rep = PersistenceLandscape(
-                    n_layers=1, n_bins=VEC_SIZE, n_jobs=N_JOBS
+                    n_layers=N_LAYERS, n_bins=VEC_SIZE, n_jobs=N_JOBS
                 )
             elif rep == "Betti curve":
                 rep = BettiCurve()
@@ -105,7 +107,8 @@ def generate_sample_representations(paths_to_patches, labels):
                     plt.imshow(
                         vectorial_representation[0:, image, :, :].reshape(
                             VEC_SIZE, VEC_SIZE
-                        )
+                        ),
+                        cmap="Blues",
                     )
                     # plt.title(
                     #     f"{representation_names[j]} representation of a "
@@ -114,7 +117,8 @@ def generate_sample_representations(paths_to_patches, labels):
                     plt.savefig(
                         sample_rep_dir
                         + f"{representation_names[j].replace(' ', '_')}"
-                        f"_{labels[i]}_h_{image}.png"
+                        f"_{labels[i]}_h_{image}.png",
+                        bbox_inches="tight",
                     )
             else:
                 rep.plot(vectorial_representation).update_layout(
@@ -167,7 +171,8 @@ def generate_displot_of_pd_distances(path_to_pd_pairwise_distances):
             )
             plt.savefig(
                 f"../figures/pd_distances/ecdf_{distance}_h"
-                f"_{homology_dimension}.png"
+                f"_{homology_dimension}.png",
+                bbox_inches="tight",
             )
 
             fig = sns.displot(
@@ -186,7 +191,8 @@ def generate_displot_of_pd_distances(path_to_pd_pairwise_distances):
             )
             plt.savefig(
                 f"../figures/pd_distances/kde_{distance}_h"
-                f"_{homology_dimension}.png"
+                f"_{homology_dimension}.png",
+                bbox_inches="tight",
             )
 
             fig = sns.displot(
@@ -208,7 +214,8 @@ def generate_displot_of_pd_distances(path_to_pd_pairwise_distances):
             )
             plt.savefig(
                 f"../figures/pd_distances/stacked_{distance}_h"
-                f"_{homology_dimension}.png"
+                f"_{homology_dimension}.png",
+                bbox_inches="tight",
             )
             plt.close("all")
 
@@ -259,7 +266,8 @@ def plot_evolution_time_series(path_to_distance_matrices):
                 + "/temporal_evolution/"
                 + metric
                 + str(h_dim)
-                + ".png"
+                + ".png",
+                bbox_inches="tight",
             )
             plt.close("all")
 
@@ -290,7 +298,10 @@ def plot_deviation_from_avg_pl(path_to_distance_matrices, figures):
                     f"distance from the average persistence landscape"
                     f"representation for {patient_type}."
                 )
-                plt.savefig(figures + "distribution_distance_from_avg_{}.png")
+                plt.savefig(
+                    figures + "distribution_distance_from_avg_{}.png",
+                    bbox_inches="tight",
+                )
 
 
 def plot_median_persistence_landscapes(image_dir, patient_types):
@@ -305,7 +316,8 @@ def plot_median_persistence_landscapes(image_dir, patient_types):
         plt.savefig(
             DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
             + "/median_pls/"
-            + f"median_pl_{patient_types[i]}.png"
+            + f"median_pl_{patient_types[i]}.png",
+            bbox_inches="tight",
         )
 
 
@@ -338,7 +350,8 @@ def plot_distance_from_median_pl(distance_files, patient_types):
             plt.savefig(
                 DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
                 + "/median_pls/"
-                + f"median_pl_{patient_type}_H_{i}.png"
+                + f"median_pl_{patient_type}_H_{i}.png",
+                bbox_inches="tight",
             )
     distance_stats_df.to_latex(
         DOTENV_KEY2VAL["GEN_DATA_DIR"] + "output_distance_statistics.tex",
@@ -382,13 +395,16 @@ def plot_patient_evolution(generated_distance_data):
                 generated_distance_data + file, allow_pickle=True
             )
             for j in HOMOLOGY_DIMENSIONS:
-                ax = sns.heatmap(X_distance[:, :, j], vmin=v_min, vmax=v_max)
+                ax = sns.heatmap(
+                    X_distance[:, :, j], vmin=v_min, vmax=v_max, cmap="YlOrBr"
+                )
                 # ax.set_xticklabels(available_timepoints[i])
                 # ax.set_yticklabels(available_timepoints[i])
                 plt.savefig(
                     DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
                     + "/temporal_evolution/"
-                    + f"landscape_distance_for_{file.split('_')[3]}_h_{j}.png"
+                    + f"landscape_distance_for_{file.split('_')[3]}_h_{j}.png",
+                    bbox_inches="tight",
                 )
                 plt.close("all")
 
@@ -461,17 +477,23 @@ def plot_patient_evolution_average(generated_distance_data):
             plt.savefig(
                 DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
                 + "/temporal_evolution/"
-                + f"{distance}_H_{i}_dist_diag_change.png"
+                + f"{distance}_H_{i}_dist_diag_change.png",
+                bbox_inches="tight",
             )
             plt.close("all")
             # Mann-Whitney U test
-            x = distance_data[f"H_{i}"].loc[distance_data[
-                                                "diagnosis_changed"] == True]
-            y = distance_data[f"H_{i}"].loc[distance_data[
-                                                "diagnosis_changed"] == False]
+            x = distance_data[f"H_{i}"].loc[
+                distance_data["diagnosis_changed"] == True
+            ]
+            y = distance_data[f"H_{i}"].loc[
+                distance_data["diagnosis_changed"] == False
+            ]
             if distance in ["wasserstein", "bottleneck", "landscape"]:
-                print(f"For {distance} in H_{i}, the Mann-Whitney U yields"
-                      f" {mannwhitneyu(x,y).pvalue}")
+                print(
+                    f"For {distance} in H_{i}, the Mann-Whitney U yields"
+                    f" {mannwhitneyu(x,y).pvalue}"
+                )
+
 
 def main():
     # First, we want to generate a typical representation of the data for each

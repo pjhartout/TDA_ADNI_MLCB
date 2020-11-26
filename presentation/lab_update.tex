@@ -35,6 +35,11 @@
         \includegraphics{/home/pjh/.emojis/u2615.png}
     }{X}
   }
+  \NewDocumentCommand\map{}{
+    \scalerel*{
+      \includegraphics{/home/pjh/.emojis/u1F5FA.png}
+    }{X}
+  }
 
 
 \usetikzlibrary{shapes,arrows}
@@ -50,7 +55,7 @@
 	}
 
 
-\title{Saliency assessment of topological features extracted from the temporal region for Alzheimer's disease characterization}
+\title{Uncovering the saliency of local topological features for Alzheimer's disease characterisation}
 % \subtitle{Lab Update}
 \date{\today}
 \author{Philip Hartout}
@@ -84,11 +89,11 @@
     \column{0.5\textwidth}
     \textbf{Alzheimer's disease:} \brain
     \begin{itemize}
-    \item Nearly 40 million people live with AD
-    \item Cost in US alone \$ 2 trillion by 2030
-    \item Among leading causes of death in EU
+    \onslide<2->\item Nearly 40 million people live with AD
+    \onslide<3->\item Cost in US alone \$ 2 trillion by 2030
+    \onslide<4->\item Among leading causes of death in EU
     \end{itemize}
-    \onslide<2->{
+    \onslide<5->{
       \begin{figure}
         \begin{subfigure}{0.2\textwidth}
           \centering
@@ -104,12 +109,12 @@
       \end{figure}
     }
     \column{0.5\textwidth}
-    \onslide<3->
+    \onslide<6->
     \textbf{Topology:} \doughnut \mug
     \begin{itemize}
-    \onslide<4-> \item Concerned with ``properties of a geometric object that are preserved under \textbf{continuous deformations}, such as [...] crumpling.''
-    \onslide<5->\item Recently, \textit{persistent homology} has emerged to quantify (differences in) the shape of data.
-    \onslide<6->\item \textbf{How can we apply persistent homology to quantify changes in shape due to Alzheimer's disease?}
+    \onslide<7-> \item Concerned with ``properties of a geometric object that are preserved under \textbf{continuous deformations}, such as [...] crumpling.''
+    \onslide<8->\item Recently, \textit{persistent homology} has emerged to quantify (differences in) the shape of data.
+    \onslide<9->\item \textbf{How can we apply persistent homology to quantify changes in shape due to Alzheimer's disease?}
     \end{itemize}
     \end{columns}
 \end{frame}
@@ -124,23 +129,134 @@
 % \onslide<5->$\rightarrow$ Some findings in these directions will be presented today
 \end{frame}
 
+% \begin{frame}[fragile]{Analysis setting}
+% \begin{center}
+%   \begin{tikzpicture}[align=center, node distance = 1cm, auto]
+%     \node[orange, text width=8em](raw){\scriptsize Raw T1-weighted %     sMRI};
+%     \node[inner sep=0pt] (unprocessed) at (0,-1)
+%     {\includegraphics[width=0.1\textwidth]{figures/t1_unprocessed.jpg}};
+%     \onslide<2->{
+%       \node[orange, right of=raw, xshift=2.5cm](fmriprep){\scriptsize %       \textit{fMRIprep}};
+%       \draw[myarrow](raw.east)--(fmriprep.west);
+%     }
+%     \node[inner sep=0pt, below of=fmriprep](prepped) %     {\includegraphics[width=0.1\textwidth]{figures/fmri_preped.jpeg}};
+%   \onslide<3->{
+%     \node[orange, right of=fmriprep, xshift=2.5cm](patch){\scriptsize %     Patch Selection};
+%     \draw[myarrow](fmriprep.east)--(patch.west);}
+%   \onslide<4->{
+%     \node[orange, right of=patch, xshift=2.5cm](ph){\scriptsize %     Persistent Homology};
+%     \draw[myarrow](patch.east)--(ph.west);}
+%   \node[inner sep=0pt, right of=ph, xshift=1.1cm](pd_ex) %   {\includegraphics[width=0.1\textwidth]{figures/PDs/persistence_diagram_AD.png}};
+%   \onslide<5->{
+%     \node[orange, below of=ph, yshift=-0.2cm](diag){\scriptsize %     Persistence images};
+%     \draw[myarrow](ph.south)--(diag.north);}
+%   \node[inner sep=0pt, right of=diag, xshift=1.1cm](pi_ex) %   {\includegraphics[width=0.1\textwidth]{figures/PIs/Persistence_image_AD_h_2.png}};
+%   \onslide<6->{
+%     \node[orange, below of=diag, yshift=-0.2cm](diag2){\scriptsize %     Classification CN/AD};
+%     \draw[myarrow](diag.south)--(diag2.north);}
+%   \node[inner sep=0pt, right of=diag2, xshift=1.1cm](ann)
+%   {\includegraphics[width=0.1\textwidth]{figures/neuralnetwork.png}};
+%   % \onslide<6->{
+%   %   \node[orange, above of=ph, yshift=0.2cm](dist){\scriptsize %   Distance between persistence rep.};
+%   %   \draw[myarrow](ph.north)--(dist.south);}
+% \end{tikzpicture}
+% \end{center}
+% \end{frame}
+
 \begin{frame}[fragile]{Analysis setting}
 \begin{center}
-  \begin{tikzpicture}[align=center, node distance = 1.8cm, auto]
-    \node[orange, text width=8em](raw){\scriptsize Raw T1-weighted sMRI};
-    \onslide<2->{
-      \node[orange, right of=raw, xshift=1.5cm](fmriprep){\scriptsize \textit{fMRIprep}};
-    \draw[myarrow](raw.east)--(fmriprep.west);
-  }
-  \onslide<3->{
-    \node[orange, right of=fmriprep, xshift=1.5cm](patch){\scriptsize Patch Selection};
-    \draw[myarrow](fmriprep.east)--(patch.west);}
-  \onslide<4->{
-    \node[orange, right of=patch, xshift=1.5cm](ph){\scriptsize Persistent Homology};
-    \draw[myarrow](patch.east)--(ph.west);}
-  \onslide<5->{
-    \node[orange, below of=ph, yshift=-0.2cm](diag){\scriptsize Saliency assessment of topological features for diagnosis};
-    \draw[myarrow](ph.south)--(diag.north);}
+  \begin{tikzpicture}[align=center, node distance = 1cm, auto]
+    \node[](unprocessed)
+    {\includegraphics[width=0.15\textwidth]{figures/t1_unprocessed.jpg}};
+    \node[below of=unprocessed, yshift=-0.3cm](unprocessed_txt){Unprocessed};
+    \pause
+    \node[right of=unprocessed, xshift=2.5cm](processed)
+    {\includegraphics[width=0.15\textwidth]{figures/fmri_preped.jpeg}};
+    \node[below of=processed, yshift=-0.3cm](processed_txt)
+    {\textit{fMRIPrep}};
+    \draw[myarrow](unprocessed.east)--(processed.west);
+    \pause
+    \node[right of=processed, xshift=2.5cm](selection)
+    {\includegraphics[width=0.15\textwidth]{figures/patch_performance.png}};
+    \node[below of=selection, yshift=-0.3cm](selection_txt)
+    {Patch selection};
+    \draw[myarrow](processed.east)--(selection.west);
+    \pause
+    \node[right of=selection, xshift=2.5cm](persistence_homology)
+    {\includegraphics[width=0.15\textwidth]{figures/PDs/persistence_diagram_CN.png}};
+    \node[below of=persistence_homology, yshift=-0.3cm](persistence_homology_txt)
+    {Persistence homology};
+    \draw[myarrow](selection.east)--(persistence_homology.west);
+    \pause
+    \node[below of=persistence_homology_txt, yshift=-1.3cm](persistence_image)
+    {\includegraphics[width=0.15\textwidth]{figures/PIs/Persistence_image_CN_h_1.png}};
+    \node[below of=persistence_image, yshift=-0.3cm](persistence_image_txt)
+    {Persistence Image};
+    \draw[myarrow](persistence_homology_txt.south)--(persistence_image.north);
+    \pause
+    \node[left of=persistence_image, xshift=-2.5cm](classification)
+    {\includegraphics[width=0.15\textwidth]{figures/neuralnetwork.png}};
+    \node[below of=classification, yshift=-0.3cm](classification_txt)
+    {Classification};
+    \draw[myarrow](persistence_image.west)--(classification.east);
+  \end{tikzpicture}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Analysis setting}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.4\textwidth]{figures/patch_performance.png}
+  \caption{AUPRC on each patch, achieved using a model described in earlier work. Chosen patch for analyses is boxed in red (patch with highest accuracy).}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{I - Persistent homology}
+    \begin{center}
+      \begin{tabular}{cccc}
+        & $H_0$ & $H_1$ & $H_2$ \\
+         CN & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_CN_H_0.png}} & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_CN_H_1.png}} & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_CN_H_2.png}} \\
+        AD & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_AD_H_0.png}} & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_AD_H_1.png}} & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_AD_H_2.png}} }} \\
+      \end{tabular}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]{I - Classification - Persistence Images}
+    \begin{center}
+      \begin{tabular}{cccc}
+        & $H_0$ & $H_1$ & $H_2$ \\
+         CN & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PIs/Persistence_image_CN_h_0.png}} & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PIs/Persistence_image_CN_h_1.png}} & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PIs/Persistence_image_CN_h_2.png}} \\
+        AD & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PIs/Persistence_image_AD_h_0.png}} & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PIs/Persistence_image_AD_h_1.png}} & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PIs/Persistence_image_AD_h_2.png}} \\
+      \end{tabular}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]{I - Classification - Network architecture}
+\begin{center}
+  \begin{tikzpicture}[align=center, node distance = 1cm, auto]
+    \node[orange, text width=12em](input){\scriptsize Persistence image ($H_0$, $H_1$, $H_2$)};\pause
+    \node[orange, below left of=input, xshift=-2.5cm,yshift=-0.25cm](conv1){\scriptsize Conv2D on $H_0$};
+  \draw[myarrow](input.west)-|(conv1.north);\pause
+    \node[orange, below of=input, yshift=-0.25cm](conv2){\scriptsize Conv2D on $H_1$};
+    \draw[myarrow](input.south)--(conv2.north);\pause
+    \node[orange, below right of=input, xshift=2.5cm,yshift=-0.25cm](conv3){\scriptsize Conv2D on $H_2$};
+  \draw[myarrow](input.east)-|(conv3.north);\pause
+  \node[orange, below of=conv1, yshift=-0.25cm](batchmax1){\scriptsize Max pooling};
+  \draw[myarrow](conv1.south)--(batchmax1.north);\pause
+  \node[orange, below of=conv2, yshift=-0.25cm](batchmax2){\scriptsize Max pooling};
+  \draw[myarrow](conv2.south)--(batchmax2.north);
+  \node[orange, below of=conv3, yshift=-0.25cm](batchmax3){\scriptsize Max pooling};
+  \draw[myarrow](conv3.south)--(batchmax3.north);\pause
+  \node[orange, below of=batchmax2, yshift=-0.25cm](dense){\scriptsize Dense layer};
+  \draw[myarrow](batchmax1.south)--(dense.west);
+  \draw[myarrow](batchmax2.south)--(dense.north);
+  \draw[myarrow](batchmax3.south)--(dense.east);
+  \node[orange, below of=dense, yshift=-0.25cm](sigm){\scriptsize Sigmoid};
+  \draw[myarrow](dense.south)--(sigm.north);
   % \onslide<6->{
   %   \node[orange, above of=ph, yshift=0.2cm](dist){\scriptsize %   Distance between persistence rep.};
   %   \draw[myarrow](ph.north)--(dist.south);}
@@ -149,120 +265,59 @@
 \end{frame}
 
 
-\begin{frame}[fragile]{Analysis setting}
-\begin{figure}
-  \centering
-  \includegraphics[width=0.4\textwidth]{figures/patch_performance.png}
-  \caption{AUCPRC on each patch, achieved using a model described in earlier work. Chosen patch for analyses is boxed in red (patch with highest accuracy).}
-\end{figure}
-\end{frame}
-
-\begin{frame}[fragile]{I - Diagnosis prediction}
-  \begin{itemize}
-  \onslide<2->\item Computed the cubical filtration to obtain persistence image for each patch
-  \onslide<3->\item Simple CNN to classify AD/CN patients.
-  \onslide<4->\item Use same partition as NeurIPS submission, train ANN 3 times on each partition
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{I - Persistent homology}
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/PDs/persistence_diagram_CN.png}
-    \caption{CN}
-  \end{figure}
-  \endminipage
-  \hfill
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/PDs/persistence_diagram_MCI.png}
-    \caption{MCI}
-  \end{figure}
-  \endminipage
-  \hfill
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/PDs/persistence_diagram_AD.png}
-    \caption{AD}
-  \end{figure}
-  \endminipage
-\end{frame}
-
-
-\begin{frame}[fragile]{I - Diagnosis prediction - Persistence Images}
-\begin{figure}
-  \centering
-  \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_CN_h_0.png}
-  \end{subfigure}
-  \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_CN_h_1.png}
-  \end{subfigure}
-    \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_CN_h_2.png}
-  \end{subfigure}
-  \onslide<2->\begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_AD_h_0.png}
-  \end{subfigure}
-  \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_AD_h_1.png}
-  \end{subfigure}
-  \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_AD_h_2.png}
-  \end{subfigure}
-  \caption{Columns: hom. dimension (0,1,2); Row: Diagnostic category (CN top, AD bottom).}
-  \label{fig:sample_rep_pi}
-\end{figure}
-
-\end{frame}
-
-
-\begin{frame}[fragile]{I - Diagnosis prediction - Network architecture}
+\begin{frame}[fragile]{I - Classification - Network architecture}
   \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/model.png}
   \end{figure}
 \end{frame}
 
+\begin{frame}[fragile]{Methodological considerations}
+  \begin{itemize}
+  \item 4 fold CV, 3 inits. Stratified for age, diagnoses and no patients are spread over folds.
+  \item Same experimental settings as from Br{\"u}ningk, Sarah C \textit{et al} \url{https://arxiv.org/abs/2011.06531}
+  \end{itemize}
+\end{frame}
 
-\begin{frame}[fragile]{I - Diagnosis prediction - Performance}
+\begin{frame}[fragile]{I - Classification - Performance}
 \begin{table}
   \centering
-  \begin{tabular}{lc}
+  \begin{tabular}{lccc}
     \toprule
-    \textbf{Performance metric} & \textbf{DL model trained on PIs}\\
+    Local & \textbf{PI} & 3D Conv & \\
+    Global &&& PI\\
     \midrule
-    Training accuracy & $0.83 \pm 0.01$  \\
-    Validation accuracy & $0.79\pm 0.02$  \\
-    Precision & $0.81\pm 0.04$  \\
-    Recall & $0.81\pm 0.02$  \\
-    AUC & $0.85\pm 0.03$  \\
+    Validation accuracy & $0.79\pm 0.02$ & $0.85\pm 0.06$ & $ 0.76\pm 0.02$ \\
+    Precision & $0.81\pm 0.04$  & $0.87\pm0.04$ &  $0.74\pm 0.02$ \\
+    Recall & $0.81\pm 0.02$ & $0.87\pm0.08$ & $0.88\pm 0.08$\\
+    AUC & $0.85\pm 0.03$ & $0.89\pm0.05$ &  $ 0.78\pm 0.02$\\
     \bottomrule
     \vspace{1pt}
   \end{tabular}
-  \caption{Performance metrics of the deep learning model.}
+  \caption{Performance metrics of the different models trained on the same data. \\Metrics from Br{\"u}ningk, Sarah C \textit{et al} \url{https://arxiv.org/abs/2011.06531}.}
   \label{tab:performance}
 \end{table}
-\onslide<2->$\rightarrow$ using a normal CPU, training  takes $<5$ minutes!
+\pause$\rightarrow$ Local PI training time is 2 minutes on a \textbf{laptop CPU}. Very efficient compression of features! \\
+$\rightarrow$  Local 3D Conv training takes 15 minutes on a \textbf{server GPU}.\\
+\pause Persistent homology produces \textbf{highly salient compressed} features for AD characterization.
 \end{frame}
 
 
-
-\begin{frame}[fragile]{Limitations \& Outlook}
+\begin{frame}[fragile]{Limitations \& Outlook \map}
+  Limitations:
   \begin{itemize}
-    \onslide<2-> \item Performance can be enhanced by taking local features from other patches and passing them through convolutions. Especially useful when dealing with subtypes of Alzheimer's which show atrophy in other brain regions.
-    \onslide<3-> \item Neural architecture could be made more complex to capture more complex features of the persistence images
-    \onslide<4-> \item Can persistence images be used to diagnose prodromal forms of AD?
-    \onslide<5-> \item Use other representations for prediction.
-    \onslide<6-> \item Use topology-based embeddings for subtype identification?
+    \item Using \textbf{raw} images is \textbf{better}, but more \textbf{expensive}.
+    \onslide<2-> \item Does not take atrophy from \textbf{other regions} into account
+  \end{itemize}
+  \onslide<3->Future directions:
+  \begin{itemize}
+     \item Can persistent homology be used to diagnose \textbf{prodromal} forms of AD?
+    \onslide<4-> \item Use a similar approach for \textbf{subtype identification}.
   \end{itemize}
 \end{frame}
 
 
-\begin{frame}{Summary}
+\begin{frame}{Thanks!}
 
   GitHub repository of the project
 
@@ -273,9 +328,50 @@
 \end{frame}
 
 
-\begin{frame}[standout]
-  Questions?
+\begin{frame}[fragile]{Questions?}
+\begin{center}
+  \begin{tikzpicture}[align=center, node distance = 1cm, auto]
+    \node[](unprocessed)
+    {\includegraphics[width=0.15\textwidth]{figures/t1_unprocessed.jpg}};
+    \node[below of=unprocessed, yshift=-0.3cm](unprocessed_txt){Unprocessed};
+
+    \node[right of=unprocessed, xshift=2.5cm](processed)
+    {\includegraphics[width=0.15\textwidth]{figures/fmri_preped.jpeg}};
+    \node[below of=processed, yshift=-0.3cm](processed_txt)
+    {\textit{fMRIPrep}};
+    \draw[myarrow](unprocessed.east)--(processed.west);
+
+    \node[right of=processed, xshift=2.5cm](selection)
+    {\includegraphics[width=0.15\textwidth]{figures/patch_performance.png}};
+    \node[below of=selection, yshift=-0.3cm](selection_txt)
+    {Patch selection};
+    \draw[myarrow](processed.east)--(selection.west);
+
+    \node[right of=selection, xshift=2.5cm](persistence_homology)
+    {\includegraphics[width=0.15\textwidth]{figures/PDs/persistence_diagram_CN.png}};
+    \node[below of=persistence_homology, yshift=-0.3cm](persistence_homology_txt)
+    {Persistence homology};
+    \draw[myarrow](selection.east)--(persistence_homology.west);
+
+    \node[below of=persistence_homology_txt, yshift=-1.3cm](persistence_image)
+    {\includegraphics[width=0.15\textwidth]{figures/PIs/Persistence_image_CN_h_1.png}};
+    \node[below of=persistence_image, yshift=-0.3cm](persistence_image_txt)
+    {Persistence Image};
+    \draw[myarrow](persistence_homology_txt.south)--(persistence_image.north);
+
+    \node[left of=persistence_image, xshift=-2.5cm](classification)
+    {\includegraphics[width=0.15\textwidth]{figures/neuralnetwork.png}};
+    \node[below of=classification, yshift=-0.3cm](classification_txt)
+    {Classification};
+    \draw[myarrow](persistence_image.west)--(classification.east);
+  \end{tikzpicture}
+\end{center}
 \end{frame}
+
+\begin{frame}[standout]
+  Backup slides
+\end{frame}
+
 
 \begin{frame}[fragile]{II - Distance analysis among patients in CN, MCI \& AD}
   Median persistence landscape.\\

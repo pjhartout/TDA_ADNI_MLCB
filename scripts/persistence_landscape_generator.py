@@ -89,6 +89,7 @@ HOMOLOGY_DIMENSIONS = (0, 1, 2)
 N_BINS = 100
 N_LAYERS = 50
 
+
 def get_all_available_patches(path_to_patches):
     """Obtains all array data in given path_to_patches and tracks loaded files.
 
@@ -130,9 +131,7 @@ def cubical_persistence(patch):
 
 
 def get_persistence_landscape(persistence_diagram):
-    pi = PersistenceLandscape(
-        n_layers=N_LAYERS, n_bins=100, n_jobs=None
-    )
+    pi = PersistenceLandscape(n_layers=N_LAYERS, n_bins=100, n_jobs=None)
     print("Computed persistence landscape")
     return pi.fit_transform(persistence_diagram)
 
@@ -149,7 +148,9 @@ def export_persistence_images(
 
 def main():
     path_to_patch = DOTENV_KEY2VAL["DATA_DIR"] + "patch_91/"
-    path_to_persistence_landscape = DOTENV_KEY2VAL["DATA_DIR"] + "patch_91_persistence_landscapes/"
+    path_to_persistence_landscape = (
+        DOTENV_KEY2VAL["DATA_DIR"] + "patch_91_persistence_landscapes/"
+    )
 
     if not os.path.exists(path_to_persistence_landscape):
         os.mkdir(path_to_persistence_landscape)

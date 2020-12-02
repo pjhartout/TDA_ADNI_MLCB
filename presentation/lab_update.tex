@@ -1,5 +1,5 @@
 %Metroplolis Beamer Theme: https://github.com/matze/mtheme
-\documentclass[aspectratio=169, 10pt, dvipsnames]{beamer}
+\documentclass[aspectratio=169, 10pt, dvipsnames, handout]{beamer}
 \usetheme{metropolis}
 \usepackage{appendixnumberbeamer, lmodern, bookmark, kbordermatrix,fontawesome}
 \usepackage{booktabs}
@@ -89,11 +89,11 @@
     \column{0.5\textwidth}
     \textbf{Alzheimer's disease:} \brain
     \begin{itemize}
-    \onslide<2->\item Nearly 40 million people live with AD
-    \onslide<3->\item Cost in US alone \$ 2 trillion by 2030
-    \onslide<4->\item Among leading causes of death in EU
+    \pause\item Nearly 40 million people live with AD
+    \pause\item Cost in US alone \$ 2 trillion by 2030
+    \pause\item Among leading causes of death in EU
     \end{itemize}
-    \onslide<5->{
+    \pause{
       \begin{figure}
         \begin{subfigure}{0.2\textwidth}
           \centering
@@ -104,17 +104,18 @@
         $\downarrow$\\
         \begin{subfigure}{\textwidth}
           \centering
-          \includegraphics[width=\textwidth]{figures/AD_brain_comparison.jpg}
+          \includegraphics[width=0.8\textwidth]{figures/AD_brain_comparison.jpg}
         \end{subfigure}
+        \scriptsize Images adapted from \href{https://www.nature.com/articles/nrn2967?foxtrotcallback=true}{Ittner et al} and \href{https://en.wikipedia.org/wiki/File:Alzheimer%27s_disease_brain_comparison.jpg}{Wikipedia}
       \end{figure}
     }
     \column{0.5\textwidth}
-    \onslide<6->
+    \pause
     \textbf{Topology:} \doughnut \mug
     \begin{itemize}
-    \onslide<7-> \item Concerned with ``properties of a geometric object that are preserved under \textbf{continuous deformations}, such as [...] crumpling.''
-    \onslide<8->\item Recently, \textit{persistent homology} has emerged to quantify (differences in) the shape of data.
-    \onslide<9->\item \textbf{How can we apply persistent homology to quantify changes in shape due to Alzheimer's disease?}
+    \pause\item Concerned with ``properties of a geometric object that are preserved under \textbf{continuous deformations}, such as [...] crumpling.''
+    \pause\item Recently, \textit{persistent homology} has emerged to quantify (differences in) the shape of data.
+    \pause\item \textbf{How can we apply persistent homology to quantify changes in shape due to Alzheimer's disease?}
     \end{itemize}
     \end{columns}
 \end{frame}
@@ -122,11 +123,11 @@
 
 \begin{frame}[fragile]{Topology in AD - Research Avenues \compass}
   \begin{enumerate}
-  \onslide<2->\item \textbf{Classification}
-  \onslide<3->\item Subtype identification
-  \onslide<4->\item Progression \& forecasting
+  \pause\item \textbf{Classification}
+  \pause\item Subtype identification
+  \pause\item Progression \& forecasting
   \end{enumerate}
-% \onslide<5->$\rightarrow$ Some findings in these directions will be presented today
+% \pause$\rightarrow$ Some findings in these directions will be presented today
 \end{frame}
 
 % \begin{frame}[fragile]{Analysis setting}
@@ -135,28 +136,28 @@
 %     \node[orange, text width=8em](raw){\scriptsize Raw T1-weighted %     sMRI};
 %     \node[inner sep=0pt] (unprocessed) at (0,-1)
 %     {\includegraphics[width=0.1\textwidth]{figures/t1_unprocessed.jpg}};
-%     \onslide<2->{
+%     \pause{
 %       \node[orange, right of=raw, xshift=2.5cm](fmriprep){\scriptsize %       \textit{fMRIprep}};
 %       \draw[myarrow](raw.east)--(fmriprep.west);
 %     }
 %     \node[inner sep=0pt, below of=fmriprep](prepped) %     {\includegraphics[width=0.1\textwidth]{figures/fmri_preped.jpeg}};
-%   \onslide<3->{
+%   \pause{
 %     \node[orange, right of=fmriprep, xshift=2.5cm](patch){\scriptsize %     Patch Selection};
 %     \draw[myarrow](fmriprep.east)--(patch.west);}
-%   \onslide<4->{
+%   \pause{
 %     \node[orange, right of=patch, xshift=2.5cm](ph){\scriptsize %     Persistent Homology};
 %     \draw[myarrow](patch.east)--(ph.west);}
 %   \node[inner sep=0pt, right of=ph, xshift=1.1cm](pd_ex) %   {\includegraphics[width=0.1\textwidth]{figures/PDs/persistence_diagram_AD.png}};
-%   \onslide<5->{
+%   \pause{
 %     \node[orange, below of=ph, yshift=-0.2cm](diag){\scriptsize %     Persistence images};
 %     \draw[myarrow](ph.south)--(diag.north);}
 %   \node[inner sep=0pt, right of=diag, xshift=1.1cm](pi_ex) %   {\includegraphics[width=0.1\textwidth]{figures/PIs/Persistence_image_AD_h_2.png}};
-%   \onslide<6->{
+%   \pause{
 %     \node[orange, below of=diag, yshift=-0.2cm](diag2){\scriptsize %     Classification CN/AD};
 %     \draw[myarrow](diag.south)--(diag2.north);}
 %   \node[inner sep=0pt, right of=diag2, xshift=1.1cm](ann)
 %   {\includegraphics[width=0.1\textwidth]{figures/neuralnetwork.png}};
-%   % \onslide<6->{
+%   % \pause{
 %   %   \node[orange, above of=ph, yshift=0.2cm](dist){\scriptsize %   Distance between persistence rep.};
 %   %   \draw[myarrow](ph.north)--(dist.south);}
 % \end{tikzpicture}
@@ -171,7 +172,7 @@
     \node[below of=unprocessed, yshift=-0.3cm](unprocessed_txt){Unprocessed};
     \pause
     \node[right of=unprocessed, xshift=2.5cm](processed)
-    {\includegraphics[width=0.15\textwidth]{figures/fmri_preped.jpeg}};
+    {\includegraphics[width=0.15\textwidth]{figures/T1_BET.png}};
     \node[below of=processed, yshift=-0.3cm](processed_txt)
     {\textit{fMRIPrep}};
     \draw[myarrow](unprocessed.east)--(processed.west);
@@ -201,6 +202,10 @@
     \draw[myarrow](persistence_image.west)--(classification.east);
   \end{tikzpicture}
 \end{center}
+\scriptsize Images adapted from \href{https://commons.wikimedia.org/wiki/Brain#/media/File:MRI_head_side.jpg}{Wikimedia},
+\href{https://www.slicer.org/wiki/Documentation/Nightly/Modules/BrainVolumeRefinement}{ slicer.org}, and
+\href{https://thenounproject.com/smodgekar/collection/data-classify/}{ Sachin Modgekar}
+
 \end{frame}
 
 
@@ -218,7 +223,7 @@
       \begin{tabular}{cccc}
         & $H_0$ & $H_1$ & $H_2$ \\
          CN & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_CN_H_0.png}} & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_CN_H_1.png}} & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_CN_H_2.png}} \\
-        AD & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_AD_H_0.png}} & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_AD_H_1.png}} & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_AD_H_2.png}} }} \\
+        AD & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_AD_H_0.png}} & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_AD_H_1.png}} & \raisebox{-.5\height}{\includegraphics[height=.40\textheight]{figures/PDs/persistence_diagram_AD_H_2.png}} \\
       \end{tabular}
     \end{center}
 \end{frame}
@@ -257,7 +262,7 @@
   \draw[myarrow](batchmax3.south)--(dense.east);
   \node[orange, below of=dense, yshift=-0.25cm](sigm){\scriptsize Sigmoid};
   \draw[myarrow](dense.south)--(sigm.north);
-  % \onslide<6->{
+  % \pause{
   %   \node[orange, above of=ph, yshift=0.2cm](dist){\scriptsize %   Distance between persistence rep.};
   %   \draw[myarrow](ph.north)--(dist.south);}
 \end{tikzpicture}
@@ -307,19 +312,19 @@ $\rightarrow$  Local 3D Conv training takes 15 minutes on a \textbf{server GPU}.
   Limitations:
   \begin{itemize}
     \item Using \textbf{raw} images is \textbf{better}, but more \textbf{expensive}.
-    \onslide<2-> \item Does not take atrophy from \textbf{other regions} into account
+    \pause \item Does not take atrophy from \textbf{other regions} into account
   \end{itemize}
-  \onslide<3->Future directions:
+  \pauseFuture directions:
   \begin{itemize}
      \item Can persistent homology be used to diagnose \textbf{prodromal} forms of AD?
-    \onslide<4-> \item Use a similar approach for \textbf{subtype identification}.
+    \pause \item Use a similar approach for \textbf{subtype identification}.
   \end{itemize}
 \end{frame}
 
 
 \begin{frame}{Thanks!}
 
-  GitHub repository of the project
+  GitHub repository of the project (currently available upon request)
 
   \begin{center}\url{github.com/pjhartout/TDA_ADNI_MLCB}\end{center}
 
@@ -336,7 +341,7 @@ $\rightarrow$  Local 3D Conv training takes 15 minutes on a \textbf{server GPU}.
     \node[below of=unprocessed, yshift=-0.3cm](unprocessed_txt){Unprocessed};
 
     \node[right of=unprocessed, xshift=2.5cm](processed)
-    {\includegraphics[width=0.15\textwidth]{figures/fmri_preped.jpeg}};
+    {\includegraphics[width=0.15\textwidth]{figures/T1_BET.png}};
     \node[below of=processed, yshift=-0.3cm](processed_txt)
     {\textit{fMRIPrep}};
     \draw[myarrow](unprocessed.east)--(processed.west);
@@ -366,210 +371,214 @@ $\rightarrow$  Local 3D Conv training takes 15 minutes on a \textbf{server GPU}.
     \draw[myarrow](persistence_image.west)--(classification.east);
   \end{tikzpicture}
 \end{center}
+\scriptsize Images adapted from \href{https://commons.wikimedia.org/wiki/Brain#/media/File:MRI_head_side.jpg}{Wikimedia},
+\href{https://www.slicer.org/wiki/Documentation/Nightly/Modules/BrainVolumeRefinement}{ slicer.org}, and
+\href{https://thenounproject.com/smodgekar/collection/data-classify/}{ Sachin Modgekar}
+
 \end{frame}
 
-\begin{frame}[standout]
-  Backup slides
-\end{frame}
+% \begin{frame}[standout]
+%   Backup slides
+% \end{frame}
 
 
-\begin{frame}[fragile]{II - Distance analysis among patients in CN, MCI \& AD}
-  Median persistence landscape.\\
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_CN.png}
-    \caption{CN}
-  \end{figure}
-  \endminipage
-  \hfill
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_MCI.png}
-    \caption{MCI}
-  \end{figure}
-  \endminipage
-  \hfill
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD.png}
-    \caption{AD}
-  \end{figure}
-  \endminipage
-\end{frame}
+% \begin{frame}[fragile]{II - Distance analysis among patients in CN, % MCI \& AD}
+%   Median persistence landscape.\\
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/median_pls/median_pl_CN.png}
+%     \caption{CN}
+%   \end{figure}
+%   \endminipage
+%   \hfill
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/median_pls/median_pl_MCI.png}
+%     \caption{MCI}
+%   \end{figure}
+%   \endminipage
+%   \hfill
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD.png}
+%     \caption{AD}
+%   \end{figure}
+%   \endminipage
+% \end{frame}
 
-\begin{frame}[fragile]{II - Distance analysis among patients in CN, MCI \& AD}
-\textbf{Question:} How topologically heterogenous is the data?
-\begin{table}
-\centering
-\begin{tabular}{lrrrrrr}
-\toprule
-{} &  Mean &  Median &  Standard deviation &   Q3 &   Max &  Skewness \\
-\midrule
-CN $H_0$ & 2.16 & 2.00 & 0.78 & 2.50 & 7.41 & 1.78 \\
-CN $H_1$ & 2.61 & 2.27 & 1.17 & 2.93 & 9.47 & 1.92 \\
-CN $H_2$ & 2.38 & 2.23 & 0.88 & 2.79 & 7.19 & 1.39 \\
-MCI $H_0$ & 2.24 & 2.04 & 0.82 & 2.55 & 6.21 & 1.71 \\
-MCI $H_1$ & 2.57 & 2.19 & 1.29 & 2.80 & \textbf{11.87} & \textbf{2.57} \\
-MCI $H_2$ & 2.40 & 2.27 & 0.83 & 2.82 & 6.55 & 1.18 \\
-AD $H_0$ & 2.40 & 2.18 & 0.96 & 2.77 & 7.77 & 1.97 \\
-AD $H_1$ & 2.47 & 2.13 & 1.15 & 2.77 & \textbf{9.28} & \textbf{2.10} \\
-AD $H_2$ & 2.36 & 2.20 & 0.80 & 2.75 & 8.39 & 1.64 \\
-  \bottomrule
-\end{tabular}
-\caption{Summary statistics of the distribution of distances }
-\label{tab:stats_median_pl}
-\end{table}
-\end{frame}
-
-
-
-\begin{frame}[fragile]{III - Distance analysis among patients who deteriorate vs. those who don't}
-\textbf{Question:} Among the patients who deteriorate, do we see higher average pairwise distances compared to patients who don't deteriorate?
-  \begin{itemize}
-  \onslide<2->\item The data is a longitudinal dataset (multiple timepoints are available for each patient)
-  \onslide<3->\item Some patients deteriorate (transition from CN$\rightarrow$MCI or from MCI$\rightarrow$AD)
-  \onslide<4->\item Compute pairwise distance between patients ($L^1$ PL distance, Wasserstein distance and bottleneck distance), and average for each patient.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{III - Distance analysis among patients who deteriorate vs. those who don't}
-  Example of $L^1$ norm between PLs of a deteriorating patient.\\
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering \includegraphics[width=\textwidth]{figures/temporal_evolution/ADNI029S0878_h_0.png}
-    \caption{$H_0$}
-  \end{figure}
-  \endminipage
-  \hfill
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/temporal_evolution/ADNI029S0878_h_1.png}
-    \caption{$H_1$}
-  \end{figure}
-  \endminipage
-  \hfill
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/temporal_evolution/ADNI029S0878_h_2.png}
-    \caption{$H_2$}
-  \end{figure}
-  \endminipage
-\end{frame}
-
-\begin{frame}[fragile]{III - Distance analysis among patients who deteriorate vs. those who don't}
-  Example of $L^1$ norm between PLs of a subject who does \emph{not} deteriorate.\\
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/temporal_evolution/ADNI011S0023_h_0.png}
-    \caption{$H_0$}
-  \end{figure}
-  \endminipage
-  \hfill
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/temporal_evolution/ADNI011S0023_h_1.png}
-    \caption{$H_1$}
-  \end{figure}
-  \endminipage
-  \hfill
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-     \includegraphics[width=\textwidth]{figures/temporal_evolution/ADNI011S0023_h_2.png}
-    \caption{$H_2$}
-  \end{figure}
-  \endminipage
-\end{frame}
-
-\begin{frame}[fragile]{III - Distance analysis among patients who deteriorate vs. those who don't}
-Persistence landscape $L^1$ norm\\
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/temporal_evolution/landscape_H_0_dist_diag_change.png}
-    \caption{$H_0$}
-  \end{figure}
-  \endminipage
-  \hfill
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/temporal_evolution/landscape_H_1_dist_diag_change.png}
-    \caption{$H_1$}
-  \end{figure}
-  \endminipage
-  \hfill
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-     \includegraphics[width=\textwidth]{figures/temporal_evolution/landscape_H_2_dist_diag_change.png}
-    \caption{$H_2$}
-  \end{figure}
-  \endminipage
-\end{frame}
+% \begin{frame}[fragile]{II - Distance analysis among patients in CN, % MCI \& AD}
+% \textbf{Question:} How topologically heterogenous is the data?
+% \begin{table}
+% \centering
+% \begin{tabular}{lrrrrrr}
+% \toprule
+% {} &  Mean &  Median &  Standard deviation &   Q3 &   Max &  Skewness % \\
+% \midrule
+% CN $H_0$ & 2.16 & 2.00 & 0.78 & 2.50 & 7.41 & 1.78 \\
+% CN $H_1$ & 2.61 & 2.27 & 1.17 & 2.93 & 9.47 & 1.92 \\
+% CN $H_2$ & 2.38 & 2.23 & 0.88 & 2.79 & 7.19 & 1.39 \\
+% MCI $H_0$ & 2.24 & 2.04 & 0.82 & 2.55 & 6.21 & 1.71 \\
+% MCI $H_1$ & 2.57 & 2.19 & 1.29 & 2.80 & \textbf{11.87} & \textbf{2.57} % \\
+% MCI $H_2$ & 2.40 & 2.27 & 0.83 & 2.82 & 6.55 & 1.18 \\
+% AD $H_0$ & 2.40 & 2.18 & 0.96 & 2.77 & 7.77 & 1.97 \\
+% AD $H_1$ & 2.47 & 2.13 & 1.15 & 2.77 & \textbf{9.28} & \textbf{2.10} % \\
+% AD $H_2$ & 2.36 & 2.20 & 0.80 & 2.75 & 8.39 & 1.64 \\
+%   \bottomrule
+% \end{tabular}
+% \caption{Summary statistics of the distribution of distances }
+% \label{tab:stats_median_pl}
+% \end{table}
+% \end{frame}
 
 
-\begin{frame}[fragile]{III - Distance analysis among patients who deteriorate vs. those who don't}
-Bottleneck $L^1$ norm\\
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/temporal_evolution/bottleneck_H_0_dist_diag_change.png}
-    \caption{$H_0$}
-  \end{figure}
-  \endminipage
-  \hfill
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/temporal_evolution/bottleneck_H_1_dist_diag_change.png}
-    \caption{$H_1$}
-  \end{figure}
-  \endminipage
-  \hfill
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-     \includegraphics[width=\textwidth]{figures/temporal_evolution/bottleneck_H_2_dist_diag_change.png}
-    \caption{$H_2$}
-  \end{figure}
-  \endminipage
-\end{frame}
+
+% \begin{frame}[fragile]{III - Distance analysis among patients who % deteriorate vs. those who don't}
+% \textbf{Question:} Among the patients who deteriorate, do we see % higher average pairwise distances compared to patients who don't % deteriorate?
+%   \begin{itemize}
+%   \pause\item The data is a longitudinal dataset (multiple timepoints %   are available for each patient)
+%   \pause\item Some patients deteriorate (transition from %   CN$\rightarrow$MCI or from MCI$\rightarrow$AD)
+%   \pause\item Compute pairwise distance between patients ($L^1$ PL %   distance, Wasserstein distance and bottleneck distance), and average %   for each patient.
+%   \end{itemize}
+% \end{frame}
+
+% \begin{frame}[fragile]{III - Distance analysis among patients who % deteriorate vs. those who don't}
+%   Example of $L^1$ norm between PLs of a deteriorating patient.\\
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering %     \includegraphics[width=\textwidth]{figures/temporal_evolution/ADNI029S0878_h_0.png}
+%     \caption{$H_0$}
+%   \end{figure}
+%   \endminipage
+%   \hfill
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/temporal_evolution/ADNI029S0878_h_1.png}
+%     \caption{$H_1$}
+%   \end{figure}
+%   \endminipage
+%   \hfill
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/temporal_evolution/ADNI029S0878_h_2.png}
+%     \caption{$H_2$}
+%   \end{figure}
+%   \endminipage
+% \end{frame}
+
+% \begin{frame}[fragile]{III - Distance analysis among patients who % deteriorate vs. those who don't}
+%   Example of $L^1$ norm between PLs of a subject who does \emph{not} %   deteriorate.\\
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/temporal_evolution/ADNI011S0023_h_0.png}
+%     \caption{$H_0$}
+%   \end{figure}
+%   \endminipage
+%   \hfill
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/temporal_evolution/ADNI011S0023_h_1.png}
+%     \caption{$H_1$}
+%   \end{figure}
+%   \endminipage
+%   \hfill
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%      \includegraphics[width=\textwidth]{figures/temporal_evolution/ADNI011S0023_h_2.png}
+%     \caption{$H_2$}
+%   \end{figure}
+%   \endminipage
+% \end{frame}
+
+% \begin{frame}[fragile]{III - Distance analysis among patients who % deteriorate vs. those who don't}
+% Persistence landscape $L^1$ norm\\
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/temporal_evolution/landscape_H_0_dist_diag_change.png}
+%     \caption{$H_0$}
+%   \end{figure}
+%   \endminipage
+%   \hfill
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/temporal_evolution/landscape_H_1_dist_diag_change.png}
+%     \caption{$H_1$}
+%   \end{figure}
+%   \endminipage
+%   \hfill
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%      \includegraphics[width=\textwidth]{figures/temporal_evolution/landscape_H_2_dist_diag_change.png}
+%     \caption{$H_2$}
+%   \end{figure}
+%   \endminipage
+% \end{frame}
 
 
-\begin{frame}[fragile]{III - Distance analysis among patients who deteriorate vs. those who don't}
-Wasserstein distance\\
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/temporal_evolution/wasserstein_H_0_dist_diag_change.png}
-    \caption{$H_0$}
-  \end{figure}
-  \endminipage
-  \hfill
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/temporal_evolution/wasserstein_H_1_dist_diag_change.png}
-    \caption{$H_1$}
-  \end{figure}
-  \endminipage
-  \hfill
-  \minipage{0.32\textwidth}
-  \begin{figure}
-    \centering
-     \includegraphics[width=\textwidth]{figures/temporal_evolution/wasserstein_H_2_dist_diag_change.png}
-     \caption{$H_2$}
-  \end{figure}
-  \endminipage
-\end{frame}
+% \begin{frame}[fragile]{III - Distance analysis among patients who % deteriorate vs. those who don't}
+% Bottleneck $L^1$ norm\\
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/temporal_evolution/bottleneck_H_0_dist_diag_change.png}
+%     \caption{$H_0$}
+%   \end{figure}
+%   \endminipage
+%   \hfill
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/temporal_evolution/bottleneck_H_1_dist_diag_change.png}
+%     \caption{$H_1$}
+%   \end{figure}
+%   \endminipage
+%   \hfill
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%      \includegraphics[width=\textwidth]{figures/temporal_evolution/bottleneck_H_2_dist_diag_change.png}
+%     \caption{$H_2$}
+%   \end{figure}
+%   \endminipage
+% \end{frame}
+
+
+% \begin{frame}[fragile]{III - Distance analysis among patients who % deteriorate vs. those who don't}
+% Wasserstein distance\\
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/temporal_evolution/wasserstein_H_0_dist_diag_change.png}
+%     \caption{$H_0$}
+%   \end{figure}
+%   \endminipage
+%   \hfill
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/temporal_evolution/wasserstein_H_1_dist_diag_change.png}
+%     \caption{$H_1$}
+%   \end{figure}
+%   \endminipage
+%   \hfill
+%   \minipage{0.32\textwidth}
+%   \begin{figure}
+%     \centering
+%      \includegraphics[width=\textwidth]{figures/temporal_evolution/wasserstein_H_2_dist_diag_change.png}
+%      \caption{$H_2$}
+%   \end{figure}
+%   \endminipage
+% \end{frame}
 
 
 

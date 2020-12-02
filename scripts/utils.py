@@ -208,6 +208,7 @@ def get_all_available_diagnoses(path_to_diags):
     with open(path_to_diags) as f:
         diagnoses = json.load(f)
     counts = 0
+    unknown = list()
     for patient in list(diagnoses.keys()):
         for timepoint in list(diagnoses[patient].keys()):
             if diagnoses[patient][timepoint] == "CN":
@@ -224,7 +225,10 @@ def get_all_available_diagnoses(path_to_diags):
                     f"Unknown diagnosis ({diagnoses[patient][timepoint]}) "
                     f"specified for patient {patient}"
                 )
-    return cn_images, mci_images, ad_images
+
+                unknown.append(format_patient_timepoint(patient, timepoint))
+    print(counts)
+    return cn_images, mci_images, ad_images, unknown
 
 
 def format_patient(patient, diagnoses):

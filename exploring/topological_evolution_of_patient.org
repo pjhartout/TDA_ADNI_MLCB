@@ -39,8 +39,6 @@ how it evolves. Where is the biggest difference on average?
 
 Let's take a patient with an evolving diagnosis over time.
 
-Not a single patient evolves from CN - MCI - AD in the dataset.
-
 CP
 #+BEGIN_SRC python
 

@@ -22,6 +22,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from scipy.spatial import distance
 from gtda.diagrams import PairwiseDistance
+import utils
 
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 
@@ -102,7 +103,7 @@ def main():
     diagnosis_json = (
         DOTENV_KEY2VAL["DATA_DIR"] + "collected_diagnoses_complete.json"
     )
-    gen_data_dir = DOTENV_KEY2VAL["GEN_DATA_DIR"] + "/distance_from_average/"
+    gen_data_dir = DOTENV_KEY2VAL["GEN_DATA_DIR"] + "/distance_from_average_pi/"
     utils.make_dir(gen_data_dir)
     (
         cn_patients,

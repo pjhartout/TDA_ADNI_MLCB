@@ -32,14 +32,16 @@ from scipy.stats import mannwhitneyu
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 N_JOBS = 1
 HOMOLOGY_DIMENSIONS = (0, 1, 2)
-SAMPLE_REP = True
+SAMPLE_REP = False
 # DISTPLOT_PD_DISTANCES = False
-MEDIAN_PL = True
+MEDIAN_PL = False
+MEDIAN_PI = False
 # AVERAGE_PL_MULTI = False
-PLOT_DISTANCE_FROM_MEDIAN_PL = True
+PLOT_DISTANCE_FROM_MEDIAN_PL = False
+PLOT_DISTANCE_FROM_MEDIAN_PI = True
 PATIENT_EVOLUTION = True
-PATIENT_EVOLUTION_AVERAGE = True
-DIVERGENCE_BETWEEN_PDS = True
+PATIENT_EVOLUTION_AVERAGE = False
+DIVERGENCE_BETWEEN_PDS = False
 SCALE = 5  # resolution of exported images
 VEC_SIZE = 100
 N_LAYERS = 50
@@ -68,8 +70,11 @@ def generate_sample_representations(paths_to_patches, labels):
             patch.reshape(1, 30, 36, 30)
         )
         for h_dim in HOMOLOGY_DIMENSIONS:
-            cp.plot(diagrams_cubical_persistence, homology_dimensions=[h_dim]).write_image(
-                sample_rep_dir + f"persistence_diagram_{labels[i]}_H_{h_dim}.png",
+            cp.plot(
+                diagrams_cubical_persistence, homology_dimensions=[h_dim]
+            ).write_image(
+                sample_rep_dir
+                + f"persistence_diagram_{labels[i]}_H_{h_dim}.png",
                 scale=SCALE,
             )
 
@@ -306,8 +311,8 @@ def plot_deviation_from_avg_pl(path_to_distance_matrices, figures):
 
 def plot_median_persistence_landscapes(image_dir, patient_types):
     """
-    This function computes the average persistence landscape of the diagnostic
-    categories and plots them
+    This function plots the median persistence landscape of the diagnostic
+    categories
     """
     for i, pl in enumerate(image_dir):
         pl = np.load(DOTENV_KEY2VAL["GEN_DATA_DIR"] + pl)
@@ -319,6 +324,23 @@ def plot_median_persistence_landscapes(image_dir, patient_types):
             + f"median_pl_{patient_types[i]}.png",
             bbox_inches="tight",
         )
+
+
+def plot_median_persistence_image(image_dir, patient_types):
+    """
+    This function plots the median  persistence landscape of the diagnostic
+    categories and plots them
+    """
+    for i, pi in enumerate(image_dir):
+        pi = np.load(DOTENV_KEY2VAL["GEN_DATA_DIR"] + pi)
+        for h_dim in HOMOLOGY_DIMENSIONS:
+            plt.imshow(pi[h_dim, :, :], cmap="Blues")
+            plt.savefig(
+                DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+                + "/median_pis/"
+                + f"median_pi_{patient_types[i]}_h_{h_dim}.png",
+                bbox_inches="tight",
+            )
 
 
 def plot_distance_from_median_pl(distance_files, patient_types):
@@ -358,6 +380,21 @@ def plot_distance_from_median_pl(distance_files, patient_types):
         float_format="{:0.2f}".format,
         escape=False,
     )
+
+
+def plot_distance_from_median_pi(distance_files, patient_types):
+    distance_stats_df = pd.DataFrame()
+    distances = pd.read_csv(
+        DOTENV_KEY2VAL["GEN_DATA_DIR"]
+        + "L_1_distances_to_mutliple_diagnostic_medians.csv"
+    )
+    distances = distances.set_index("Unnamed: 0")
+    for distance_col in distances.columns:
+        distance_data = distances.iloc[:, distances]
+        # First, we select the patients belonging to that diagnostic category
+        patient_type = distance_col.split("_")[0]
+
+        # Second, we select the patients belonging to that diagnostic category
 
 
 def plot_patient_evolution(generated_distance_data):
@@ -403,7 +440,7 @@ def plot_patient_evolution(generated_distance_data):
                 plt.savefig(
                     DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
                     + "/temporal_evolution/"
-                    + f"landscape_distance_for_{file.split('_')[3]}_h_{j}.png",
+                    + f"persistence_image_distance_for_{file.split('_')[3]}_h_{j}.png",
                     bbox_inches="tight",
                 )
                 plt.close("all")
@@ -521,12 +558,33 @@ def main():
             ["CN", "MCI", "AD"],
         )
 
+    if MEDIAN_PI:
+        utils.make_dir(DOTENV_KEY2VAL["GEN_FIGURES_DIR"] + "/median_pis/")
+        plot_median_persistence_image(
+            [
+                "/distance_from_median_image/median_pi_CN.npy",
+                "/distance_from_median_image/median_pi_MCI.npy",
+                "/distance_from_median_image/median_pi_AD.npy",
+            ],
+            ["CN", "MCI", "AD"],
+        )
+
     if PLOT_DISTANCE_FROM_MEDIAN_PL:
         plot_distance_from_median_pl(
             [
                 "/distance_from_average/distance_from_average_pl_CN.csv",
                 "/distance_from_average/distance_from_average_pl_MCI.csv",
                 "/distance_from_average/distance_from_average_pl_AD.csv",
+            ],
+            ["CN", "MCI", "AD"],
+        )
+
+    if PLOT_DISTANCE_FROM_MEDIAN_PI:
+        plot_distance_from_median_pi(
+            [
+                "/distance_from_median_image/distance_from_average_pl_CN.csv",
+                "/distance_from_median_image/distance_from_average_pl_MCI.csv",
+                "/distance_from_median_image/distance_from_average_pl_AD.csv",
             ],
             ["CN", "MCI", "AD"],
         )

@@ -42,14 +42,15 @@ def main():
     utils.make_dir(DOTENV_KEY2VAL["GEN_DATA_DIR"] + distance_dir)
 
     distances_to_evaluate = [
-        "bottleneck",
-        "wasserstein",
-        "betti",
+        # "bottleneck",
+        # "wasserstein",
+        # "betti",
         "landscape",
-        "silhouette",
-        "heat",
+        # "silhouette",
+        # "heat",
         "persistence_image",
     ]
+    # patients = ["sub-ADNI011S0023", "sub-ADNI029S0878"]
     # If we want to process multiple patients, we just throw them in a loop.
     for i, patient in tqdm(enumerate(patients), total=len(patients)):
         for distance in distances_to_evaluate:

@@ -39,12 +39,12 @@ MEDIAN_PI = False
 # AVERAGE_PL_MULTI = False
 PLOT_DISTANCE_FROM_MEDIAN_PL = False
 PLOT_DISTANCE_FROM_MEDIAN_PI = True
-PATIENT_EVOLUTION = True
+PATIENT_EVOLUTION = False
 PATIENT_EVOLUTION_AVERAGE = False
 DIVERGENCE_BETWEEN_PDS = False
 SCALE = 5  # resolution of exported images
 VEC_SIZE = 100
-N_LAYERS = 50
+N_LAYERS = 1
 
 
 def generate_sample_representations(paths_to_patches, labels):
@@ -127,7 +127,7 @@ def generate_sample_representations(paths_to_patches, labels):
                     )
             else:
                 rep.plot(vectorial_representation).update_layout(
-                    title=None
+                    title=None, margin=dict(l=0, r=0, b=0, t=0, pad=4),
                 ).write_image(
                     sample_rep_dir
                     + f"{representation_names[j].replace(' ', '_')}"
@@ -386,15 +386,71 @@ def plot_distance_from_median_pi(distance_files, patient_types):
     distance_stats_df = pd.DataFrame()
     distances = pd.read_csv(
         DOTENV_KEY2VAL["GEN_DATA_DIR"]
+        + "/distance_from_median_image/"
         + "L_1_distances_to_mutliple_diagnostic_medians.csv"
     )
-    distances = distances.set_index("Unnamed: 0")
-    for distance_col in distances.columns:
-        distance_data = distances.iloc[:, distances]
-        # First, we select the patients belonging to that diagnostic category
-        patient_type = distance_col.split("_")[0]
+    distances = distances.rename(columns={"Unnamed: 0": "patients"}).set_index(
+        "patients"
+    )
+    diagnosis_json = (
+        DOTENV_KEY2VAL["DATA_DIR"] + "collected_diagnoses_complete.json"
+    )
+    (
+        cn_patients,
+        mci_patients,
+        ad_patients,
+        unknown,
+    ) = utils.get_all_available_diagnoses(diagnosis_json)
 
-        # Second, we select the patients belonging to that diagnostic category
+    h_dim_max = dict()
+    for h_dim in HOMOLOGY_DIMENSIONS:
+        h_dim_max[h_dim] = np.max(
+            distances.loc[:, distances.columns.str.contains(str(h_dim))].values
+        )
+
+    patient_dict = {"CN": cn_patients, "MCI": mci_patients, "AD": ad_patients}
+    distance_stats_df = pd.DataFrame()
+    for distance_col in distances.columns:
+        distance_data = distances[distance_col].reset_index()
+        h_dim = distance_col.split("_")[2]
+        patient_type = distance_col.split("_")[0]
+        distance_patient_type = (
+            distance_data[
+                distance_data["patients"].isin(patient_dict[patient_type])
+            ]
+            .drop(columns=["patients"])
+            .values
+        )
+        distance_stats_dict = dict()
+        distance_stats_dict["Mean"] = np.mean(distance_patient_type)
+        distance_stats_dict["Median"] = np.median(distance_patient_type)
+        distance_stats_dict["Standard deviation"] = np.std(
+            distance_patient_type
+        )
+        distance_stats_dict["Q3"] = np.quantile(distance_patient_type, 0.75)
+        distance_stats_dict["Max"] = np.max(distance_patient_type)
+        #            distance_stats_dict["kurtosis"] = kurtosis(distance_data)
+        distance_stats_dict["Skewness"] = skew(distance_patient_type)
+        distance_stats_df_entry = pd.DataFrame.from_dict(
+            distance_stats_dict, orient="index"
+        )
+        distance_stats_df_entry.columns = [f"{distance_col}"]
+        distance_stats_df = distance_stats_df.append(distance_stats_df_entry.T)
+        ax = sns.displot(distance_data, legend=False)
+        # ax.set(ylim=(0, ))  # Finetuned to the data
+        ax.set(xlim=(0, h_dim_max[int(h_dim)]))
+        plt.savefig(
+            DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
+            + "/median_pis/"
+            + f"displot_median_pi_{distance_col}.png",
+            bbox_inches="tight",
+        )
+    distance_stats_df.to_latex(
+        DOTENV_KEY2VAL["GEN_DATA_DIR"]
+        + "output_distance_statistics_median_pi.tex",
+        float_format="{:0.2f}".format,
+        escape=False,
+    )
 
 
 def plot_patient_evolution(generated_distance_data):
@@ -440,7 +496,8 @@ def plot_patient_evolution(generated_distance_data):
                 plt.savefig(
                     DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
                     + "/temporal_evolution/"
-                    + f"persistence_image_distance_for_{file.split('_')[3]}_h_{j}.png",
+                    + f"persistence_image_distance_for_"
+                    f"{file.split('_')[5]}_h_{j}.png",
                     bbox_inches="tight",
                 )
                 plt.close("all")
@@ -462,12 +519,12 @@ def plot_patient_evolution_average(generated_distance_data):
 
     distance_data = pd.DataFrame()
     distances_to_evaluate = [
-        "bottleneck",
-        "wasserstein",
-        "betti",
-        "landscape",
-        "silhouette",
-        "heat",
+        # "bottleneck",
+        # "wasserstein",
+        # "betti",
+        # "landscape",
+        # "silhouette",
+        # "heat",
         "persistence_image",
     ]
     for distance in distances_to_evaluate:
@@ -591,8 +648,7 @@ def main():
 
     if PATIENT_EVOLUTION:
         plot_patient_evolution(
-            DOTENV_KEY2VAL["GEN_DATA_DIR"]
-            + "/temporal_evolution/per_patient_data/"
+            DOTENV_KEY2VAL["GEN_DATA_DIR"] + "/temporal_evolution/"
         )
 
     if PATIENT_EVOLUTION_AVERAGE:

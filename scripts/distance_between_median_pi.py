@@ -42,7 +42,8 @@ from scipy.spatial import distance
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 N_JOBS = -1
 
-def compute_average_pl(patient_list, image_dir):
+
+def compute_average_pi(patient_list, image_dir):
     file_names = []
     images = []
     for patient in patient_list:
@@ -88,30 +89,25 @@ def compute_pi_distance(
     # Select patients who are outliers
     for col in diffs.columns:
         outliers[col] = list(
-            file_names[
-                np.array(diffs.nlargest(140, columns=col).index)
-            ]
+            file_names[np.array(diffs.nlargest(140, columns=col).index)]
         )
     outliers.to_csv(dest_dir + f"outliers_{patient_category}.csv", index=False)
     diffs.index = file_names
-    diffs.to_csv(dest_dir + f"distance_from_median_pi_{patient_category}.csv",
-                 index=True)
+    diffs.to_csv(
+        dest_dir + f"distance_from_median_pi_{patient_category}.csv",
+        index=True,
+    )
 
 
 def compute_category(patient_list, patient_category, image_dir, dest_dir):
     # Compute average
-    pis, average_pi, file_names = compute_average_pl(patient_list, image_dir)
+    pis, average_pi, file_names = compute_average_pi(patient_list, image_dir)
     with open(dest_dir + f"median_pi_{patient_category}.npy", "wb") as f:
-         np.save(f, average_pi)
+        np.save(f, average_pi)
 
     # Compute distance to average
     compute_pi_distance(
-        pis,
-        average_pi,
-        1,
-        dest_dir,
-        file_names,
-        patient_category,
+        pis, average_pi, 1, dest_dir, file_names, patient_category,
     )
 
 
@@ -121,13 +117,15 @@ def main():
     diagnosis_json = (
         DOTENV_KEY2VAL["DATA_DIR"] + "collected_diagnoses_complete.json"
     )
-    gen_data_dir = DOTENV_KEY2VAL["GEN_DATA_DIR"] + \
-                   "/distance_from_median_image/"
+    gen_data_dir = (
+        DOTENV_KEY2VAL["GEN_DATA_DIR"] + "/distance_from_median_image/"
+    )
     utils.make_dir(gen_data_dir)
     (
         cn_patients,
         mci_patients,
         ad_patients,
+        unknown,
     ) = utils.get_all_available_diagnoses(diagnosis_json)
     compute_category(cn_patients, "CN", image_dir, gen_data_dir)
     compute_category(mci_patients, "MCI", image_dir, gen_data_dir)

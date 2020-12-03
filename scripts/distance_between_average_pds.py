@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""distance_between_average_pds.py
+"""distance_between_median_pds.py
 This script investigates the "distance" between each of the images to the
 average vectorial representation of a persistence image within a diagnostic
 category.
@@ -27,7 +27,7 @@ import utils
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 
 
-def compute_average_pl(patient_list, image_dir):
+def compute_average_pi(patient_list, image_dir):
     file_names = []
     images = []
     for patient in patient_list:
@@ -40,23 +40,23 @@ def compute_average_pl(patient_list, image_dir):
     pis = utils.cubical_persistence(
         images, None, plot_diagrams=False, betti_curves=False, scaled=False
     )
-    pls = utils.persistence_landscape(pis)
-    return pls, np.median(pls, axis=0), file_names
+    pis = utils.persistence_landscape(pis)
+    return pis, np.median(pis, axis=0), file_names
 
 
-def compute_pl_distance(
-    pls, average_pl, p, dest_dir, file_names, patient_category
+def compute_pi_distance(
+    pis, average_pi, p, dest_dir, file_names, patient_category
 ):
     diffs = []
-    for pl in range(pls.shape[0]):
+    for pl in range(pis.shape[0]):
         # Loop through each patient
         patient_dist_from_avg = []
-        for h_dim in range(pls.shape[1]):
+        for h_dim in range(pis.shape[1]):
             # Loop through each dimension
             patient_dist_from_avg.append(
                 distance.minkowski(
-                    pls[pl, h_dim, :].flatten(),
-                    average_pl[h_dim, :].flatten(),
+                    pis[pl, h_dim, :].flatten(),
+                    average_pi[h_dim, :].flatten(),
                     p,
                 )
             )
@@ -76,20 +76,20 @@ def compute_pl_distance(
         )
     outliers.to_csv(dest_dir + f"outliers_{patient_category}.csv", index=False)
     diffs.index = file_names
-    diffs.to_csv(dest_dir + f"distance_from_average_pl_{patient_category}.csv",
+    diffs.to_csv(dest_dir + f"distance_from_average_pi_{patient_category}.csv",
                  index=True)
 
 
 def compute_category(patient_list, patient_category, image_dir, dest_dir):
     # Compute average
-    pls, average_pl, file_names = compute_average_pl(patient_list, image_dir)
-    with open(dest_dir + f"average_pl_{patient_category}.npy", "wb") as f:
-         np.save(f, average_pl)
+    pis, average_pi, file_names = compute_average_pi(patient_list, image_dir)
+    with open(dest_dir + f"average_pi_{patient_category}.npy", "wb") as f:
+         np.save(f, average_pi)
 
     # Compute distance to average
-    compute_pl_distance(
-        pls,
-        average_pl,
+    compute_pi_distance(
+        pis,
+        average_pi,
         1,
         dest_dir,
         file_names,

@@ -10,6 +10,7 @@ to all other median PIs for each diagnostic category.
 
 import utils
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 import dotenv
 
 import numpy as np
@@ -36,8 +37,9 @@ from sklearn.preprocessing import RobustScaler, StandardScaler
 from sklearn.decomposition import PCA
 
 HOMOLOGY_DIMENSIONS = (0, 1, 2)
-CMAP_DIAG = {"CN": "Greens", "MCI": "Blues", "AD":"Purples"}
 DOTENV_KEY2VAL = dotenv.dotenv_values()
+SCALE = 10
+rcParams["figure.figsize"] = 20, 20
 
 
 def format_tex(float_number):
@@ -80,11 +82,11 @@ def main():
                 f"{patient_type}_H_{h_dim}"
             ]
             # Displot of the distance for a particular patient category
-            sns.displot(distance_patient_type_hdim, color=CMAP_DIAG[patient_type])
-            plt.xlim(
-                min(distance_data),
-                max(distance_data),
-            )
+            # sns.displot(distance_patient_type_hdim, color=CMAP_DIAG[patient_type])
+            # plt.xlim(
+            #     min(distance_data),
+            #     max(distance_data),
+            # )
             # plt.show()
 
             # Create dict with stats for the distribution of a given patient category
@@ -115,12 +117,12 @@ def main():
         distance_data_diags = distance_data_diags.append(distance_patient_type)
 
     distance_stats_df = distance_stats_df.applymap(lambda x: format_tex(x))
-    distance_stats_df.to_latex(
-        DOTENV_KEY2VAL["GEN_DATA_DIR"]
-        + "output_distance_statistics_persistence_image.tex",
-        float_format="{:0.2f}".format,
-        escape=False,
-    )
+    # distance_stats_df.to_latex(
+    #     DOTENV_KEY2VAL["GEN_DATA_DIR"]
+    #     + "output_distance_statistics_persistence_image.tex",
+    #     float_format="{:0.2f}".format,
+    #     escape=False,
+    # )
     scaler = StandardScaler()
     patients = distance_data["patients"]
     columns = distance_data.columns[1:]
@@ -128,13 +130,24 @@ def main():
     # distance_data = distance_data.apply(
     #     lambda x: np.log10(x) if np.issubdtype(x.dtype, np.number) else x
     # )
-    distance_data = pd.DataFrame(distance_data, index=patients, columns=columns)
+    distance_data = pd.DataFrame(
+        distance_data, index=patients, columns=columns
+    )
     distance_data = distance_data.merge(distance_data_diags, on="patients")
     pca = PCA(n_components=2)
     pca_data = pca.fit_transform(distance_data[["CN_H_2", "AD_H_2"]])
-    pca_data = pd.DataFrame(pca_data, index=patients, columns=["PCA_1", "PCA_2"])
+    pca_data = pd.DataFrame(
+        pca_data, index=patients, columns=["PCA_1", "PCA_2"]
+    )
     pca_data = pca_data.merge(distance_data_diags, on="patients")
-    fig = px.scatter(pca_data, x="PCA_1", y="PCA_2", color="diag").write_html("cluster_CN_H_2_AD_H_2_PCA.html")
+    sns.scatterplot(
+        data=pca_data, x="PCA_1", y="PCA_2", hue="diag", sizes=(2, 2)
+    )
+    plt.savefig(
+        DOTENV_KEY2VAL["GEN_FIGURES_DIR"] + "cluster_CN_H_2_AD_H_2_PCA.png",
+        dpi=300,
+        bbox_inches="tight",
+    )
 
 
 if __name__ == "__main__":

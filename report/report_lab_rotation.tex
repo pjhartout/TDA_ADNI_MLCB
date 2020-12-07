@@ -175,10 +175,10 @@ poised to substantially burden the economic prosperity of developed countries in
 ~\citep{world2017global}. Although the definite diagnosis of a patient with AD can only be done
 post-mortem, clinicians use a plethora of standardized tools to find indications of the developing
 pathology as early as possible, ranging from neuropsychological tests, blood and cerebrospinal fluid
-biomarkers, to MRI images ~\citep{mckhann2011diagnosis, lehmann2016biomarkers, smits2012early}.
+biomarkers, to MRI images ~\citep{mckhann2011diagnosis, smits2012early, lehmann2016biomarkers}.
 
 Although there are disputes on the root cause of the disease in the late onset form of AD
-\citep{hur2020innate, fulop2018can, tharp2013origins}, there is still wide consensus that the
+\citep{tharp2013origins, fulop2018can, hur2020innate}, there is still wide consensus that the
 presence of Amyloid \textbeta{} (A\textbeta{}), originating from cleavage of the amyloid precursor
 protein (APP), together with the aggregation of neurofibrillary tangles, stemming from
 hyperphosphorylated tau proteins, accumulate in the brain of patients with AD, and leads to neural
@@ -212,7 +212,7 @@ topological ideas as a distinct branch of mathematics in his 1895 publication of
   Situs}~\citep{poincare1895analysis, james1999history}. Only recently, with the advent of
 modern computing, has the field of computational topology and topological data analysis (TDA) gained
 momentum to investigate (high-dimensional) data in physics, biology, and
-beyond~\citep{ghrist2008barcodes, dey1999computational, amezquita2020shape}. While surveying the
+beyond~\citep{dey1999computational, ghrist2008barcodes, amezquita2020shape}. While surveying the
 various applications of computational topology is beyond the scope of this report, we do want to
 focus on a number of procedures that are paramount to the workflow described in this report: cubical
 persistence, various vectorized representations of the persistence diagrams obtained from filtered
@@ -1009,7 +1009,7 @@ for a high uncertainty.
 One way to increase the performance of our models would be a multi-patch setup, where the persistent
 image of other relevant patches could be considered. This stems from the fact that there is
 increasing evidence for the existence of biological subtypes of AD, which translate in
-differentially affected brain regions \citep{tijms2020pathophysiological,poulakis2018heterogeneous}.
+differentially affected brain regions \citep{poulakis2018heterogeneous, tijms2020pathophysiological}.
 In this context, computing the PI of other local areas of the brain which are affected by other
 subtypes of AD, like the precuneus, the medial and lateral temporal cortex, some of which
 incidentally also show increased accuracy in patch-based classification as seen in Figure
@@ -1110,8 +1110,8 @@ include Parkinson's disease, dementia with Lewy bodies, and genetically inherite
 Huntington's disease, which all have distinct atrophy patterns and therefore distinct topological signatures.
 Adaptations would be required, such as adapting the choice of patch of interest -- as an example, it
 might be more relevant to look at the basal ganglia for Huntington's disease, since the medial
-temporal lobe is observed to be mostly spared in Huntington's \citep{halliday1998regional,
-  kuhl1982cerebral, kassubek2004topography}.
+temporal lobe is observed to be mostly spared in Huntington's
+\citep{kuhl1982cerebral, halliday1998regional, kassubek2004topography}.
 
 Additionally, we note that a clustering using topological descriptors could be used to more finely
 delineate subtypes of AD and various stages of progression. For instance, using deep clustering

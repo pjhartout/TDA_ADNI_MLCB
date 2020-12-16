@@ -80,7 +80,7 @@
 %   \tableofcontents[hideallsubsections]
 % \end{frame}
 
-\begin{frame}[fragile]{Alzheimer's disease}
+\begin{frame}[fragile]{}
 
   \begin{columns}[T,onlytextwidth]
     \column{0.5\textwidth}
@@ -188,8 +188,7 @@
   \item We use the T1-weighting value ($\text{fat}\approx 1$; $\text{water}\approx 0$) to compute
     topological features
   \item Filtration of point clouds:
-
-    \begin{figure}
+  \begin{figure}
       \centering
       \animategraphics[loop,controls,width=0.3\linewidth]{10}{figures/VR-filtration/something-}{0}{99}
       \caption{Point cloud filtration. Adapted from \url{giotto-ai.github.io/gtda-docs/}}
@@ -201,7 +200,7 @@
 \begin{frame}[fragile]{Obtaining topological features from sMRI data}
   \begin{itemize}
   \item We use the T1-weighting value ($\text{fat}\approx 1$; $\text{water}\approx 0$) to compute topological features
-  \item Filtration of cubical complexes to examine the connected components, cycles, and voids.
+    \item Filtration of cubical complexes to examine the connected components, cycles, and voids.
     \begin{figure}
       \centering
       \animategraphics[loop,controls,width=0.5\linewidth]{10}{figures/cubical-filtration/cubical_complex_filtration_stills-}{0}{220}
@@ -297,7 +296,7 @@
 \end{table}
 \pause $\rightarrow$  Local 3D Conv training takes 15 minutes on a
 \textbf{server GPU}.\\
-\pause $\rightarrow$ Local PI training time is 2 minutes on a \textbf{laptop CPU}. Very efficient compression of features! \\
+\pause $\rightarrow$ Local PI training time is 2 minutes on a \textbf{laptop CPU}. \\
 \pause Persistent homology produces \textbf{highly salient compressed} features for AD characterization.
 \end{frame}
 

@@ -1,5 +1,5 @@
 %Metroplolis Beamer Theme: https://github.com/matze/mtheme
-\documentclass[aspectratio=169, 10pt, dvipsnames, handout]{beamer}
+\documentclass[aspectratio=169, 10pt, dvipsnames]{beamer}
 \usetheme{metropolis}
 \usepackage{appendixnumberbeamer, lmodern, bookmark, kbordermatrix,fontawesome}
 \usepackage{booktabs}
@@ -14,33 +14,9 @@
 \usepackage{caption, subcaption}
 \usepackage{multicol}
 % \usepackage[dvipsnames]{xcolor}
+\usepackage{animate}
 \usepackage{scalerel,xparse}
-\NewDocumentCommand\brain{}{
-    \scalerel*{
-        \includegraphics{/home/pjh/.emojis/u1F9E0.png}
-    }{X}
-  }
-  \NewDocumentCommand\doughnut{}{
-    \scalerel*{
-        \includegraphics{/home/pjh/.emojis/u1F369.png}
-    }{X}
-  }
-  \NewDocumentCommand\compass{}{
-    \scalerel*{
-        \includegraphics{/home/pjh/.emojis/u1F9ED.png}
-    }{X}
-  }
-  \NewDocumentCommand\mug{}{
-    \scalerel*{
-        \includegraphics{/home/pjh/.emojis/u2615.png}
-    }{X}
-  }
-  \NewDocumentCommand\map{}{
-    \scalerel*{
-      \includegraphics{/home/pjh/.emojis/u1F5FA.png}
-    }{X}
-  }
-
+\usepackage[style=british]{csquotes}
 
 \usetikzlibrary{shapes,arrows}
 \tikzstyle{orange} = [rectangle, draw, fill=YellowOrange!30,
@@ -62,7 +38,6 @@
 
 % \titlegraphic{\hfill\includegraphics[height=1.5cm]{logo.pdf}}
 
-\usepackage[style=british]{csquotes}
 
 \def\signed #1{{\leavevmode\unskip\nobreak\hfil\penalty50\hskip1em
   \hbox{}\nobreak\hfill #1%
@@ -73,11 +48,33 @@
   {\savebox\mybox{#1}\begin{quote}\openautoquote\hspace*{-.7ex}}
   {\unskip\closeautoquote\vspace*{1mm}\signed{\usebox\mybox}\end{quote}}
 
+\titlegraphic{%
+  \includegraphics[width=.2\textwidth]{figures/mlcb.png}\hfill
+  \includegraphics[width=.2\textwidth]{figures/dbsse.png}\hfill
+  \includegraphics[width=.2\textwidth]{figures/eth.png}
+}
+
+\makeatletter
+\setbeamertemplate{title page}{
+  \begin{minipage}[b][\paperheight]{\textwidth}
+    \vfill%
+    \ifx\inserttitle\@empty\else\usebeamertemplate*{title}\fi
+    \ifx\insertsubtitle\@empty\else\usebeamertemplate*{subtitle}\fi
+    \usebeamertemplate*{title separator}
+    \ifx\beamer@shortauthor\@empty\else\usebeamertemplate*{author}\fi
+    \ifx\insertdate\@empty\else\usebeamertemplate*{date}\fi
+    \ifx\insertinstitute\@empty\else\usebeamertemplate*{institute}\fi
+    \vfill
+    \ifx\inserttitlegraphic\@empty\else\inserttitlegraphic\fi
+    \vspace*{1cm}
+  \end{minipage}
+}
+\makeatother
+
 
 \begin{document}
 
 \maketitle
-
 % \begin{frame}{Table of contents}
 %   \setbeamertemplate{section in toc}[sections numbered]
 %   \tableofcontents[hideallsubsections]
@@ -87,7 +84,7 @@
 
   \begin{columns}[T,onlytextwidth]
     \column{0.5\textwidth}
-    \textbf{Alzheimer's disease:} \brain
+    \textbf{Alzheimer's disease:}
     \begin{itemize}
     \pause\item Nearly 40 million people live with AD
     \pause\item Cost in US alone \$ 2 trillion by 2030
@@ -111,17 +108,18 @@
     }
     \column{0.5\textwidth}
     \pause
-    \textbf{Topology:} \doughnut \mug
+    \textbf{Topology:}
     \begin{itemize}
     \pause\item Concerned with ``properties of a geometric object that are preserved under \textbf{continuous deformations}, such as [...] crumpling.''
-    \pause\item Recently, \textit{persistent homology} has emerged to quantify (differences in) the shape of data.
+    \pause\item Recently, \textit{persistent homology} has emerged as a way to
+    quantify the shape of data.
     \pause\item \textbf{How can we apply persistent homology to quantify changes in shape due to Alzheimer's disease?}
     \end{itemize}
     \end{columns}
 \end{frame}
 
 
-\begin{frame}[fragile]{Topology in AD - Research Avenues \compass}
+\begin{frame}[fragile]{Topology in AD - Research Avenues}
   \begin{enumerate}
   \pause\item \textbf{Classification}
   \pause\item Subtype identification
@@ -130,92 +128,87 @@
 % \pause$\rightarrow$ Some findings in these directions will be presented today
 \end{frame}
 
+
 % \begin{frame}[fragile]{Analysis setting}
 % \begin{center}
 %   \begin{tikzpicture}[align=center, node distance = 1cm, auto]
-%     \node[orange, text width=8em](raw){\scriptsize Raw T1-weighted %     sMRI};
-%     \node[inner sep=0pt] (unprocessed) at (0,-1)
-%     {\includegraphics[width=0.1\textwidth]{figures/t1_unprocessed.jpg}};
-%     \pause{
-%       \node[orange, right of=raw, xshift=2.5cm](fmriprep){\scriptsize %       \textit{fMRIprep}};
-%       \draw[myarrow](raw.east)--(fmriprep.west);
-%     }
-%     \node[inner sep=0pt, below of=fmriprep](prepped) %     {\includegraphics[width=0.1\textwidth]{figures/fmri_preped.jpeg}};
-%   \pause{
-%     \node[orange, right of=fmriprep, xshift=2.5cm](patch){\scriptsize %     Patch Selection};
-%     \draw[myarrow](fmriprep.east)--(patch.west);}
-%   \pause{
-%     \node[orange, right of=patch, xshift=2.5cm](ph){\scriptsize %     Persistent Homology};
-%     \draw[myarrow](patch.east)--(ph.west);}
-%   \node[inner sep=0pt, right of=ph, xshift=1.1cm](pd_ex) %   {\includegraphics[width=0.1\textwidth]{figures/PDs/persistence_diagram_AD.png}};
-%   \pause{
-%     \node[orange, below of=ph, yshift=-0.2cm](diag){\scriptsize %     Persistence images};
-%     \draw[myarrow](ph.south)--(diag.north);}
-%   \node[inner sep=0pt, right of=diag, xshift=1.1cm](pi_ex) %   {\includegraphics[width=0.1\textwidth]{figures/PIs/Persistence_image_AD_h_2.png}};
-%   \pause{
-%     \node[orange, below of=diag, yshift=-0.2cm](diag2){\scriptsize %     Classification CN/AD};
-%     \draw[myarrow](diag.south)--(diag2.north);}
-%   \node[inner sep=0pt, right of=diag2, xshift=1.1cm](ann)
-%   {\includegraphics[width=0.1\textwidth]{figures/neuralnetwork.png}};
-%   % \pause{
-%   %   \node[orange, above of=ph, yshift=0.2cm](dist){\scriptsize %   Distance between persistence rep.};
-%   %   \draw[myarrow](ph.north)--(dist.south);}
-% \end{tikzpicture}
+%     \node[](unprocessed)
+%     {\includegraphics[width=0.15\textwidth]{figures/t1_unprocessed.jpg}};
+%     \node[below of=unprocessed, yshift=-0.3cm](unprocessed_txt){Unprocessed};
+%     \pause
+%     \node[right of=unprocessed, xshift=2.5cm](processed)
+%     {\includegraphics[width=0.15\textwidth]{figures/T1_BET.png}};
+%     \node[below of=processed, yshift=-0.3cm](processed_txt)
+%     {\textit{fMRIPrep}};
+%     \draw[myarrow](unprocessed.east)--(processed.west);
+%     \pause
+%     \node[right of=processed, xshift=2.5cm](selection)
+%     {\includegraphics[width=0.15\textwidth]{figures/selected_patch.png}};
+%     \node[below of=selection, yshift=-0.3cm](selection_txt)
+%     {Patch selection};
+%     \draw[myarrow](processed.east)--(selection.west);
+%     \pause
+%     \node[right of=selection, xshift=2.5cm](persistence_homology)
+%     {\includegraphics[width=0.15\textwidth]{figures/PDs/persistence_diagram_CN.png}};
+%     \node[below of=persistence_homology, yshift=-0.3cm](persistence_homology_txt)
+%     {Persistent homology};
+%     \draw[myarrow](selection.east)--(persistence_homology.west);
+%     \pause
+%     \node[below of=persistence_homology_txt, yshift=-1.3cm](persistence_image)
+%     {\includegraphics[width=0.15\textwidth]{figures/PIs/Persistence_image_CN_h_1.png}};
+%     \node[below of=persistence_image, yshift=-0.3cm](persistence_image_txt)
+%     {Persistence Image};
+%     \draw[myarrow](persistence_homology_txt.south)--(persistence_image.north);
+%     \pause
+%     \node[left of=persistence_image, xshift=-2.5cm](classification)
+%     {\includegraphics[width=0.15\textwidth]{figures/neuralnetwork.png}};
+%     \node[below of=classification, yshift=-0.3cm](classification_txt)
+%     {Classification};
+%     \draw[myarrow](persistence_image.west)--(classification.east);
+%   \end{tikzpicture}
 % \end{center}
+% \scriptsize Images adapted from \href{https://commons.wikimedia.org/wiki/Brain#/media/File:MRI_head_side.jpg}{Wikimedia},
+% \href{https://www.slicer.org/wiki/Documentation/Nightly/Modules/BrainVolumeRefinement}{ slicer.org}, and
+% \href{https://thenounproject.com/smodgekar/collection/data-classify/}{ Sachin Modgekar}
+
 % \end{frame}
 
-\begin{frame}[fragile]{Analysis setting}
-\begin{center}
-  \begin{tikzpicture}[align=center, node distance = 1cm, auto]
-    \node[](unprocessed)
-    {\includegraphics[width=0.15\textwidth]{figures/t1_unprocessed.jpg}};
-    \node[below of=unprocessed, yshift=-0.3cm](unprocessed_txt){Unprocessed};
-    \pause
-    \node[right of=unprocessed, xshift=2.5cm](processed)
-    {\includegraphics[width=0.15\textwidth]{figures/T1_BET.png}};
-    \node[below of=processed, yshift=-0.3cm](processed_txt)
-    {\textit{fMRIPrep}};
-    \draw[myarrow](unprocessed.east)--(processed.west);
-    \pause
-    \node[right of=processed, xshift=2.5cm](selection)
-    {\includegraphics[width=0.15\textwidth]{figures/patch_performance.png}};
-    \node[below of=selection, yshift=-0.3cm](selection_txt)
-    {Patch selection};
-    \draw[myarrow](processed.east)--(selection.west);
-    \pause
-    \node[right of=selection, xshift=2.5cm](persistence_homology)
-    {\includegraphics[width=0.15\textwidth]{figures/PDs/persistence_diagram_CN.png}};
-    \node[below of=persistence_homology, yshift=-0.3cm](persistence_homology_txt)
-    {Persistence homology};
-    \draw[myarrow](selection.east)--(persistence_homology.west);
-    \pause
-    \node[below of=persistence_homology_txt, yshift=-1.3cm](persistence_image)
-    {\includegraphics[width=0.15\textwidth]{figures/PIs/Persistence_image_CN_h_1.png}};
-    \node[below of=persistence_image, yshift=-0.3cm](persistence_image_txt)
-    {Persistence Image};
-    \draw[myarrow](persistence_homology_txt.south)--(persistence_image.north);
-    \pause
-    \node[left of=persistence_image, xshift=-2.5cm](classification)
-    {\includegraphics[width=0.15\textwidth]{figures/neuralnetwork.png}};
-    \node[below of=classification, yshift=-0.3cm](classification_txt)
-    {Classification};
-    \draw[myarrow](persistence_image.west)--(classification.east);
-  \end{tikzpicture}
-\end{center}
-\scriptsize Images adapted from \href{https://commons.wikimedia.org/wiki/Brain#/media/File:MRI_head_side.jpg}{Wikimedia},
-\href{https://www.slicer.org/wiki/Documentation/Nightly/Modules/BrainVolumeRefinement}{ slicer.org}, and
-\href{https://thenounproject.com/smodgekar/collection/data-classify/}{ Sachin Modgekar}
-
-\end{frame}
 
 
-
-\begin{frame}[fragile]{Analysis setting}
+\begin{frame}[fragile]{Determining the patch of interest}
 \begin{figure}
   \centering
-  \includegraphics[width=0.4\textwidth]{figures/patch_performance.png}
-  \caption{AUPRC on each patch, achieved using a model described in earlier work. Chosen patch for analyses is boxed in red (patch with highest accuracy).}
+  \includegraphics[width=0.4\textwidth]{figures/selected_patch.png}
+  \caption{The patch with the highest accuracy was selected. Results from Br{\"u}ningk, Sarah C \textit{et al} \url{https://arxiv.org/abs/2011.06531}}
 \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Obtaining topological features from sMRI data}
+  \begin{itemize}
+  \item We use the T1-weighting value ($\text{fat}\approx 1$; $\text{water}\approx 0$) to compute
+    topological features
+  \item Filtration of point clouds:
+
+    \begin{figure}
+      \centering
+      \animategraphics[loop,controls,width=0.3\linewidth]{10}{figures/VR-filtration/something-}{0}{99}
+      \caption{Point cloud filtration. Adapted from \url{giotto-ai.github.io/gtda-docs/}}
+      \label{fig:pc_filt}
+    \end{figure}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Obtaining topological features from sMRI data}
+  \begin{itemize}
+  \item We use the T1-weighting value ($\text{fat}\approx 1$; $\text{water}\approx 0$) to compute topological features
+  \item Filtration of cubical complexes to examine the connected components, cycles, and voids.
+    \begin{figure}
+      \centering
+      \animategraphics[loop,controls,width=0.5\linewidth]{10}{figures/cubical-filtration/cubical_complex_filtration_stills-}{0}{220}
+      \caption{Cubical complex filtration. Adapted from Bastian Rieck \url{https://youtu.be/4mBcwy1tOJ4}}
+      \label{fig:pc_filt}
+    \end{figure}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{I - Persistent homology}
@@ -227,7 +220,6 @@
       \end{tabular}
     \end{center}
 \end{frame}
-
 
 \begin{frame}[fragile]{I - Classification - Persistence Images}
     \begin{center}
@@ -263,7 +255,8 @@
   \node[orange, below of=dense, yshift=-0.25cm](sigm){\scriptsize Sigmoid};
   \draw[myarrow](dense.south)--(sigm.north);
   % \pause{
-  %   \node[orange, above of=ph, yshift=0.2cm](dist){\scriptsize %   Distance between persistence rep.};
+  %   \node[orange, above of=ph, yshift=0.2cm](dist){\scriptsize %   Distance
+  %   between persistence rep.};
   %   \draw[myarrow](ph.north)--(dist.south);}
 \end{tikzpicture}
 \end{center}
@@ -279,8 +272,8 @@
 
 \begin{frame}[fragile]{Methodological considerations}
   \begin{itemize}
-  \item 4 fold CV, 3 inits. Stratified for age, diagnoses and no patients are spread over folds.
-  \item Same experimental settings as from Br{\"u}ningk, Sarah C \textit{et al} \url{https://arxiv.org/abs/2011.06531}
+  \item 4 fold CV, 3 inits. Stratified for age, diagnoses and patients spread over folds.
+  \item Same settings as in Br{\"u}ningk, Sarah C \textit{et al} \url{https://arxiv.org/abs/2011.06531}
   \end{itemize}
 \end{frame}
 
@@ -302,19 +295,20 @@
   \caption{Performance metrics of the different models trained on the same data. \\Metrics from Br{\"u}ningk, Sarah C \textit{et al} \url{https://arxiv.org/abs/2011.06531}.}
   \label{tab:performance}
 \end{table}
-\pause$\rightarrow$ Local PI training time is 2 minutes on a \textbf{laptop CPU}. Very efficient compression of features! \\
-$\rightarrow$  Local 3D Conv training takes 15 minutes on a \textbf{server GPU}.\\
+\pause $\rightarrow$  Local 3D Conv training takes 15 minutes on a
+\textbf{server GPU}.\\
+\pause $\rightarrow$ Local PI training time is 2 minutes on a \textbf{laptop CPU}. Very efficient compression of features! \\
 \pause Persistent homology produces \textbf{highly salient compressed} features for AD characterization.
 \end{frame}
 
 
-\begin{frame}[fragile]{Limitations \& Outlook \map}
+\begin{frame}[fragile]{Limitations \& Outlook}
   Limitations:
   \begin{itemize}
     \item Using \textbf{raw} images is \textbf{better}, but more \textbf{expensive}.
     \pause \item Does not take atrophy from \textbf{other regions} into account
   \end{itemize}
-  \pauseFuture directions:
+  \pause Future directions:
   \begin{itemize}
      \item Can persistent homology be used to diagnose \textbf{prodromal} forms of AD?
     \pause \item Use a similar approach for \textbf{subtype identification}.
@@ -328,7 +322,9 @@ $\rightarrow$  Local 3D Conv training takes 15 minutes on a \textbf{server GPU}.
 
   \begin{center}\url{github.com/pjhartout/TDA_ADNI_MLCB}\end{center}
 
-  With thanks to Bastian Rieck for the   supervision and Sarah Brueningk, Felix Hensel, Catherine Jutzeler, Merel Kuijs and Louis Lukas for insightful discussions, code, and data.
+  With thanks to Bastian Rieck for the   supervision and Sarah Brueningk, Felix Hensel, Catherine
+  Jutzeler, Merel Kuijs and Louis Lukas for insightful discussions, code, and data \& Karsten
+  Borgwardt for providing the research setting.
 
 \end{frame}
 
@@ -347,7 +343,7 @@ $\rightarrow$  Local 3D Conv training takes 15 minutes on a \textbf{server GPU}.
     \draw[myarrow](unprocessed.east)--(processed.west);
 
     \node[right of=processed, xshift=2.5cm](selection)
-    {\includegraphics[width=0.15\textwidth]{figures/patch_performance.png}};
+    {\includegraphics[width=0.15\textwidth]{figures/selected_patch.png}};
     \node[below of=selection, yshift=-0.3cm](selection_txt)
     {Patch selection};
     \draw[myarrow](processed.east)--(selection.west);
@@ -355,7 +351,7 @@ $\rightarrow$  Local 3D Conv training takes 15 minutes on a \textbf{server GPU}.
     \node[right of=selection, xshift=2.5cm](persistence_homology)
     {\includegraphics[width=0.15\textwidth]{figures/PDs/persistence_diagram_CN.png}};
     \node[below of=persistence_homology, yshift=-0.3cm](persistence_homology_txt)
-    {Persistence homology};
+    {Persistent homology};
     \draw[myarrow](selection.east)--(persistence_homology.west);
 
     \node[below of=persistence_homology_txt, yshift=-1.3cm](persistence_image)

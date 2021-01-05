@@ -22,7 +22,6 @@ __author__ = "Philip Hartout"
 __email__ = "philip.hartout@protonmail.com"
 
 import dotenv
-import random
 import datetime
 import os
 
@@ -33,25 +32,24 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from itertools import islice
-from sklearn.model_selection import train_test_split, GroupKFold
-import pydot
 import shutil
-import utils
 
 
 print(tf.test.gpu_device_name())
-print("DEVICE INFO")
 
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 tf.random.set_seed(42)
 N_BINS = 100
+N_FILTERS = 4
+KERNEL_SIZE = 4
+DROPOUT_RATE = 0.6
 
 ################################################################################
 #  Functions
 ################################################################################
 
 persistence_image_location = (
-    DOTENV_KEY2VAL["DATA_DIR"] + "/patch_91_persistence_images/"
+    DOTENV_KEY2VAL["DATA_DIR"] + "/global_persistence_images/"
 )
 partitions_location = DOTENV_KEY2VAL["DATA_DIR"] + "/partitions/"
 diagnosis_json = (
@@ -62,22 +60,6 @@ diagnosis_json = (
 def take(n, iterable):
     "Return first n items of the iterable as a list"
     return dict(islice(iterable, n))
-
-
-def cleaning(image_labels):
-    """Quick sanity check to check if files exist prior to declaring in
-    generator"""
-    print("Performing sanity check for existence of all files.")
-    image_labels_cleaned = image_labels.copy()
-    counts = 0
-    for image in image_labels.keys():
-        try:
-            X = np.load(persistence_image_location + image)
-        except FileNotFoundError:
-            counts = counts + 1
-            del image_labels_cleaned[image]
-    print(f"{counts} images not found, removed from data labels.")
-    return image_labels_cleaned
 
 
 def make_model(input_shape):
@@ -92,30 +74,30 @@ def make_model(input_shape):
     """
     inputs = keras.Input(shape=input_shape)
 
-    tower_1 = layers.Conv2D(2, 4, padding="same", activation="relu")(
-        inputs[:, :, :, 0:1]
-    )
+    tower_1 = layers.Conv2D(
+        N_FILTERS, KERNEL_SIZE, padding="same", activation="relu"
+    )(inputs[:, :, :, 0:1])
     tower_1 = layers.BatchNormalization()(tower_1)
     tower_1 = layers.MaxPooling2D()(tower_1)
 
-    tower_2 = layers.Conv2D(2, 4, padding="same", activation="relu")(
-        inputs[:, :, :, 1:2]
-    )
+    tower_2 = layers.Conv2D(
+        N_FILTERS, KERNEL_SIZE, padding="same", activation="relu"
+    )(inputs[:, :, :, 1:2])
     tower_2 = layers.BatchNormalization()(tower_2)
     tower_2 = layers.MaxPooling2D()(tower_2)
 
-    tower_3 = layers.Conv2D(2, 4, padding="same", activation="relu")(
-        inputs[:, :, :, 2:]
-    )
+    tower_3 = layers.Conv2D(
+        N_FILTERS, KERNEL_SIZE, padding="same", activation="relu"
+    )(inputs[:, :, :, 2:])
     tower_3 = layers.BatchNormalization()(tower_3)
     tower_3 = layers.MaxPooling2D()(tower_3)
 
     merged = layers.concatenate([tower_1, tower_2, tower_3], axis=1)
     merged = layers.Flatten()(merged)
     x = layers.Dense(500, activation="relu")(merged)
-    x = layers.Dropout(0.6)(x)
+    x = layers.Dropout(DROPOUT_RATE)(x)
     x = layers.Dense(500, activation="relu")(merged)
-    x = layers.Dropout(0.6)(x)
+    x = layers.Dropout(DROPOUT_RATE)(x)
     outputs = layers.Dense(1, activation="sigmoid")(x)
     return keras.Model(inputs, outputs)
 
@@ -217,13 +199,20 @@ def main():
                     log_dir=log_dir, histogram_freq=1
                 ),
                 tf.keras.callbacks.EarlyStopping(
-                    monitor="val_loss",
-                    min_delta=0.00001,
+                    monitor="val_accuracy",
+                    min_delta=0.001,
                     patience=10,
                     verbose=0,
                     mode="auto",
                     baseline=None,
                     restore_best_weights=True,
+                ),
+                tf.keras.callbacks.ModelCheckpoint(
+                    filepath="model_weights",
+                    save_weights_only=True,
+                    monitor="val_accuracy",
+                    mode="max",
+                    save_best_only=True,
                 ),
             ]
             lr = keras.optimizers.schedules.ExponentialDecay(
@@ -265,11 +254,11 @@ def main():
     last_val_rec = []
     last_val_auc = []
     for hist in histories:
-        last_acc.append(hist.history["accuracy"][-1])
-        last_val_acc.append(hist.history["val_accuracy"][-1])
-        last_val_prec.append(hist.history["val_precision"][-1])
-        last_val_rec.append(hist.history["val_recall"][-1])
-        last_val_auc.append(hist.history["val_auc"][-1])
+        last_acc.append(max(hist.history["accuracy"]))
+        last_val_acc.append(max(hist.history["val_accuracy"]))
+        last_val_prec.append(max(hist.history["val_precision"]))
+        last_val_rec.append(max(hist.history["val_recall"]))
+        last_val_auc.append(max(hist.history["val_auc"]))
     print(
         f"The mean training accuracy over the folds is {np.mean(last_acc)}, pm {np.std(last_acc)}"
     )
@@ -290,24 +279,24 @@ def main():
     #  Model evaluation
     ############################################################################
     # Here we actually extract the id of the samples that are misclassified
-    y_pred = model.predict(X_train)
-    difference = np.round(y_train - y_pred)
-    index = np.nonzero(difference)
-    y_pred = model.predict(X_val)
-    difference = np.round(y_val - y_pred)
-    index_2 = np.nonzero(difference)
-    df_misclassified_train = pd.DataFrame(
-        np.array(partitions[0]["train"])[index[0]]
-    )
-    df_misclassified_val = pd.DataFrame(
-        np.array(partitions[0]["validation"])[index_2[0]]
-    )
-    df_misclassified = pd.concat(
-        [df_misclassified_train, df_misclassified_val]
-    )
-    df_misclassified.to_csv(
-        DOTENV_KEY2VAL["GEN_DATA_DIR"] + "misclassification.csv"
-    )
+    # y_pred = model.predict(X_train)
+    # difference = np.round(y_train - y_pred)
+    # index = np.nonzero(difference)
+    # y_pred = model.predict(X_val)
+    # difference = np.round(y_val - y_pred)
+    # index_2 = np.nonzero(difference)
+    # df_misclassified_train = pd.DataFrame(
+    #     np.array(partitions[0]["train"])[index[0]]
+    # )
+    # df_misclassified_val = pd.DataFrame(
+    #     np.array(partitions[0]["validation"])[index_2[0]]
+    # )
+    # df_misclassified = pd.concat(
+    #     [df_misclassified_train, df_misclassified_val]
+    # )
+    # df_misclassified.to_csv(
+    #     DOTENV_KEY2VAL["GEN_DATA_DIR"] + "misclassification.csv"
+    # )
 
 
 if __name__ == "__main__":

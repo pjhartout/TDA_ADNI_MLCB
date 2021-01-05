@@ -15,76 +15,22 @@ TODO:
 __author__ = "Philip Hartout"
 __email__ = "philip.hartout@protonmail.com"
 
-import nibabel
-import nibabel as nib  # Useful to load data
-
-import nilearn
-from nilearn import datasets
-from nilearn.regions import RegionExtractor
-from nilearn import plotting
-from nilearn.image import index_img
-from nilearn.plotting import find_xyz_cut_coords
-from nilearn.input_data import NiftiMapsMasker
-from nilearn.connectome import ConnectivityMeasure
-from nilearn.regions import RegionExtractor
-from nilearn import plotting
-from nilearn.image import index_img
-from nilearn import datasets
-from nilearn import plotting
-
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-from pathlib import Path
 import dotenv
 
 
 import numpy as np
-import networkx as nx
-import pandas as pd
 
-import plotly.express as px
-import plotly.graph_objects as go
-import plotly.figure_factory as ff
-
-import gtda
-from gtda.images import ImageToPointCloud, ErosionFiltration
-from gtda.homology import VietorisRipsPersistence
-from gtda.diagrams import (
-    PersistenceEntropy,
-    PersistenceLandscape,
-    PersistenceImage,
-)
-from gtda.pipeline import Pipeline
-from gtda.plotting import plot_diagram, plot_point_cloud, plot_heatmap
+from gtda.diagrams import PersistenceImage
 from gtda.homology import CubicalPersistence
-from gtda.diagrams import (
-    Scaler,
-    Filtering,
-    PersistenceEntropy,
-    BettiCurve,
-    PairwiseDistance,
-)
 
 import os
-import tempfile
-from urllib.request import urlretrieve
-import zipfile
-
-from sklearn.linear_model import LogisticRegression
-from skimage import io
-
-import glob
-import json
-
-# Import utils library
-import utils
 
 
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 N_JOBS = -1
 HOMOLOGY_DIMENSIONS = (0, 1, 2)
 N_BINS = 100
+
 
 def get_all_available_patches(path_to_patches):
     """Obtains all array data in given path_to_patches and tracks loaded files.
@@ -117,13 +63,13 @@ def cubical_persistence(patch):
         reduced_homology=True,
         n_jobs=N_JOBS,
     )
-    diagrams_cubical_persistence = cp.fit_transform(patch)
-    sc = Scaler(metric="bottleneck")
-    scaled_diagrams_cubical_persistence = sc.fit_transform(
-        diagrams_cubical_persistence
-    )
+    diagrams_cubical_persistence = cp.fit_transform()
+    # sc = Scaler(metric="bottleneck")
+    # scaled_diagrams_cubical_persistence = sc.fit_transform(
+    #     diagrams_cubical_persistence
+    # )
     print("Computed cubical persistence")
-    return scaled_diagrams_cubical_persistence
+    return diagrams_cubical_persistence
 
 
 def get_persistence_images(persistence_diagram):

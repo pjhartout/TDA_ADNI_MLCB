@@ -28,9 +28,9 @@ from joblib import Parallel, delayed
 import gc
 
 DOTENV_KEY2VAL = dotenv.dotenv_values()
-N_JOBS = 4
+N_JOBS = 6
 HOMOLOGY_DIMENSIONS = (0, 1, 2)
-N_BINS = 100
+N_BINS = 1000
 
 
 def get_all_available_patches(path_to_raw_images):

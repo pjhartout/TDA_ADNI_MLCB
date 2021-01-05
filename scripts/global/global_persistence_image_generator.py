@@ -28,7 +28,7 @@ from joblib import Parallel, delayed
 import gc
 
 DOTENV_KEY2VAL = dotenv.dotenv_values()
-N_JOBS = 6
+N_JOBS = 4
 HOMOLOGY_DIMENSIONS = (0, 1, 2)
 N_BINS = 1000
 
@@ -73,7 +73,9 @@ def get_persistence_images(persistence_diagram):
 def process_image(image_name, path_to_raw_images, path_to_persistence_images):
     patch = np.load(path_to_raw_images + image_name).reshape(1, 180, 216, 180)
     persistence_diagram = get_cubical_persistence(patch)
+    gc.collect()
     persistence_image = get_persistence_images(persistence_diagram)
+    gc.collect()
 
     with open(path_to_persistence_images + image_name, "wb") as f:
         np.save(f, persistence_image)

@@ -96,7 +96,7 @@ def main():
     for image in tqdm(processed_files):
         file_names.remove(image)
 
-    print(f"There arex {len(file_names)} files to process.")
+    print(f"There are {len(file_names)} files left to process.")
     Parallel(n_jobs=N_JOBS, verbose=10)(
         delayed(process_image)(
             image_name, path_to_raw_images, path_to_persistence_images

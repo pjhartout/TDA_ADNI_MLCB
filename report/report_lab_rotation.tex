@@ -33,11 +33,9 @@
 \usepackage{xcolor}
 
 \usetikzlibrary{shapes,arrows}
-\tikzstyle{orange} = [rectangle, draw, fill=YellowOrange!30,
-    text width=7em, text centered, rounded corners]
-\tikzstyle{orange} = [rectangle, draw, fill=YellowOrange!30,
-    text width=7em, text centered, rounded corners]
-\tikzstyle{orange} = [rectangle, draw, fill=YellowOrange!30,
+\definecolor{orange}{rgb}{1,0.5,0}
+
+\tikzstyle{orange} = [rectangle, draw, fill=orange,
     text width=7em, text centered, rounded corners]
 
 \tikzset{
@@ -74,19 +72,16 @@
 \maketitle
 
 \begin{abstract}
-Topological data analysis on medical imaging data is an emerging field
-leveraging the shape of data for various application domains, including machine
-learning tasks. Here, we apply a topological data analysis pipeline to uncover
-novel insights in the Alzheimer's disease neuroimaging initiative dataset by
-applying persistent homology on a patch of the medial temporal lobe to extract
-persistence images and persistence landscapes. We use these representations to
-(i) learn to classify patients suffering from Alzheimer's disease from
-cognitively normal patients thereby assessing the saliency of persistence images
-extracted from the most affected brain regions in Alzheimer's disease, (ii)
-analyze the topological heterogeneity of each of the diagnostic categories, and
-(iii) across various time points available for each patient. Finally, we use
-these representations to (iv) attempt to cluster the patients according to their
-diagnosis and disease subtypes, when applicable.
+Topological data analysis on medical imaging data is an emerging field leveraging the shape of data
+for various application domains, including machine learning tasks. Here, we apply a topological data
+analysis pipeline to uncover novel insights in the Alzheimer's disease neuroimaging initiative
+dataset by applying persistent homology on a patch of the medial temporal lobe to extract
+persistence images and persistence landscapes. We use these representations to (i) learn to classify
+patients suffering from Alzheimer's disease from cognitively normal patients thereby assessing the
+saliency of persistence images extracted from the most affected brain regions in Alzheimer's
+disease, (ii) analyze the topological heterogeneity of each of the diagnostic categories, as well as
+(iii) across various time points available for each patient. Finally, we use these representations
+to (iv) cluster the patients according to their diagnosis and disease subtypes, when applicable.
 \end{abstract}
 
 A graphical abstract of the analyses discussed in this report is shown in
@@ -169,8 +164,8 @@ Figure~\ref{fig:graphical_abstract}
 Alzheimer's disease (AD) is the most prevalent form of dementia in the world, with a forecasted 75
 million cases in 2030 and 132 million by 2050 \citep{world2017global}. In EU member states and
 Switzerland, AD is already among the leading causes of death and is projected to further accelerate
-in the future \citep{sleeman2019escalating}. The associated costs are immense --- in the United
-States alone, the cost of care of AD patients is expected to be \$2 trillion by 2030 ---, and are
+in the future \citep{sleeman2019escalating}. The associated costs are immense---in the United
+States alone, the cost of care of AD patients is expected to be \$2 trillion by 2030---, and are
 poised to substantially burden the economic prosperity of developed countries in the future
 ~\citep{world2017global}. Although the definite diagnosis of a patient with AD can only be done
 post-mortem, clinicians use a plethora of standardized tools to find indications of the developing
@@ -206,71 +201,81 @@ apply computational topology to uncover and quantify anatomical changes resultin
 
 Topology has witnessed relentless theoretical progress since Henri Poincaré first addressed
 topological ideas as a distinct branch of mathematics in his 1895 publication of \textit{Analysis
-  Situs}~\citep{poincare1895analysis, james1999history}. Only recently, -- with the advent of
-modern computing -- has the field of computational topology and topological data analysis (TDA) gained
+Situs}~\citep{poincare1895analysis, james1999history}. Only recently, -- with the advent of modern
+computing -- has the field of computational topology and topological data analysis (TDA) gained
 momentum to investigate (high-dimensional) data in physics, biology, and
 beyond~\citep{dey1999computational, ghrist2008barcodes, amezquita2020shape}. While surveying the
 various applications of computational topology are beyond the scope of this report, we still want to
 define several procedures that are paramount to the workflow described in this report: cubical
 persistence, various vectorized representations of the persistence diagrams obtained from filtered
 cubical complexes, and the notion of pairwise distance between such representations. For material
-providing an extensive and formal introduction to topology and persistent homology, please refer to
-~\citep{freedman2009algebraic, edelsbrunner2010computational, ghrist2008barcodes}.
+providing an extensive and formal introduction to topology and persistent homology, please refer
+to~\citet{freedman2009algebraic, edelsbrunner2010computational, ghrist2008barcodes}.
 
 
 \subsubsection{Cubical complexes and persistent homology}
 
-Before defining the notion of cubical persistence, \emph{cubical complexes} need to be defined.
-For that, let us first assign to each elementary non-degenerate interval $[a,a+1]\forall
-a\in\mathbb{R}$, two degenerate intervals $[a,a]$ and $[a+1,a+1]$. For a $d$-dimensional space, a
-cube is then defined as a product of $d$ elementary intervals $\Pi_{i=1}^{d}I_i$. The dimension of
-the cube is then equal to the number of non-degenerate interval in the aforementioned product, such
-that 0-cubes, 1-cubes, 2-cubes, and 3-cubes correspond to vertices, edges, squares, and 3D cubes,
-respectively. In this report, the 3D cube corresponds to a given voxel of our sMRI.
+Before defining the notion of cubical persistence, \emph{cubical complexes} need to be defined. For
+that, let us first assign to each elementary non-degenerate interval for some $[a,a+1]\forall
+a\in\mathbb{R}$, two degenerate intervals $[a,a]$ and $[a+1,a+1]$. For a
+$d$-dimensional space, a cube is then defined as a product of $d$ elementary intervals
+$\Pi_{i=1}^{d}I_i$. The dimension of the cube is then equal to the number of non-degenerate interval
+in the aforementioned product, such that 0-cubes, 1-cubes, 2-cubes, and 3-cubes correspond to
+vertices, edges, squares, and 3D cubes, respectively. In this report, the 3D cube corresponds to a
+given voxel of our sMRI.
 
-A cubical complex $X$ of dimension $d$ is then defined as a finite set of elementary cubes of at
+A cubical subcomplex $X$ of dimension $d$ is then defined as a finite set of elementary cubes of at
 most dimension $d$, where $X$ must be closed undertaking faces and intersections, i.e. for any cube
 in $X$, all of its faces must belong to $X$, and for any two cubes in $X$, their intersection is
 either empty, or there is a common face between them.
 
-Given a topological space $\mathbb{X}$ (in our case, the sMRI voxels), we use a filtering function
-$f:\mathbb{X}\to\mathbb{R}$, which here corresponds to the pixel density of each voxel, to study the
-topology of the sublevel sets $\mathbb{X}_t=f^{-1}(-\infty, t]$ of cubical complexes that arise.
-This is a method to study topological spaces referred to as \emph{persistent homology}. A common
+To obtain the entire cubical complex $\mathbb{X}$ contained in an sMRI image of a particular patient
+taken at a particular timepoint, we use a filtering function $f:\mathbb{X}\to\mathbb{R}$ (such as an
+activation function), which corresponds to the pixel density of each voxel, to study the topology of
+the sublevel sets $\mathbb{X}_t=f^{-1}(-\infty, t]$ of cubical subcomplexes that arise. This is a
+method to study topological spaces referred to as \emph{persistent homology}. A common
 representation of the evolution of topological complexes as a function of the value of the
 filtration function is the \emph{persistence diagram} (PD), which is a multiset of points. For each
 homological dimension (here, $0,1,2$), we obtain a collection of points, with an associated $x$ and
 $y$ coordinate which corresponds to the birth and death of a topological feature in the homology
-dimension $n=0,1,2,\ldots$, respectively. We refer to a homological feature as \emph{persistent} if
-the difference between its birth and death value is
-particularly high.
+dimension $n=0,1,2,\ldots$, respectively. The homological dimensions $0,1,2$ can be interpreted as
+connected components, tunnels and cubes, respectively. We refer to a homological feature as
+\emph{persistent} if the difference between its birth and death value is particularly high.
 
 
-\subsubsection{Persistence images and persistence landscapes}\label{sec:theory_persistence_landscape_persistence_image}
+\subsubsection{Persistence images and persistence
+  landscapes}\label{sec:theory_persistence_landscape_persistence_image}
 
-PDs are endowed with a metric space; the $p$-Wasserstein distances can be computed between any two
-persistence image, and these metrics are stable under small perturbations of the data
-\citep{skraba2020wasserstein}. So, it is possible to perform a variety of machine learning (ML)
-techniques using (representations) PDs as input data. However, multiple ML algorithms require more than
-a metric, and the computation cost of the $p$-Wasserstein distance increases linearly with the
-number of points in the PD. It is therefore desirable to have a fixed-length, stable, efficient-to-compute,
-interpretable (with respect to the PD) and tunable mapping from the PD to a vector space in
-$\mathbb{R}^n$ to fit various machine learning algorithms to them.
+PDs are endowed with a metric (further discussed in Section
+\ref{sec:pairwise_distance_definitions}), so it is possible to perform a variety of machine learning
+(ML) techniques using representations of PDs as input data. However, multiple ML algorithms
+require more than a metric --fixed-size vectors are often required--. It is therefore
+desirable to have a fixed-length, stable, efficient-to-compute, interpretable (with respect to the
+PD) and tunable mapping from the PD to a vector space in $\mathbb{R}^n$ to fit various machine
+learning algorithms to them.
 
-One such representation is the \emph{persistence image} (PI) of a PD, which has been proven to be
-stable upon small perturbations of data while still retaining the underlying features in the data
-useful for classification. Computing the PI from a PD $D$ consists of
-a two-step process. First, the PD is mapped to an integrable function $\rho_D : \mathbb{R}^2\to
-\mathbb{R}$ called a persistent surface. This surface is a weighted sum of Gaussian distributions,
-each centered around a point of the PD. The matrix of pixel values can be obtained from the
-computation of the integration of $\rho_D$ on a grid overlaid on the surface
-~\citep{adams2017persistence}.
+One such representation is the \emph{persistence image} (PI) of a PD, which has also been proven to
+be stable upon small perturbations of data while still retaining the underlying features in the data
+useful for classification. Computing the PI from a PD $D$ consists of a two-step process. First, the
+PD is mapped to an integrable function $\rho_D : \mathbb{R}^2\to \mathbb{R}$ called a persistent
+surface. This surface is a weighted sum of Gaussian distributions, each centered around a point of
+the PD. The matrix of pixel values can be obtained from the computation of the integration of
+$\rho_D$ on a grid overlaid on the surface ~\citet{adams2017persistence}. An overview of the
+pipeline to obtain persistence images is shown in Figure~\ref{fig:pipeline_persistence_image}.
 
-Another representation associated to the PD is the persistence landscape
-(PL). This representation maps the PD into a
-Hilbert space, which is useful for ML applications. In order to define a persistence landscape, let
-us take a pair $(b,d)$, which refer to the birth and death of a feature. We now define the piecewise
-linear function $f_{(b,d)}:\mathbb{R} \to [0, \infty]$ as
+\begin{figure}
+  \begin{centering}
+    \includegraphics[width=1.0\textwidth]{figures/cartoon.pdf}
+    \caption{Algorithm to obtain the persistence image, as presented by~\citet{adams2017persistence}.}
+    \label{fig:pipeline_persistence_image}
+  \end{centering}
+\end{figure}
+
+Another representation associated to the PD is the persistence landscape (PL). Similarly to PIs, PLs
+maps the PD into a Hilbert space as well, which is useful for ML applications, but additionally
+extracts the most persistent features of the data. In order to define a persistence landscape, let
+us take a pair $(b,d)$, which refer to the birth and death of a topological feature. We now define
+the piecewise linear function $f_{(b,d)}:\mathbb{R} \to [0, \infty]$ as
 \begin{equation}
   \label{eq:piecewise_linear_landscape}
   f_{(b,d)}(x)=
@@ -303,7 +308,7 @@ value does not exist, which results in $\lambda_k=0$ for $k>n$ ~\citep{bubenik20
 %   \label{fig:pl_bubenik}
 % \end{figure}
 
-\subsubsection{Pairwise distances and medians}
+\subsubsection{Pairwise distances and medians}\label{sec:pairwise_distance_definitions}
 
 A crucial element in our investigations consists of examining distances between vectorized
 topological representations. Intuitively, and as noted by
@@ -314,7 +319,7 @@ same diagram without that point, where the feature would not appear at all. Henc
 introduce the notion of minimal cost required to match up points of the two diagrams, either
 off-diagonal to off-diagonal, or off-diagonal to the nearest point on the diagonal (for small values
 of $\epsilon$). In this context, distance functions usually applied to evaluate the distance between
-two probability density estimations are relevant: the bottleneck distance and the $p$-Wasserstein
+two probability density distributions are relevant: the bottleneck distance and the $p$-Wasserstein
 distance, where $p\geq 1$. The $p$-Wasserstein distance between two diagrams $D_1$ and $D_2$ is the
 infimum over all bijections $\gamma: D_1 \cup \Delta \to D_2 \cup \Delta$, where $\Delta$ is the
 multiset $\lbrace (s, s) \mid s \in \mathbb{R} \rbrace$ with multiplicity $(s,s) \mapsto +\infty$,
@@ -327,18 +332,19 @@ of
 where we usually have $q=\infty$. When we let $p\to\infty$, we recover the bottleneck distance.
 
 We also use the notion of a median persistence landscape, where, given a collection of PDs, we
-compute their associated PL, which is a matrix of fixed dimension $m\times h$ where $m$ is the
-length of the vector, and $h$ is the homology dimension. We compute the median PL by taking the
+compute their associated binned PL, which is a matrix of fixed dimension $m\times h$ where $m$ is the
+length of the binned $\lambda_1$ persistence landscape, and $h$ is the homology dimension. We compute the median PL by taking the
 median over all samples for each cell in $m$ for each homology dimension $h$, so we end up with a PL
 representative of the collection of the samples in the collection. A similar approach can be adopted
 for PIs. The median PL and PI were chosen over the average PL or PI due to the skewed distribution of
 the data observed in some cases, as will be highlighted in section \ref{sec:disc-dist}.
 
-Taking the distance between any two persistence landscape or image can be achieved using the
-Minkowski distance defined, given two vectors $\mathbf{x},\mathbf{y}\in\mathbb{R}^n$, as:
+Taking the distance between any two persistence landscapes or images can be achieved using the
+Minkowski distance--essentially a proxy for the $p$-Wasserstein distance for fixed-length vectors.
+We define the Minkowski distance given two vectors $\mathbf{x},\mathbf{y}\in\mathbb{R}^n$, as:
 \begin{equation}
   \label{eq:minkowski}
-  D(\mathbf{x},\mathbf{y}) = \left(\sum_{i=1}^{n}|x_i-y_i|^p\right)^{1\over p}
+  D(\mathbf{x},\mathbf{y}) = \left(\sum_{i=1}^{n}|x_i-y_i|^p\right)^{1\over p}.
 \end{equation}
 
 In this report, we set $p=1$ and henceforth refer to the distance function as the $L^1$ norm.
@@ -425,7 +431,10 @@ the default parameters provided by the
   documentation}. An example persistence diagram for a cognitively intact subject, a patient with MCI, and a
 patient with AD are depicted in Figure \ref{fig:sample_rep_pd}. To obtain persistence images for each 3D
 volume, we used 0.001 as a standard deviation for the Gaussian kernel, no weight function, and a
-default dimension of $100 \times 100$ for each image. Representative samples of these images are
+default dimension of $100 \times 100$ for each image. The stability of the performance of the
+classifier shown below was the highest at these particular values, although image dimensions did not
+really influence the performance of local patches, however higher values for the standard deviation
+of the Gaussian kernel seemed to affect performance beyond 0.1. Representative samples of these images are
 shown in Figure \ref{fig:sample_rep_pi}.
 
 \begin{figure}
@@ -484,13 +493,38 @@ the computation graph is shown in Figure ~\ref{fig:model_arch}. We also note tha
 trained on a laptop CPU (Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz). For consistency and to enable a
 direct comparison with results shown in \citep{bruningk2020image}, we used the same data
 partitioning to present any kind of data leakage that would artificially increase our score, as
-discussed in \citep{wen2020convolutional}. We also trained each model three times to mitigate any
+discussed in \citet{wen2020convolutional}. We also trained each model three times to mitigate any
 performance fluctuations due to different layer initializations.
 
 
 \begin{figure}
   \centering \includegraphics[width=0.9\textwidth]{figures/model.png}
-  \caption{Computation graph to predict the phenotype of a given set of persistent images.}
+  \begin{tikzpicture}[align=center, node distance = 1cm, auto]
+    \node[orange, text width=12em](input){\scriptsize Persistence image ($H_0$, $H_1$, $H_2$)};
+    \node[orange, below left of=input, xshift=-2.5cm,yshift=-0.25cm](conv1){\scriptsize Conv2D on $H_0$};
+    \draw[myarrow](input.west)-|(conv1.north);
+    \node[orange, below of=input, yshift=-0.25cm](conv2){\scriptsize Conv2D on $H_1$};
+    \draw[myarrow](input.south)--(conv2.north);
+    \node[orange, below right of=input, xshift=2.5cm,yshift=-0.25cm](conv3){\scriptsize Conv2D on $H_2$};
+    \draw[myarrow](input.east)-|(conv3.north);
+    \node[orange, below of=conv1, yshift=-0.25cm](batchmax1){\scriptsize Max pooling};
+    \draw[myarrow](conv1.south)--(batchmax1.north);
+    \node[orange, below of=conv2, yshift=-0.25cm](batchmax2){\scriptsize Max pooling};
+    \draw[myarrow](conv2.south)--(batchmax2.north);
+    \node[orange, below of=conv3, yshift=-0.25cm](batchmax3){\scriptsize Max pooling};
+    \draw[myarrow](conv3.south)--(batchmax3.north);
+    \node[orange, below of=batchmax2, yshift=-0.25cm](dense){\scriptsize Dense layer};
+    \draw[myarrow](batchmax1.south)--(dense.west);
+    \draw[myarrow](batchmax2.south)--(dense.north);
+    \draw[myarrow](batchmax3.south)--(dense.east);
+    \node[orange, below of=dense, yshift=-0.25cm](sigm){\scriptsize Sigmoid};
+    \draw[myarrow](dense.south)--(sigm.north);
+    % {
+    % \node[orange, above of=ph, yshift=0.2cm](dist){\scriptsize %   Distance
+    % between persistence rep.};
+    % \draw[myarrow](ph.north)--(dist.south);}
+  \end{tikzpicture}
+  \caption{Computation graph to predict the phenotype of a given set of persistent images. }
   \label{fig:model_arch}
 \end{figure}
 
@@ -540,7 +574,8 @@ performance fluctuations due to different layer initializations.
 \subsection{Distance between median topological representations}
 
 We also used \texttt{giotto-tda} to compute persistence landscapes. We wanted to keep only the most
-prominent features, so we kept only $\lambda_1$, and set the PL vector lengths of 100.
+prominent features, so we kept only $\lambda_1$, and set the PL vector lengths of 100. The
+median PL for each homological dimension is shown in Figure~\ref{fig:median_pls}.
 
 Computing the median persistence landscape for each diagnostic category was done using the median
 value of each subject for each of the vector coordinate. The pairwise distance between two PLs was
@@ -572,16 +607,17 @@ from one trained network defined in section \ref{sec:model_arch}. We then looked
 between patients who were misclassified and the selected set of topological outliers, as well as the
 distribution of the distance of the misclassified samples compared to the median representation.
 
-\subsection{Distance between multiple median topological representations}\label{sec:methods_dist_multiple_images}
+\subsection{Clustering using multiple median topological representations}\label{sec:methods_dist_multiple_images}
 
 As the last step, we investigated whether the distance of a patient with respect to more than one
 median persistence image. We, therefore, evaluated the $L^1$ norm between each persistence image and
-both the median AD persistence image and median CN persistence image in $H_2$. We chose
-to take these two images because they showed high variability in other analyses (see Figure \ref{fig:displots_median_pi}) and they represent the two
-most divergent diagnostic cases in our dataset, MCI being considered as a state
-where patients are neither cognitively normal nor formally diagnosed with AD. Given we wanted to maximize
-variance across samples for visualization purposes, we first standardized the data and subsequently
-applied a principal component analysis to the resulting pairs of distances.
+both the median AD persistence image and median CN persistence image in $H_2$ (i.e. voids). We chose
+to take these two images because they showed high variability in other analyses (see Figure
+\ref{fig:displots_median_pi}) and they represent the two most divergent diagnostic cases in our
+dataset, MCI being considered as a state where patients are neither cognitively normal nor formally
+diagnosed with AD. Given we wanted to maximize variance across samples for visualization purposes,
+we first standardized the data and subsequently applied a principal component analysis to the
+resulting pairs of distances.
 
 \section{Results}\label{sec:results}
 
@@ -597,24 +633,26 @@ emerge.
 The performance metrics of the deep learning model is shown in Table ~\ref{tab:performance}, and
 seems to be somewhat inferior to state-of-the-art models trained on similar data
 \citep{wen2020convolutional}, but requires dramatically less computing power -- the relatively
-shallow multilayer CNN shown in \citep{bruningk2020image}, for instance, requires 15 minutes of
+shallow multilayer CNN shown in \citet{bruningk2020image}, for instance, requires 15 minutes of
 training time on a server GPU while our approach requires only 2 minutes on one laptop CPU, showing
 the high grade of compression of the approach presented here. Additionally, the model yields higher
 results compared to whole-brain persistence images reported in \citep{bruningk2020image}.
-Remarkably, we observe that the performance of our network seems to be more stable than other
-approaches for which standard deviations of performance metrics are provided.
+Theoretically, the information contained in a patch PI should be contained in a whole-brain PI, so
+reducing the standard deviation of the Gaussian kernel as well as computing larger patches should be
+preferred. Remarkably, we observe that the performance of our network seems to be more stable than
+other approaches for which standard deviations of performance metrics are provided.
 
 \begin{table}[b]
   \centering
   \begin{tabular}{lcccc}
-    \toprule Local & \textbf{PI} & 3D Conv & & \\ Global &&& PI & SOTA \\ \midrule Validation
+    \toprule Local (single patch) & \textbf{PI} & 3D Conv & & \\ Global (whole-brain) &&& PI & SOTA \\ \midrule Validation
     accuracy & $0.79\pm 0.02$ & $0.85\pm 0.06$ & $ 0.76\pm 0.02$ & $0.91$\\ Precision & $0.81\pm
     0.04$ & $0.87\pm0.04$ & $0.74\pm 0.02$& \\ Recall & $0.81\pm 0.02$ & $0.87\pm0.08$ & $0.88\pm
     0.08$ &$0.84$\\ AUC & $0.85\pm 0.03$ & $0.89\pm0.05$ & $ 0.78\pm 0.02$ & $0.96$\\ \bottomrule
     \vspace{1pt}
   \end{tabular}
   \caption{Performance metrics of the local PI approach. Global PI and local 3D Conv approach from
-    \citep{bruningk2020image}. SOTA results are obtained from \citep{liu2018anatomical}.}
+    \citet{bruningk2020image}. SOTA results are obtained from \citet{liu2018anatomical}.}
   \label{tab:performance}
 \end{table}
 
@@ -1147,7 +1185,7 @@ result in cognitive decline due to the presence of a cognitive reserve
 \citep{scarmeas2004cognitive, van2017neuroimaging}. The identification of patient populations at
 risk of developing the disease could then form the target of any potential preventive treatment.
 
-\section{Conclusion}
+\section{Conclusions}
 
 In this report we have shown that PIs computed from a patch in the temporal lobe are salient for
 classifying CN and AD subjects. Additionally, we show that the distribution of distances among the

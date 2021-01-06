@@ -42,7 +42,7 @@ tf.random.set_seed(42)
 N_BINS = 100
 N_FILTERS = 4
 KERNEL_SIZE = 4
-DROPOUT_RATE = 0.6
+DROPOUT_RATE = 0.3
 
 ################################################################################
 #  Functions

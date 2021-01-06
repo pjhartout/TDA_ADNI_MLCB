@@ -57,11 +57,6 @@ diagnosis_json = (
 )
 
 
-def take(n, iterable):
-    "Return first n items of the iterable as a list"
-    return dict(islice(iterable, n))
-
-
 def make_model(input_shape):
     """Makes a keras model.
 

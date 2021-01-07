@@ -382,11 +382,15 @@ def plot_density_plots(metric):
             )
         )
     )
-    plt.savefig(DOTENV_KEY2VAL["GEN_FIGURES_DIR"] + metric + "_histogram.png",)
+    plt.savefig(
+        DOTENV_KEY2VAL["GEN_FIGURES_DIR"] + metric + "_histogram.png",
+    )
 
 
 def plot_distance_matrix(
-    X_distance, title=None, file_prefix=None,
+    X_distance,
+    title=None,
+    file_prefix=None,
 ):
     """Plots and saves the distance matrix for each of the homology dimensions
 
@@ -418,8 +422,7 @@ def plot_distance_matrix(
 
 
 def make_dir(directory):
-    """Makes directory and handles errors
-    """
+    """Makes directory and handles errors"""
     try:
         os.mkdir(directory)
     except OSError:

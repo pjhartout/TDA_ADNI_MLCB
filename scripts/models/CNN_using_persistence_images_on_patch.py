@@ -28,6 +28,7 @@ import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -39,7 +40,7 @@ print(tf.test.gpu_device_name())
 
 DOTENV_KEY2VAL = dotenv.dotenv_values()
 tf.random.set_seed(42)
-N_BINS = 100
+N_BINS = 1000
 N_FILTERS = 4
 KERNEL_SIZE = 4
 DROPOUT_RATE = 0.3
@@ -134,7 +135,7 @@ def main():
             # Make sure there aren't the same patients in train and test
             X_train_lst = []
             y_train_lst = []
-            for image in partition["train"]:
+            for image in tqdm(partition["train"]):
                 X_train_lst.append(
                     np.load(persistence_image_location + image + ".npy")
                 )
@@ -146,9 +147,10 @@ def main():
                     ),
                     np.vstack(y_train_lst),
                 )
+            print("Training data loadede")
             X_val_lst = []
             y_val_lst = []
-            for image in partition["validation"]:
+            for image in tqdm(partition["validation"]):
                 X_val_lst.append(
                     np.load(persistence_image_location + image + ".npy")
                 )
@@ -160,7 +162,7 @@ def main():
                     ),
                     np.vstack(y_val_lst),
                 )
-
+            print("Validation data loadede")
             ####################################################################
             #  Model definition
             ####################################################################

@@ -192,7 +192,9 @@ def main():
     diagnosis_json = (
         DOTENV_KEY2VAL["DATA_DIR"] + "collected_diagnoses_complete.json"
     )
-    gen_data_dir = DOTENV_KEY2VAL["GEN_DATA_DIR"] + "/distance_from_median_pi/"
+    gen_data_dir = (
+        DOTENV_KEY2VAL["GEN_DATA_DIR"] + "/distance_fromo_median_pi/"
+    )
     make_dir(gen_data_dir)
     (
         cn_patients,

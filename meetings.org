@@ -22,6 +22,11 @@
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
+
+* <2021-01-07 Thu> Bastian notes on feedback
+- Ask about cubical complex definition rewrite
+- Ask about test to see if two functions are different
+
 * <2020-11-10 Tue> Spark meeting
 - Two threads, one is classifier, others is topological outliers. knot
 these two together by predicting which samples will be misclassified.

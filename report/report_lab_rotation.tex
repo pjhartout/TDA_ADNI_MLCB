@@ -132,7 +132,7 @@ Figure~\ref{fig:graphical_abstract}
     \node[below of=persistence_landscape_txt, yshift=-1.6cm](median_persistence_landscape)
     {\includegraphics[width=0.15\textwidth]{figures/median_pls/median_pl_CN_rep.png}};
          \node[below of=median_persistence_landscape,
-           yshift=-1.3cm](median_persistence_landscape_txt) {Median persistence \\landscape and
+           yshift=-0.3cm](median_persistence_landscape_txt) {Median persistence \\landscape and
            image};
          \draw[myarrow](persistence_landscape_txt.south)--(median_persistence_landscape.north);
          \draw[myarrow](persistence_image_txt.south)--(median_persistence_landscape.north);
@@ -230,8 +230,8 @@ in $X$, all of its faces must belong to $X$, and for any two cubes in $X$, their
 either empty, or there is a common face between them.
 
 To obtain the entire cubical complex $\mathbb{X}$ contained in an sMRI image of a particular patient
-taken at a particular timepoint, we use a filtering function $f:\mathbb{X}\to\mathbb{R}$ (such as an
-activation function), which corresponds to the pixel density of each voxel, to study the topology of
+taken at a particular timepoint, we use a filtering function $f:\mathbb{X}\to\mathbb{R}$, such as an
+activation function, which corresponds to the pixel density of each voxel, to study the topology of
 the sublevel sets $\mathbb{X}_t=f^{-1}(-\infty, t]$ of cubical subcomplexes that arise. This is a
 method to study topological spaces referred to as \emph{persistent homology}. A common
 representation of the evolution of topological complexes as a function of the value of the
@@ -289,24 +289,27 @@ the piecewise linear function $f_{(b,d)}:\mathbb{R} \to [0, \infty]$ as
 The PL of the birth-death pairs $\left\{b_i,d_i\right\}_{i=1}^{n}$ is the sequence of functions
 $\lambda_k:\mathbb{R}\to [0,\infty]$, $k=1,2,3,\ldots$ where $\lambda_k(x)$ is the $k^{th}$ largest
 value of $\left\{f_{b_i, d_i}(x)\right\}^{n}_{i=1}$. We set $\lambda_k(x)=0$ if the $k^{th}$ largest
-value does not exist, which results in $\lambda_k=0$ for $k>n$ ~\citep{bubenik2015statistical, bubenik2020persistence}.
-% An example of PL is shown in figure~\ref{fig:pl_bubenik}.
+value does not exist, which results in $\lambda_k=0$ for $k>n$ ~\citep{bubenik2015statistical,
+  bubenik2020persistence}. An example of PL is shown in figure~\ref{fig:pl_bubenik}.
 
-% \begin{figure}[htb]
-%   \centering
-%   \begin{minipage}{60mm}
-%     \includegraphics[width=43mm]{figures/persistence_landscape_bubenik_paper/landscapes-figure7.pdf} %     \vspace{1ex}
-%     \includegraphics[width=53mm]{figures/persistence_landscape_bubenik_paper/landscapes-figure9.pdf}
-%   \end{minipage}
-%   \begin{minipage}{60mm}
-%     \vspace{5ex}
-%     \includegraphics[width=53mm]{figures/persistence_landscape_bubenik_paper/landscapes-figure8.pdf} %     \vspace{-5ex}
-%     \includegraphics[width=53mm]{figures/persistence_landscape_bubenik_paper/paper3dlandscape.png}
-%   \end{minipage}
-%   \vspace{5ex}
-%   \caption{PL for the homology in degree 1 of linked annuli from %   \citep{bubenik2015statistical}. Top left, persistence diagram, top %   right, rescaled function from equation %   \ref{eq:piecewise_linear_landscape}. Bottom left and right, 2 and 3d %   representation of the persistent landscape. Note that $\lambda_1$ %   represents the most persistent topological features.}
-%   \label{fig:pl_bubenik}
-% \end{figure}
+\begin{figure}[htb]
+  \centering
+  \begin{minipage}{60mm}
+    \includegraphics[width=43mm]{figures/persistence_landscape_bubenik_paper/landscapes-figure7.pdf} %     \vspace{1ex}
+    \includegraphics[width=53mm]{figures/persistence_landscape_bubenik_paper/landscapes-figure9.pdf}
+  \end{minipage}
+  \begin{minipage}{60mm}
+    \vspace{5ex}
+    \includegraphics[width=53mm]{figures/persistence_landscape_bubenik_paper/landscapes-figure8.pdf} %     \vspace{-5ex}
+    \includegraphics[width=53mm]{figures/persistence_landscape_bubenik_paper/paper3dlandscape.png}
+  \end{minipage}
+  \vspace{5ex}
+  \caption{PL for the homology in degree 1 of linked annuli from \citep{bubenik2015statistical}. Top
+    left, persistence diagram, top right, rescaled function from equation
+    \ref{eq:piecewise_linear_landscape}. Bottom left and right, 2 and 3-d representation of the
+    persistent landscape. Note that $\lambda_1$ represents the most persistent topological features.}
+  \label{fig:pl_bubenik}
+\end{figure}
 
 \subsubsection{Pairwise distances and medians}\label{sec:pairwise_distance_definitions}
 
@@ -340,7 +343,7 @@ for PIs. The median PL and PI were chosen over the average PL or PI due to the s
 the data observed in some cases, as will be highlighted in section \ref{sec:disc-dist}.
 
 Taking the distance between any two persistence landscapes or images can be achieved using the
-Minkowski distance--essentially a proxy for the $p$-Wasserstein distance for fixed-length vectors.
+Minkowski distance, essentially a proxy for the $p$-Wasserstein distance for fixed-length vectors.
 We define the Minkowski distance given two vectors $\mathbf{x},\mathbf{y}\in\mathbb{R}^n$, as:
 \begin{equation}
   \label{eq:minkowski}
@@ -400,7 +403,7 @@ our further analyses. Support for the use of this patch also comes from its anat
 since it contains regions that are most affected in Alzheimer's disease such as the
 hippocampus, the entorhinal cortex, and the amygdala ~\citep{goedert2006century}.
 
-\begin{figure}[htb][b]
+\begin{figure}[htb]
   \centering
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/perf_coronal.png}
@@ -423,19 +426,19 @@ hippocampus, the entorhinal cortex, and the amygdala ~\citep{goedert2006century}
 \subsection{Topological Data Analysis}\label{sec:tda_setup}
 
 To perform the topological analysis on the patch, we used \texttt{giotto-tda}, a library
-specifically made for the integration of TDA pipelines in ML applications ~\citep{tauzin2020giottotda}. Each
-filtration on the cubical complexes has been done in three homological dimensions $0,1,2$,
-representing features in each of the dimensions of the three-dimensional image. We otherwise used
-the default parameters provided by the
+specifically made for the integration of TDA pipelines in ML applications
+~\citep{tauzin2020giottotda}. Each filtration on the cubical complexes has been done in three
+homological dimensions $0,1,2$, representing features in each of the dimensions of the
+three-dimensional image. We otherwise used the default parameters provided by the
 \href{https://giotto-ai.github.io/gtda-docs/latest/modules/generated/homology/gtda.homology.CubicalPersistence.html#id2}{giotto-tda
-  documentation}. An example persistence diagram for a cognitively intact subject, a patient with MCI, and a
-patient with AD are depicted in Figure \ref{fig:sample_rep_pd}. To obtain persistence images for each 3D
-volume, we used 0.001 as a standard deviation for the Gaussian kernel, no weight function, and a
-default dimension of $100 \times 100$ for each image. The stability of the performance of the
-classifier shown below was the highest at these particular values, although image dimensions did not
-really influence the performance of local patches, however higher values for the standard deviation
-of the Gaussian kernel seemed to affect performance beyond 0.1. Representative samples of these images are
-shown in Figure \ref{fig:sample_rep_pi}.
+documentation}. An example persistence diagram for a cognitively intact subject, a patient with MCI,
+and a patient with AD are depicted in Figure \ref{fig:sample_rep_pd}. To obtain persistence images
+for each 3D volume, we used 0.001 as a standard deviation for the Gaussian kernel, no weight
+function, and a default dimension of $100 \times 100$ for each image. The stability of the
+performance of the classifier shown below was the highest at these particular values, although image
+dimensions did not really influence the performance of local patches, however higher values for the
+standard deviation of the Gaussian kernel seemed to affect performance at a value higher than 0.1.
+Representative samples of these images are shown in Figure \ref{fig:sample_rep_pi}.
 
 \begin{figure}[htb]
   \centering
@@ -592,8 +595,9 @@ We compute the distances in two settings:
 available sMRIs belonging to a diagnostic category with respect to the median PL of that category.
 For this particular analysis, we extracted the earliest available image for that patient patient.
 Additionally, we check whether or not the distribution of the distances is skewed by performing a
-Shapiro-Wilk test of normality. A significant $p$-value--- defined at $\alpha<0.05$--- for this test
-indicates evidence that the distribution is not normal, and that it is skewed.
+Shapiro-Wilk test of normality \citep{shapiro1965analysis}. A significant $p$-value--- defined at
+$\alpha<0.05$ for all statistical tests used throughout this report--- for this test indicates
+evidence that the distribution is not normal, therefore indicating skewness.
 
 \item[Intra-patient distance]: this allows us to assess the distance of the different PDs of the
 same patient, to see if there is any distinctive evolution of the topological features over time. In
@@ -609,28 +613,30 @@ We performed each of the analyses on both persistence landscapes and images to h
 among persistent features in the case of the persistence landscapes and all of the topological
 features in the case of the persistence image.
 
-\subsection{Relationship between distances and misclassification}
+\subsection{Relationship between distances and misclassification}\label{sec:relationship_distance_misclassification}
 
 To investigate the relationship between patients departing significantly from the median
 representation of the diagnostic category to which they belong and misclassified patients, we chose
 to take the $n$ subjects -- hereafter referred to as \emph{topological outliers} -- with the highest
 $L_1$ norm from their median representation, and set $n$ to the number of misclassified patients
 from one trained network defined in section \ref{sec:model_arch} -- here, 145 images were
-misclassified. We then looked at the overlap between patients who were misclassified and the
-selected set of topological outliers, as well as the distribution of the distance of the
-misclassified samples compared to the median representation.
+misclassified\footnote{Therefore, the PLs or PIs of patients with the 145 highest distance from
+their respective median PL or PL.}. We then looked at the overlap between patients who were
+misclassified and the selected set of topological outliers, as well as the distribution of the
+distance of the misclassified samples compared to the median representation.
 
 \subsection{Clustering using multiple median topological representations}\label{sec:methods_dist_multiple_images}
 
 As the last step, we investigated whether the distance of a patient with respect to more than one
-median persistence image. We, therefore, evaluated the $L^1$ norm between each persistence image and
-both the median AD persistence image and median CN persistence image in $H_2$ (i.e. voids). We chose
-to take these two images because they showed high variability in other analyses (see Figure
-\ref{fig:displots_median_pi}) and they represent the two most divergent diagnostic cases in our
-dataset, MCI being considered as a state where patients are neither cognitively normal nor formally
-diagnosed with AD. Given we wanted to maximize variance across samples for visualization purposes,
-we first standardized the data and subsequently applied a principal component analysis to the
-resulting pairs of distances.
+median persistence image efficiently differentiates between images. We, therefore, evaluated the
+$L^1$ norm between each persistence image and both the median AD persistence image and median CN
+persistence image in $H_2$ (i.e. voids). We chose to take these two images because they showed high
+variability in other analyses (see Figure \ref{fig:displots_median_pi}) and they represent the two
+most divergent diagnostic cases in our dataset, MCI being considered as a state where patients are
+neither cognitively normal nor formally diagnosed with AD. Given we wanted to maximize variance
+across samples for visualization purposes, we first standardized the data and subsequently applied a
+principal component analysis to the resulting pairs of distances. We also compared this approach
+with a metric multidimensional scaling (mMDS) plot frequently used for similar purposes.
 
 \section{Results}\label{sec:results}
 
@@ -648,15 +654,16 @@ seems to be somewhat inferior to state-of-the-art models trained on similar data
 \citep{wen2020convolutional}, but requires dramatically less computing power -- the relatively
 shallow multilayer CNN shown in \citet{bruningk2020image}, for instance, requires 15 minutes of
 training time on a server GPU while our approach requires only 2 minutes on one laptop CPU, showing
-the high grade of compression of the approach presented here. Additionally, the model yields higher
-results compared to whole-brain persistence images reported in \citep{bruningk2020image} as well as
-when training the network on whole-brain PIs obtained with the same parameters.
-Theoretically, the information contained in a patch PI should be contained in a whole-brain PI, so
-reducing the standard deviation of the Gaussian kernel as well as computing larger patches should be
-preferred. Remarkably, we observe that the performance of our network seems to be more stable than
-other approaches for which standard deviations of performance metrics are provided.
+the high grade of compression of the approach presented here. Additionally, the model trained on
+local PIs yields higher performance compared to whole-brain persistence images reported in
+\citep{bruningk2020image} as well as when training the network on whole-brain PIs obtained with the
+same parameters. Theoretically, the information contained in a patch PI should be contained in a
+whole-brain PI, so reducing the standard deviation of the Gaussian kernel as well as computing
+larger patches should be preferred. Remarkably, we observe that the performance of our network seems
+to be more stable than other approaches for which standard deviations of performance metrics are
+provided.
 
-\begin{table}[b]
+\begin{table}
   \centering
   \begin{tabular}{lccccc}
     \toprule
@@ -685,15 +692,12 @@ each image with respect to the median PL and PI for each diagnostic category. Th
 and PI for each diagnostic category is shown in Figure \ref{fig:median_pls} and
 \ref{fig:median_pis}, and the distribution of the $L^1$ norm between each patient and these median
 PLs and PIs is shown in Figure \ref{fig:displots_median_pl} and Figure \ref{fig:displots_median_pi},
-respectively. As we can see, while the median PLs do not differ too much from one another in each of
-the homological dimensions, we see that some persistence images seem to have a far greater distance to this
-median PL than the majority of PLs. This is also reflected by the skewness of the distributions
-observed in Figure \ref{fig:displots_median_pl} and confirmed in the skewness values shown in Table
-\ref{tab:stats_median_pl}. Additionally, both the Shapiro-Wilk test and
-Kolmogorov-Smirnov tests for normality were significant, showing the data is not
-sampled from a normal distribution. However, the skewness of the distribution does not appear when looking at
-the distribution of distance values between PIs, except for AD patients, where skewness
-values remain high (Figure \ref{fig:displots_median_pi} and Table \ref{tab:stats_median_pi}).
+respectively. Before looking at the distribution of distance values, we first note that the height of the peak median PL of AD patients in
+$H_2$ seems to be \emph{lower} than in CN or MCI. Interestingly, we see that the distribution of distances between PLs and the median PL
+in each diagnostic category and homological dimension is far more skewed---which is reflected by very low
+$p$-values of the Shapiro-Wilk test. For persistence images---see Figure \ref{fig:displots_median_pi}---,the distance distributions seem to be
+much more homogeneous with $p$-values still significant for some scenarios, but not all. Refer to Table
+\ref{tab:stats_median_pl} for details. Overall, the $p$-values are much more closer to the significance threshold.
 
 \begin{figure}[htb]
   \centering
@@ -714,7 +718,6 @@ values remain high (Figure \ref{fig:displots_median_pi} and Table \ref{tab:stats
   \caption{Median persistence landscapes for each of the diagnostic categories.}
   \label{fig:median_pls}
 \end{figure}
-
 
 \begin{figure}[htb]
   \centering \centering
@@ -797,8 +800,8 @@ values remain high (Figure \ref{fig:displots_median_pi} and Table \ref{tab:stats
     \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD_H_2_displot.png}
     \caption{$L^1$ norm for AD PLs in $H_2$}
   \end{subfigure}
-  \caption{Histogram showing the distribution of the $L^1$ norm taken between the median PL for a
-    diagnostic categories in all homological dimensions.}
+  \caption{Histogram overlayed with a density estimate showing the distribution of the $L^1$ norm
+taken between the median PL for a diagnostic categories in all homological dimensions.}
 \label{fig:displots_median_pl}
 \end{figure}
 
@@ -806,42 +809,43 @@ values remain high (Figure \ref{fig:displots_median_pi} and Table \ref{tab:stats
   \centering
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/median_pis/median_pi_CN_H_0_displot.png}
-    \caption{$L^1$ norm for CN median PIs in $H_0$}
+    \caption{$L^1$ norms for CN PIs in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/median_pis/median_pi_MCI_H_0_displot.png}
-    \caption{$L^1$ norm for MCI median PIs in $H_0$}
+    \caption{$L^1$ norms for MCI PIs in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/median_pis/median_pi_AD_H_0_displot.png}
-    \caption{$L^1$ norm for AD median PIs in $H_0$}
+    \caption{$L^1$ norms for AD PIs in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/median_pis/median_pi_CN_H_1_displot.png}
-    \caption{$L^1$ norm for CN median PIs in $H_1$}
+    \caption{$L^1$ norms for CN PIs in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/median_pis/median_pi_MCI_H_1_displot.png}
-    \caption{$L^1$ norm for MCI median PIs in $H_1$}
+    \caption{$L^1$ norms for MCI PIs in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/median_pis/median_pi_AD_H_1_displot.png}
-    \caption{$L^1$ norm for AD median PIs in $H_1$}
+    \caption{$L^1$ norms for AD PIs in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/median_pis/median_pi_CN_H_2_displot.png}
-    \caption{$L^1$ norm for CN median PIs in $H_2$}
+    \caption{$L^1$ norms for CN PIs in $H_2$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/median_pis/median_pi_MCI_H_2_displot.png}
-    \caption{$L^1$ norm for MCI median PIs in $H_2$}
+    \caption{$L^1$ norms for MCI PIs in $H_2$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/median_pis/median_pi_AD_H_2_displot.png}
-    \caption{$L^1$ norm for AD median PIs in $H_2$}
+    \caption{$L^1$ norms for AD PIs in $H_2$}
   \end{subfigure}
-  \caption{Histogram showing the distribution of the $L^1$ norm taken between the median PI and each
-    image within a diagnostic category in all three homological dimesions.}
+  \caption{Histogram overlayed with a density estimate showing the distribution of the $L^1$ norm
+taken between the PI and each image within a diagnostic category in all three homological
+dimesions.}
   \label{fig:displots_median_pi}
 \end{figure}
 
@@ -865,7 +869,7 @@ AD $H_2$  &  $2.237$ &  $2.073$ &            $0.686$ &  $2.637$ &   $5.594$ &  $
   \vspace{1pt}
 \end{tabular}
   \caption{Summary statistics of the distribution of distances from median persistence landscapes for
-each diagnostic category shown in Figure \ref{fig:displots_median_pl}. Highlighted values represent
+each diagnostic category shown in Figure \ref{fig:displots_median_pl}. Bold values represent
 relatively high values. SW: Shapiro-Wilk test $p$-value}
 \label{tab:stats_median_pl}
 \end{table}
@@ -880,53 +884,48 @@ relatively high values. SW: Shapiro-Wilk test $p$-value}
 CN $H_0$  &  $3.3\times10^{6}$ &  $3.3\times10^{6}$ &  $4.0\times10^{5}$ &  $3.6\times10^{6}$ &  $4.6\times10^{6}$ &  $5.2\times10^{-1}$ &           $0.006$ \\
 CN $H_1$  &  $1.0\times10^{7}$ &  $1.0\times10^{7}$ &  $1.1\times10^{6}$ &  $1.1\times10^{7}$ &  $1.4\times10^{7}$ &  $6.7\times10^{-1}$ &             $0.0$ \\
 CN $H_2$  &  $9.7\times10^{6}$ &  $9.4\times10^{6}$ &  $1.1\times10^{6}$ &  $1.0\times10^{7}$ &  $1.3\times10^{7}$ &  $6.4\times10^{-1}$ &             $0.0$ \\
-MCI $H_0$ &  $3.6\times10^{6}$ &  $3.6\times10^{6}$ &  $4.6\times10^{5}$ &  $4.0\times10^{6}$ &  $4.8\times10^{6}$ &  $2.5\times10^{-1}$ &           $0.071$ \\
+  MCI $H_0$ &  $3.6\times10^{6}$ &  $3.6\times10^{6}$ &  $4.6\times10^{5}$ &  $4.0\times10^{6}$ &  $4.8\times10^{6}$ &  $2.5\times10^{-1}$ &           $\mathbf{0.071}$ \\
 MCI $H_1$ &  $7.9\times10^{6}$ &  $7.8\times10^{6}$ &  $8.7\times10^{5}$ &  $8.4\times10^{6}$ &  $1.0\times10^{7}$ &  $3.5\times10^{-1}$ &           $0.018$ \\
-MCI $H_2$ &  $9.1\times10^{6}$ &  $9.0\times10^{6}$ &  $9.9\times10^{5}$ &  $9.8\times10^{6}$ &  $1.1\times10^{7}$ &  $3.4\times10^{-1}$ &           $0.169$ \\
+  MCI $H_2$ &  $9.1\times10^{6}$ &  $9.0\times10^{6}$ &  $9.9\times10^{5}$ &  $9.8\times10^{6}$ &  $1.1\times10^{7}$ &  $3.4\times10^{-1}$ &           $\mathbf{0.169}$ \\
 AD $H_0$  &  $3.8\times10^{6}$ &  $3.8\times10^{6}$ &  $4.1\times10^{5}$ &  $4.1\times10^{6}$ &  $5.0\times10^{6}$ &  $4.8\times10^{-1}$ &           $0.034$ \\
-AD $H_1$  &  $9.1\times10^{6}$ &  $9.0\times10^{6}$ &  $1.0\times10^{6}$ &  $9.9\times10^{6}$ &  $1.2\times10^{7}$ &  $4.4\times10^{-1}$ &           $0.144$ \\
-AD $H_2$  &  $9.2\times10^{6}$ &  $9.1\times10^{6}$ &  $1.0\times10^{6}$ &  $9.9\times10^{6}$ &  $1.1\times10^{7}$ &  $1.0\times10^{-1}$ &           $0.387$ \\
+  AD $H_1$  &  $9.1\times10^{6}$ &  $9.0\times10^{6}$ &  $1.0\times10^{6}$ &  $9.9\times10^{6}$ &  $1.2\times10^{7}$ &  $4.4\times10^{-1}$ &           $\mathbf{0.144}$ \\
+AD $H_2$  &  $9.2\times10^{6}$ &  $9.1\times10^{6}$ &  $1.0\times10^{6}$ &  $9.9\times10^{6}$ &  $1.1\times10^{7}$ &  $1.0\times10^{-1}$ &           $\mathbf{0.387}$ \\
   \bottomrule
   \vspace{1pt}
 \end{tabular}
 \caption{Summary statistics of the distribution of distances from median persistence image for each
-diagnostic category shown in Figure \ref{fig:displots_median_pi}. Highlighted values represent
-relatively high values. SW: Shapiro-Wilk test $p$-value.}
+diagnostic category shown in Figure \ref{fig:displots_median_pi}. Bold values represent
+non-significant $p$-values. SW: Shapiro-Wilk test $p$-value.}
 \label{tab:stats_median_pi}
 \end{table}
 
 \subsubsection{Intra-patient pairwise distance and average $L^1$ norm distributions -- topological
   evolution}
 
-As indicated in section \ref{sec:tda_setup}, we can compute the distance between
-various PLs associated with the different timepoints available to a single patient
-to evaluate the distance between each of these topological representations at
-these timepoints, hence obtaining a representation of the topological evolution
-of that particular patient. When applying this approach to our data, we find
-interesting qualitative results: distances varying widely from one patient to
-the next. For instance, if we take a CN patient diagnosed as such throughout the
-time that patient has been monitored, we see relatively low distances between
-that patients and other timepoints -- see Figure
-\ref{fig:patient_evolution_stable} for an example. However, distances seem
-higher when taking a patient who transitions from an MCI diagnosis to an AD
-diagnosis, as can be seen in Figure ~\ref{fig:patient_evolution_mci_ad}. Note
-that the color scale is the same for Figures \ref{fig:patient_evolution_stable}
-and \ref{fig:patient_evolution_mci_ad}. However, these effects do not
-generalize: if we take the average distance for each homological dimension for
-each patient and compare the distribution of these averages for patients who
-deteriorate (i.e. transition from CN to MCI or from MCI to AD) and those who do
-not, we do not see any quantitative difference, as can be seen in Figure
-\ref{fig:kde_intra_patient}. Surprisingly, we see that taking the average
-Wasserstein distance for each patient, a bimodal -- similar for both
-deteriorating and stable patients -- distribution arises, but mostly disappears as we
-let $p\to\infty$ and recover the bottleneck distance. The cause of the distance
-change is not known. Additionally, while no substantial differences are
-observed, we do see slight rightwards shifts in each mode for both Wasserstein
-and the $L^1$ norm of the persistent landscape, indicating a potentially
-increased distance distribution among some of the observed data points.
-Performing a Mann-Whitney $\mathcal{U}$ test on the data confirms this
-qualitative finding, by showing that the two distributions shown in Figure
-\ref{fig:kde_intra_patient} stem from two different latent distributions ($p<0.01$ for all distributions).
+As indicated in section \ref{sec:tda_setup}, we can compute the distance between various PLs
+associated with the different timepoints available to a single patient to evaluate the distance
+between each of these topological representations at these timepoints, hence obtaining a
+representation of the topological evolution of that particular patient. When applying this approach
+to the ADNI data, we find interesting qualitative results: distances varying widely from one patient to
+the next. For instance, if we take a CN patient diagnosed as such throughout the time that patient
+has been monitored, we see relatively low distances between that patients and other timepoints --
+see Figure \ref{fig:patient_evolution_stable} for an example. However, distances seem higher when
+taking a patient who transitions from an MCI diagnosis to an AD diagnosis, as can be seen in Figure
+~\ref{fig:patient_evolution_mci_ad}. Note that the color scale is the same for Figures
+\ref{fig:patient_evolution_stable} and \ref{fig:patient_evolution_mci_ad}. However, these effects do
+not generalize: if we take the average distance for each homological dimension for each patient and
+compare the distribution of these averages for patients who deteriorate (i.e. transition from CN to
+MCI or from MCI to AD) and those who do not, we do not see any quantitative difference, as can be
+seen in Figure \ref{fig:kde_intra_patient}. Surprisingly, we see that taking the average Wasserstein
+distance for each patient, a bimodal -- similar for both deteriorating and stable patients --
+distribution arises, but mostly disappears as we let $p\to\infty$ and recover the bottleneck
+distance. The cause of the distance change is not known. Additionally, while no substantial
+differences are observed, we do see slight rightwards shifts in each mode for both Wasserstein and
+the $L^1$ norm of the persistent landscape, indicating a potentially increased distance distribution
+among some of the observed data points. Performing a Mann-Whitney $\mathcal{U}$ test on the data
+confirms this qualitative finding, by showing that the two distributions shown in Figure
+\ref{fig:kde_intra_patient} stem from two different latent distributions ($p<0.01$ for all
+distributions).
 
 
 \begin{figure}[htb]
@@ -934,7 +933,9 @@ qualitative finding, by showing that the two distributions shown in Figure
   \hfill \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI011S0023_h_1.png}
   \hfill
   \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI011S0023_h_2.png} \caption{Topological
-    evolution of a subject with an unchanging CN diagnosis.}
+    evolution of a subject with an unchanging CN diagnosis as shown through the pairwise distances
+    between the persistence images obtained from the sMRI acquired at several months interval. M00
+    refers to the baseline sMRI, M06 refers to the sMRI taken 6 months after the baseline image, etc.}
   \label{fig:patient_evolution_stable}
 \end{figure}
 
@@ -943,9 +944,10 @@ qualitative finding, by showing that the two distributions shown in Figure
   \hfill \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI029S0878_h_1.png}
   \hfill \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI029S0878_h_2.png}
     \caption{Topological evolution of a patient who transitions from MCI to AD in the course of the
-      observation. For this particular case, the change in diagnosis occurred at $t=24$, i.e. 24
-      months after the earliest available diagnosis, which also incidentally corresponds with the
-highest distance from that baseline.}
+observation. The setup is the same as for Figure \ref{fig:patient_evolution_stable}. For this
+particular patient, the change in diagnosis occurred at $t=24$, i.e. 24 months after the earliest
+available diagnosis, which also incidentally corresponds with the highest distance from that
+baseline.}
     \label{fig:patient_evolution_mci_ad}
 \end{figure}
 
@@ -1008,27 +1010,27 @@ patients did not contain persistent features that made them more likely to be mi
   \centering
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/misclassification_distance/distribution_distance_misclassified_CN_H_0.png}
-    \caption{Distance from median CN PL in $H_0$}
+    \caption{$L^1$ norms CN PL in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/misclassification_distance/distribution_distance_misclassified_CN_H_1.png}
-    \caption{Distance from median CN PL in $H_1$}
+    \caption{$L^1$ norms CN PL in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/misclassification_distance/distribution_distance_misclassified_CN_H_2.png}
-    \caption{Distance from median CN PL in $H_2$}
+    \caption{$L^1$ norms CN PL in $H_2$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/misclassification_distance/distribution_distance_misclassified_AD_H_0.png}
-    \caption{Distance from median AD PL in $H_0$}
+    \caption{$L^1$ norms AD PL in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/misclassification_distance/distribution_distance_misclassified_AD_H_1.png}
-    \caption{Distance from median AD PL in $H_1$}
+    \caption{$L^1$ norms AD PL in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/misclassification_distance/distribution_distance_misclassified_AD_H_2.png}
-    \caption{Distance from median AD PL in $H_2$}
+    \caption{$L^1$ norms AD PL in $H_2$}
   \end{subfigure}
     \caption{Kernel density estimation of distribution of the distance between the AD and CN median
       persistence image for images which have not and have been misclassified.}
@@ -1040,7 +1042,8 @@ patients did not contain persistent features that made them more likely to be mi
 The results of the procedure highlighted in section \ref{sec:methods_dist_multiple_images} is shown
 in Figure \ref{fig:vis_pca_ad_cn}. We see that on average AD patients tend to cluster higher up in
 the visualization compared to CN subjects. As expected, patients diagnosed with MCI tend to
-comingle among AD and CN patients. Clear clusters need yet to be defined more clearly using topological
+comingle among AD and CN patients. This trend does not appear using an out-of-the-box mMDS plot, as
+can be seen in Figure \ref{fig:mds_plot}. Clear clusters need yet to be defined more clearly using topological
 data analysis.
 
 \begin{figure}[htb]
@@ -1048,6 +1051,14 @@ data analysis.
   \caption{Visualisation of the two PCA components obtained from looking at the distance between the
     $L^1$ distance of each image to the median PI of AD and CN in $H_2$.}
   \label{fig:vis_pca_ad_cn}
+\end{figure}
+
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=\textwidth]{figures/mds_plot.png}
+  \caption{MDS plot of all diagnostic categories.}
+  \label{fig:mds_plot}
 \end{figure}
 
 \section{Discussion}\label{sec:discussion}
@@ -1074,7 +1085,7 @@ performance measures were available. This stability is likely because persistenc
 homology itself is a stable method, robust to noise present in data \citep{cohen2007stability},
 but this stability is also compounded by the fact that that persistence images have also been proven
 to be stable when introducing noise to the underlying persistence diagram
-\cite{adams2017persistence}. We note that one of the inherent impediments to our classifiers is that
+\citep{adams2017persistence}. We note that one of the inherent impediments to our classifiers is that
 it does not have access to all the available clinical data contributing to the establishment of
 a formal diagnosis of Alzheimer's disease. As per the revised guidelines for the diagnosis of AD,
 other factors such as blood and cerebrospinal fluid biomarkers and positron emission tomography
@@ -1091,7 +1102,7 @@ translate in differentially affected brain regions \citep{poulakis2018heterogene
 tijms2020pathophysiological}. In this context, computing the PI of other local areas of the brain
 which are affected by other subtypes of AD, like the precuneus, the medial and lateral temporal
 cortex, some of which incidentally also show increased accuracy in patch-based classification as
-seen in Figure ~\ref{fig:acc}.Another research avenue to be explored is the determination of
+seen in Figure~\ref{fig:acc}. Another research avenue to be explored is the determination of
 possible weight functions applied to obtain persistence images to emphasize particularly important
 landmarks of Alzheimer's disease. One might consider combining the results of a gradient-weighted
 class activation mapping (Grad-CAM) on a raw CNN trained on the patch with the persistence surface
@@ -1100,6 +1111,18 @@ image and yields better classification results.
 
 
 \subsection{Distances}\label{sec:disc-dist}
+
+We begin the discussion of our distance distribution analyses by showing a somewhat surprising
+finding highlighted in Section \label{sec:results_between_images}, specifically in Figure
+\ref{fig:median_pls}. This is somewhat contrary to expectation, as we would expect larger, more
+persistent wholes to appear in brains affected by Alzheimer's disease, resulting in a higher valued
+persistent $\lambda_1$ persistent landscape. One possible explanation for this phenomenon is that
+the wholes attributed to Alzheimer's disease do not appear as the median most persistent feature at
+any given value of the filtration function. Yet, this hypothesis is difficult to prove visually.
+This finding highlights the difficulty of the emerging problems of interpretability of persistent
+homology when trying to map findings derived from persistent homology back to biological phenomena,
+which is an active area of research, for instance in the context of synthesizing neuronal structures
+using topological signatures \citep{vanherpe2016framework}.
 
 As shown in Figure \ref{fig:displots_median_pl}, the distribution of the distances of the persistent
 landscapes of each patch PL to the median PL for each of these diagnostic categories (shown in
@@ -1144,7 +1167,7 @@ not clear enough to obtain clear clusters of disease phenotypes (i.e. one associ
 condition), let alone disease subtypes. Obtaining features more salient for clustering various
 subtypes would probably require more complex features, extracted for instance using a dynamic
 autoencoder on the persistence images \citep{mrabah2019deep}. Additionally, other methods tailored
-for topological features might also be developed and applied to this analysis pipeline.
+for topological features might also be developed and applied here.
 
 \subsection{Limitations and outlook}
 
@@ -1216,7 +1239,8 @@ subtype identification. Although promising, all of these topology-driven approac
 development to maximize the information that can be extracted from MRI images.
 
 \clearpage
-\bibliographystyle{unsrtnat} \bibliography{main}
+\bibliographystyle{unsrtnat}
+\bibliography{main}
 
 \clearpage
 \appendix

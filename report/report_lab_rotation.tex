@@ -87,7 +87,7 @@ to (iv) cluster the patients according to their diagnosis and disease subtypes, 
 A graphical abstract of the analyses discussed in this report is shown in
 Figure~\ref{fig:graphical_abstract}
 
-\begin{figure}[b]
+\begin{figure}[htb][b]
   \centering
   \begin{tikzpicture}[align=center, node distance = 1cm, auto]
     \node[](unprocessed) {\includegraphics[width=0.15\textwidth]{figures/t1_unprocessed.jpg}};
@@ -109,7 +109,7 @@ Figure~\ref{fig:graphical_abstract}
            homology}; \draw[myarrow](selection.east)--(persistence_homology.west);
 
     \node[below of=selection_txt, yshift=-1.3cm](persistence_image)
-         {\includegraphics[width=0.15\textwidth]{figures/PIs/Persistence_image_CN_h_1.png}};
+         {\includegraphics[width=0.15\textwidth]{figures/representative_samples/Persistence_image_CN_h_1.png}};
          \node[below of=persistence_image, yshift=-0.3cm](persistence_image_txt) {Persistence
            image}; \draw[myarrow](persistence_homology_txt.south)--(persistence_image.north);
 
@@ -130,7 +130,7 @@ Figure~\ref{fig:graphical_abstract}
          \draw[myarrow](persistence_homology_txt.south)--(persistence_landscape.north);
 
     \node[below of=persistence_landscape_txt, yshift=-1.6cm](median_persistence_landscape)
-         {\includegraphics[width=0.15\textwidth]{figures/median_pls/median_pl_CN.png}\\ \includegraphics[width=0.15\textwidth]{figures/median_pls/median_pi_CN_h_0.png}};
+    {\includegraphics[width=0.15\textwidth]{figures/median_pls/median_pl_CN_rep.png}};
          \node[below of=median_persistence_landscape,
            yshift=-1.3cm](median_persistence_landscape_txt) {Median persistence \\landscape and
            image};
@@ -138,7 +138,7 @@ Figure~\ref{fig:graphical_abstract}
          \draw[myarrow](persistence_image_txt.south)--(median_persistence_landscape.north);
 
     \node[left of=median_persistence_landscape, xshift=-2.5cm](distance_analysis)
-         {\includegraphics[width=0.15\textwidth]{figures/PIs/displot_median_pi_CN_H_0.png}};
+    {\includegraphics[width=0.15\textwidth]{figures/median_pis/median_pi_CN_H_0_displot.png}};
          \node[below of=distance_analysis, yshift=-0.3cm](distance_analysis_txt) {Distance
            analysis}; \draw[myarrow](median_persistence_landscape.west)--(distance_analysis.east);
          %\draw[myarrow](misclassified_txt.south)--(distance_analysis.north);
@@ -263,10 +263,10 @@ the PD. The matrix of pixel values can be obtained from the computation of the i
 $\rho_D$ on a grid overlaid on the surface ~\citet{adams2017persistence}. An overview of the
 pipeline to obtain persistence images is shown in Figure~\ref{fig:pipeline_persistence_image}.
 
-\begin{figure}
+\begin{figure}[htb]
   \begin{centering}
     \includegraphics[width=1.0\textwidth]{figures/cartoon.pdf}
-    \caption{Algorithm to obtain the persistence image, as presented by~\citet{adams2017persistence}.}
+    \caption{Pipeline to obtain the persistence image, as presented by~\citet{adams2017persistence}.}
     \label{fig:pipeline_persistence_image}
   \end{centering}
 \end{figure}
@@ -292,7 +292,7 @@ value of $\left\{f_{b_i, d_i}(x)\right\}^{n}_{i=1}$. We set $\lambda_k(x)=0$ if 
 value does not exist, which results in $\lambda_k=0$ for $k>n$ ~\citep{bubenik2015statistical, bubenik2020persistence}.
 % An example of PL is shown in figure~\ref{fig:pl_bubenik}.
 
-% \begin{figure}
+% \begin{figure}[htb]
 %   \centering
 %   \begin{minipage}{60mm}
 %     \includegraphics[width=43mm]{figures/persistence_landscape_bubenik_paper/landscapes-figure7.pdf} %     \vspace{1ex}
@@ -400,7 +400,7 @@ our further analyses. Support for the use of this patch also comes from its anat
 since it contains regions that are most affected in Alzheimer's disease such as the
 hippocampus, the entorhinal cortex, and the amygdala ~\citep{goedert2006century}.
 
-\begin{figure}[b]
+\begin{figure}[htb][b]
   \centering
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/perf_coronal.png}
@@ -437,7 +437,7 @@ really influence the performance of local patches, however higher values for the
 of the Gaussian kernel seemed to affect performance beyond 0.1. Representative samples of these images are
 shown in Figure \ref{fig:sample_rep_pi}.
 
-\begin{figure}
+\begin{figure}[htb]
   \centering
   \centering
   \begin{subfigure}{0.32\textwidth}
@@ -482,23 +482,25 @@ shown in Figure \ref{fig:sample_rep_pi}.
 
 
 \subsection{Model architecture}\label{sec:model_arch}
-For the classification task of classifying AD vs CN patients, we used a parallel
-CNN network with one convolutional layer, followed by one dense layer containing 500 neurons and
-with dropout rates of 50\% at training time. The output of the last dense layer is redirected to a
-single sigmoid neuron for prediction. The model was trained using an exponential decay learning rate
-scheduler and early stopping, which monitored the validation loss. All of the layers and utilities
-to train the neural network were provided by the Keras library ~\citep{chollet2015keras} and are
-available on the \href{https://github.com/pjhartout/TDA_ADNI_MLCB}{repository}, and a depiction of
-the computation graph is shown in Figure ~\ref{fig:model_arch}. We also note that the model was
-trained on a laptop CPU (Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz). For consistency and to enable a
-direct comparison with results shown in \citep{bruningk2020image}, we used the same data
-partitioning to present any kind of data leakage that would artificially increase our score, as
-discussed in \citet{wen2020convolutional}. We also trained each model three times to mitigate any
-performance fluctuations due to different layer initializations.
+For the classification task of classifying AD vs CN patients, we used a parallel CNN network with
+one convolutional layer, followed by one dense layer containing 500 neurons and with dropout rates
+of 50\% at training time. The output of the last dense layer is redirected to a single sigmoid
+neuron for prediction. The model was trained using an exponential decay learning rate scheduler and
+early stopping, which monitored the validation loss. All of the layers and utilities to train the
+neural network were provided by the Keras library ~\citep{chollet2015keras} and are available on the
+\href{https://github.com/pjhartout/TDA_ADNI_MLCB}{repository}, and a depiction of the computation
+graph is shown in Figure ~\ref{fig:model_arch}. We also note that the model was trained on a laptop
+CPU (Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz). For consistency and to enable a direct comparison
+with results shown in \citep{bruningk2020image}, we used the same data partitioning to present any
+kind of data leakage that would artificially increase our score, as discussed in
+\citet{wen2020convolutional}. We also computed persistence images with the same parameters from the
+entire brain in scan projected in MNI space and trained a separate network with the same parameters.
+Each model was trained three times to mitigate any performance fluctuations due to different layer
+initializations.
 
 
-\begin{figure}
-  \centering \includegraphics[width=0.9\textwidth]{figures/model.png}
+\begin{figure}[htb]
+  \centering
   \begin{tikzpicture}[align=center, node distance = 1cm, auto]
     \node[orange, text width=12em](input){\scriptsize Persistence image ($H_0$, $H_1$, $H_2$)};
     \node[orange, below left of=input, xshift=-2.5cm,yshift=-0.25cm](conv1){\scriptsize Conv2D on $H_0$};
@@ -519,51 +521,54 @@ performance fluctuations due to different layer initializations.
     \draw[myarrow](batchmax3.south)--(dense.east);
     \node[orange, below of=dense, yshift=-0.25cm](sigm){\scriptsize Sigmoid};
     \draw[myarrow](dense.south)--(sigm.north);
-    % {
-    % \node[orange, above of=ph, yshift=0.2cm](dist){\scriptsize %   Distance
-    % between persistence rep.};
-    % \draw[myarrow](ph.north)--(dist.south);}
   \end{tikzpicture}
-  \caption{Computation graph to predict the phenotype of a given set of persistent images. }
+
+  \vspace{2cm}
+
+  \includegraphics[width=0.9\textwidth]{figures/model.png}
+  \caption{Computation graph to predict the phenotype of a given set of
+    persistent images derived from applying persistent homology to an sMRI
+    image. The top diagram is a simplified representation of the output of the Keras
+    \texttt{plot\_model()} function, shown below.}
   \label{fig:model_arch}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[htb]
   \centering
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_CN_h_0.png}
+    \includegraphics[width=\textwidth]{figures/representative_samples/Persistence_image_CN_h_0.png}
     \caption{PI of a CN patient in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_MCI_h_0.png}
+    \includegraphics[width=\textwidth]{figures/representative_samples/Persistence_image_MCI_h_0.png}
     \caption{PI of a MCI patient in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_AD_h_0.png}
+    \includegraphics[width=\textwidth]{figures/representative_samples/Persistence_image_AD_h_0.png}
     \caption{PI of an AD patient in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_CN_h_1.png}
+    \includegraphics[width=\textwidth]{figures/representative_samples/Persistence_image_CN_h_1.png}
     \caption{PI of a CN patient in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_MCI_h_1.png}
+    \includegraphics[width=\textwidth]{figures/representative_samples/Persistence_image_MCI_h_1.png}
     \caption{PI of a MCI patient in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_AD_h_1.png}
+    \includegraphics[width=\textwidth]{figures/representative_samples/Persistence_image_AD_h_1.png}
     \caption{PI of an AD patient in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_CN_h_2.png}
+    \includegraphics[width=\textwidth]{figures/representative_samples/Persistence_image_CN_h_2.png}
     \caption{PI of an CN patient in $H_2$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_MCI_h_2.png}
+    \includegraphics[width=\textwidth]{figures/representative_samples/Persistence_image_MCI_h_2.png}
     \caption{PI of an MCI patient in $H_2$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/Persistence_image_AD_h_2.png}
+    \includegraphics[width=\textwidth]{figures/representative_samples/Persistence_image_AD_h_2.png}
     \caption{PI of an AD patient in $H_2$}
   \end{subfigure}
   \caption{Representative PI for each of the diagnostic categories. Each column correponds to a
@@ -579,20 +584,27 @@ median PL for each homological dimension is shown in Figure~\ref{fig:median_pls}
 
 Computing the median persistence landscape for each diagnostic category was done using the median
 value of each subject for each of the vector coordinate. The pairwise distance between two PLs was
-taken using the $L^1$ norm. Additionally, the Mann-Whitney $\mathcal{U}$ test
-was used to test whether two empirical distribution of distances had the same
-latent distributions \citep{mann1947test}.
+taken using the $L^1$ norm.
 
 We compute the distances in two settings:
 \begin{description}
 \item[Intra-diagnostic category setting]: here, we compute the distance of each PL available for all
-  available sMRIs belonging to a diagnostic category with respect to the median PL of that category.
+available sMRIs belonging to a diagnostic category with respect to the median PL of that category.
+For this particular analysis, we extracted the earliest available image for that patient patient.
+Additionally, we check whether or not the distribution of the distances is skewed by performing a
+Shapiro-Wilk test of normality. A significant $p$-value--- defined at $\alpha<0.05$--- for this test
+indicates evidence that the distribution is not normal, and that it is skewed.
+
 \item[Intra-patient distance]: this allows us to assess the distance of the different PDs of the
-  same patient, to see if there is any distinctive evolution of the topological features over time.
-  In this context, we compute the pairwise distances for all sMRIs from a patient. For some
-  analyses, we averaged the pairwise distance for each patient, and grouped patients that changed
-  diagnosis over time in one category, and those that did not in another.
+same patient, to see if there is any distinctive evolution of the topological features over time. In
+this context, we compute the pairwise distances for all sMRIs from a patient. For some analyses, we
+averaged the pairwise distance for each patient, and grouped patients that changed diagnosis over
+time in one category, and those that did not in another. Additionally, the unpaired Mann-Whitney
+$\mathcal{U}$ test was used to test whether the distributions of distance values depending on
+whether or not the patient changed diagnosis over the course of the time images were taken stem from
+the same latent distribution \citep{mann1947test}.
 \end{description}
+
 We performed each of the analyses on both persistence landscapes and images to highlight differences
 among persistent features in the case of the persistence landscapes and all of the topological
 features in the case of the persistence image.
@@ -603,9 +615,10 @@ To investigate the relationship between patients departing significantly from th
 representation of the diagnostic category to which they belong and misclassified patients, we chose
 to take the $n$ subjects -- hereafter referred to as \emph{topological outliers} -- with the highest
 $L_1$ norm from their median representation, and set $n$ to the number of misclassified patients
-from one trained network defined in section \ref{sec:model_arch}. We then looked at the overlap
-between patients who were misclassified and the selected set of topological outliers, as well as the
-distribution of the distance of the misclassified samples compared to the median representation.
+from one trained network defined in section \ref{sec:model_arch} -- here, 145 images were
+misclassified. We then looked at the overlap between patients who were misclassified and the
+selected set of topological outliers, as well as the distribution of the distance of the
+misclassified samples compared to the median representation.
 
 \subsection{Clustering using multiple median topological representations}\label{sec:methods_dist_multiple_images}
 
@@ -636,7 +649,8 @@ seems to be somewhat inferior to state-of-the-art models trained on similar data
 shallow multilayer CNN shown in \citet{bruningk2020image}, for instance, requires 15 minutes of
 training time on a server GPU while our approach requires only 2 minutes on one laptop CPU, showing
 the high grade of compression of the approach presented here. Additionally, the model yields higher
-results compared to whole-brain persistence images reported in \citep{bruningk2020image}.
+results compared to whole-brain persistence images reported in \citep{bruningk2020image} as well as
+when training the network on whole-brain PIs obtained with the same parameters.
 Theoretically, the information contained in a patch PI should be contained in a whole-brain PI, so
 reducing the standard deviation of the Gaussian kernel as well as computing larger patches should be
 preferred. Remarkably, we observe that the performance of our network seems to be more stable than
@@ -644,14 +658,19 @@ other approaches for which standard deviations of performance metrics are provid
 
 \begin{table}[b]
   \centering
-  \begin{tabular}{lcccc}
-    \toprule Local (single patch) & \textbf{PI} & 3D Conv & & \\ Global (whole-brain) &&& PI & SOTA \\ \midrule Validation
-    accuracy & $0.79\pm 0.02$ & $0.85\pm 0.06$ & $ 0.76\pm 0.02$ & $0.91$\\ Precision & $0.81\pm
-    0.04$ & $0.87\pm0.04$ & $0.74\pm 0.02$& \\ Recall & $0.81\pm 0.02$ & $0.87\pm0.08$ & $0.88\pm
-    0.08$ &$0.84$\\ AUC & $0.85\pm 0.03$ & $0.89\pm0.05$ & $ 0.78\pm 0.02$ & $0.96$\\ \bottomrule
+  \begin{tabular}{lccccc}
+    \toprule
+    Local (single patch) & \textbf{PI} & & 3D Conv & & \\
+    Global (whole-brain) &&\textbf{PI}& & PI & SOTA \\ \midrule Validation
+    accuracy & $0.79\pm 0.02$ & $0.74\pm 0.03$ & $0.85\pm 0.06$ & $ 0.76\pm 0.02$ & $0.91$\\
+    Precision & $0.81\pm 0.04$ & $0.80\pm0.05$ &  $0.78\pm 0.04$ & $0.87\pm0.04$ & - \\
+    Recall & $0.81\pm 0.02$ & $0.85\pm0.08$ & $0.87\pm0.08$ & $0.88\pm 0.08$ &$0.84$\\
+    AUC & $0.85\pm 0.03$ & $0.77\pm0.03$ & $0.89\pm0.05$ & $ 0.78\pm 0.02$ & $0.96$\\
+    \bottomrule
     \vspace{1pt}
   \end{tabular}
-  \caption{Performance metrics of the local PI approach. Global PI and local 3D Conv approach from
+  \caption{Performance metrics of the local PI approach. Bold column headers represent performance
+    numbers obtained from the networks trained in this report. Global PI and local 3D Conv approach as reported from
     \citet{bruningk2020image}. SOTA results are obtained from \citet{liu2018anatomical}.}
   \label{tab:performance}
 \end{table}
@@ -670,24 +689,26 @@ respectively. As we can see, while the median PLs do not differ too much from on
 the homological dimensions, we see that some persistence images seem to have a far greater distance to this
 median PL than the majority of PLs. This is also reflected by the skewness of the distributions
 observed in Figure \ref{fig:displots_median_pl} and confirmed in the skewness values shown in Table
-\ref{tab:stats_median_pl}. However, the skewness of the distribution does not appear when looking at
+\ref{tab:stats_median_pl}. Additionally, both the Shapiro-Wilk test and
+Kolmogorov-Smirnov tests for normality were significant, showing the data is not
+sampled from a normal distribution. However, the skewness of the distribution does not appear when looking at
 the distribution of distance values between PIs, except for AD patients, where skewness
 values remain high (Figure \ref{fig:displots_median_pi} and Table \ref{tab:stats_median_pi}).
 
-\begin{figure}
+\begin{figure}[htb]
   \centering
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_CN.png}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_CN_rep.png}
     \caption{Median PL for CN subjects}
   \end{subfigure}
   \hfill
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_MCI.png}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_MCI_rep.png}
     \caption{Median PL for MCI subjects}
   \end{subfigure}
   \hfill
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD.png}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD_rep.png}
     \caption{Median PL for AD subjects}
   \end{subfigure}
   \caption{Median persistence landscapes for each of the diagnostic categories.}
@@ -695,42 +716,42 @@ values remain high (Figure \ref{fig:displots_median_pi} and Table \ref{tab:stats
 \end{figure}
 
 
-\begin{figure}
+\begin{figure}[htb]
   \centering \centering
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pi_CN_h_0.png}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_CN_h_0_rep.png}
     \caption{Median CN PI in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pi_MCI_h_0.png}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_MCI_h_0_rep.png}
     \caption{Median MCI PI in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pi_AD_h_0.png}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_AD_h_0_rep.png}
     \caption{Median AD PI in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pi_CN_h_1.png}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_CN_h_1_rep.png}
     \caption{Median CN PI in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pi_MCI_h_1.png}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_MCI_h_1_rep.png}
     \caption{Median MCI PI in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pi_AD_h_1.png}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_AD_h_1_rep.png}
     \caption{Median AD PI in $H_1 $}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pi_CN_h_2.png}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_CN_h_2_rep.png}
     \caption{Median CN PI in $H_2$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pi_MCI_h_2.png}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_MCI_h_2_rep.png}
     \caption{Median MCI PI in $H_2$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pi_AD_h_2.png}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_AD_h_2_rep.png}
     \caption{Median AD PI in $H_2$}
   \end{subfigure}
   \caption{Median persistence images for each of the diagnostic categories and homological
@@ -738,86 +759,86 @@ values remain high (Figure \ref{fig:displots_median_pi} and Table \ref{tab:stats
   \label{fig:median_pis}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[htb]
   \centering
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_CN_H_0.png}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_CN_H_0_displot.png}
     \caption{$L^1$ norm for CN PLs in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_MCI_H_0.png}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_MCI_H_0_displot.png}
     \caption{$L^1$ norm for MCI PLs in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD_H_0.png}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD_H_0_displot.png}
     \caption{$L^1$ norm for AD PLs in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_CN_H_1.png}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_CN_H_1_displot.png}
     \caption{$L^1$ norm for CN PLs in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_MCI_H_1.png}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_MCI_H_1_displot.png}
     \caption{$L^1$ norm for MCI PLs in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD_H_1.png}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD_H_1_displot.png}
     \caption{$L^1$ norm for AD PLs in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_CN_H_2.png}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_CN_H_2_displot.png}
     \caption{$L^1$ norm for CN PLs in $H_2$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_MCI_H_2.png}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_MCI_H_2_displot.png}
     \caption{$L^1$ norm for MCI PLs in $H_2$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD_H_2.png}
+    \includegraphics[width=\textwidth]{figures/median_pls/median_pl_AD_H_2_displot.png}
     \caption{$L^1$ norm for AD PLs in $H_2$}
   \end{subfigure}
   \caption{Histogram showing the distribution of the $L^1$ norm taken between the median PL for a
-    diagnostic categories in all homological dimesions.}
-  \label{fig:displots_median_pl}
+    diagnostic categories in all homological dimensions.}
+\label{fig:displots_median_pl}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[htb]
   \centering
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/displot_median_pi_CN_H_0.png}
-    \caption{$L^1$ norm for CN PIs in $H_0$}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_CN_H_0_displot.png}
+    \caption{$L^1$ norm for CN median PIs in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/displot_median_pi_MCI_H_0.png}
-    \caption{$L^1$ norm for MCI PIs in $H_0$}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_MCI_H_0_displot.png}
+    \caption{$L^1$ norm for MCI median PIs in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/displot_median_pi_AD_H_0.png}
-    \caption{$L^1$ norm for AD PIs in $H_0$}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_AD_H_0_displot.png}
+    \caption{$L^1$ norm for AD median PIs in $H_0$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/displot_median_pi_CN_H_1.png}
-    \caption{$L^1$ norm for CN PIs in $H_1$}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_CN_H_1_displot.png}
+    \caption{$L^1$ norm for CN median PIs in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/displot_median_pi_MCI_H_1.png}
-    \caption{$L^1$ norm for MCI PIs in $H_1$}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_MCI_H_1_displot.png}
+    \caption{$L^1$ norm for MCI median PIs in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/displot_median_pi_AD_H_1.png}
-    \caption{$L^1$ norm for AD PIs in $H_1$}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_AD_H_1_displot.png}
+    \caption{$L^1$ norm for AD median PIs in $H_1$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/displot_median_pi_CN_H_2.png}
-    \caption{$L^1$ norm for CN PIs in $H_2$}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_CN_H_2_displot.png}
+    \caption{$L^1$ norm for CN median PIs in $H_2$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/displot_median_pi_MCI_H_2.png}
-    \caption{$L^1$ norm for MCI PIs in $H_2$}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_MCI_H_2_displot.png}
+    \caption{$L^1$ norm for MCI median PIs in $H_2$}
   \end{subfigure}
   \begin{subfigure}{0.32\textwidth}
-    \includegraphics[width=\textwidth]{figures/PIs/displot_median_pi_AD_H_2.png}
-    \caption{$L^1$ norm for AD PIs in $H_2$}
+    \includegraphics[width=\textwidth]{figures/median_pis/median_pi_AD_H_2_displot.png}
+    \caption{$L^1$ norm for AD median PIs in $H_2$}
   \end{subfigure}
   \caption{Histogram showing the distribution of the $L^1$ norm taken between the median PI and each
     image within a diagnostic category in all three homological dimesions.}
@@ -827,52 +848,52 @@ values remain high (Figure \ref{fig:displots_median_pi} and Table \ref{tab:stats
 
 \begin{table}
 \centering
-\begin{tabular}{lrrrrrr}
-  \toprule {} & Mean & Median & Standard deviation & Q3 & Max & Skewness \\
-  \midrule CN $H_0$ & $2.16$ & $2.00$ & $0.78$ & $2.50$ & $7.41$ & $1.78$ \\
-  CN $H_1$ & $2.61$ & $2.27$ & $1.17$ & $2.93$ & $9.47$ & $1.92$ \\
-  CN $H_2$ & $2.38$ & $2.23$ & $0.88$ & $2.79$ & $7.19$ & $1.39$ \\
-  MCI $H_0$ & $2.24$ & $2.04$ & $0.82$ & $2.55$ & $6.21$ & $1.71$ \\
-  MCI $H_1$ & $2.57$ & $2.19$ & $1.29$ & $2.80$ & $\mathbf{11.87}$ & $\mathbf{2.57}$ \\
-  MCI $H_2$ & $2.40$ & $2.27$ & $0.83$ & $2.82$ & $6.55$ & $1.18$ \\
-  AD $H_0$ & $2.40$ & $2.18$ & $0.96$ & $2.77$ & $7.77$ & $1.97$ \\
-  AD $H_1$ & $2.47$ & $2.13$ & $1.15$ & $2.77$ & $\mathbf{9.28}$ & $\mathbf{2.10}$ \\
-  AD $H_2$ & $2.36$ & $2.20$ & $0.80$ & $2.75$ & $8.39$ & $1.64$ \\
+\begin{tabular}{llllllll}
+\toprule
+  {} &     Mean &   Median & Std. dev. &       Q3 &       Max & Skewness &    SW \\
+\midrule
+CN $H_0$  &  $2.145$ &  $2.022$ &             $0.74$ &  $2.457$ &   $7.095$ &  $2.351$ &  $1.9\times10^{-11}$ \\
+CN $H_1$  &  $2.669$ &   $2.35$ &            $1.202$ &    $2.9$ &   $7.757$ &  $1.823$ &  $7.2\times10^{-13}$ \\
+CN $H_2$  &  $2.293$ &  $2.198$ &            $0.812$ &  $2.647$ &   $5.677$ &  $1.093$ &   $4.6\times10^{-7}$ \\
+MCI $H_0$ &  $2.215$ &  $2.063$ &             $0.78$ &  $2.559$ &   $5.609$ &   $1.52$ &  $6.0\times10^{-10}$ \\
+  MCI $H_1$ &  $2.592$ &  $2.219$ &            $1.407$ &   $2.85$ &  $11.866$ &  $\mathbf{2.787}$ &  $2.4\times10^{-16}$ \\
+MCI $H_2$ &  $2.382$ &  $2.251$ &            $0.815$ &  $2.782$ &   $5.852$ &   $0.95$ &   $2.2\times10^{-6}$ \\
+AD $H_0$  &  $2.422$ &  $2.261$ &            $0.813$ &  $2.832$ &   $5.701$ &  $1.189$ &   $1.1\times10^{-5}$ \\
+AD $H_1$  &  $2.514$ &  $2.183$ &            $1.172$ &  $2.717$ &   $8.878$ &  $\mathbf{2.395}$ &  $3.6\times10^{-12}$ \\
+AD $H_2$  &  $2.237$ &  $2.073$ &            $0.686$ &  $2.637$ &   $5.594$ &  $1.305$ &   $6.1\times10^{-6}$ \\
   \bottomrule
   \vspace{1pt}
 \end{tabular}
-\caption{Summary statistics of the distribution of distances from median persistence landscapes for
+  \caption{Summary statistics of the distribution of distances from median persistence landscapes for
 each diagnostic category shown in Figure \ref{fig:displots_median_pl}. Highlighted values represent
-relatively high values.}
+relatively high values. SW: Shapiro-Wilk test $p$-value}
 \label{tab:stats_median_pl}
 \end{table}
 
 
 \begin{table}
 \centering
-\begin{tabular}{lllllll}
-  \toprule {}
-  & Mean & Median & Standard deviation & Q3 & Max & Skewness \\
-  \midrule
-  CN $H_0$ & $2.4\times10^{6}$ & $2.3\times10^{6}$ & $2.5\times10^{5}$ & $2.5\times10^{6}$ & $3.2\times10^{6}$ & $0.61$ \\
-  CN $H_1$ & $1.1\times10^{7}$ & $1.1\times10^{7}$ & $4.5\times10^{5}$ & $1.1\times10^{7}$ & $1.3\times10^{7}$ & $0.58$ \\
-  CN $H_2$ & $9.0\times10^{6}$ & $8.9\times10^{6}$ & $5.5\times10^{5}$ & $9.3\times10^{6}$ & $1.0\times10^{7}$ & $0.55$ \\
-  MCI $H_0$ & $2.4\times10^{6}$ & $2.3\times10^{6}$ & $2.4\times10^{5}$ & $2.5\times10^{6}$ & $3.1\times10^{6}$ & $0.35$ \\
-  MCI $H_1$ & $1.1\times10^{7}$ & $1.1\times10^{7}$ & $4.5\times10^{5}$ & $1.1\times10^{7}$ & $1.2\times10^{7}$ & $0.4$ \\
-  MCI $H_2$ & $9.0\times10^{6}$ & $8.9\times10^{6}$ & $5.4\times10^{5}$ & $9.3\times10^{6}$ & $1.0\times10^{7}$ & $0.3$ \\
-  AD $H_0$ & $2.3\times10^{6}$ & $2.3\times10^{6}$ & $2.3\times10^{5}$ & $2.5\times10^{6}$ & $3.6\times10^{6}$ & $0.78$ \\
-  AD $H_1$ & $1.1\times10^{7}$ & $1.1\times10^{7}$ & $5.5\times10^{5}$ & $1.1\times10^{7}$ & $1.5\times10^{7}$ & $\mathbf{2.2}$ \\
-  AD $H_2$ & $8.4\times10^{6}$ & $8.3\times10^{6}$ & $6.5\times10^{5}$ & $8.8\times10^{6}$ & $1.3\times10^{7}$ & $\mathbf{1.7}$ \\
+\begin{tabular}{llllllll}
+\toprule
+  {} &     Mean &   Median & Std. dev. &       Q3 &       Max & Skewness &   SW \\
+\midrule
+CN $H_0$  &  $3.3\times10^{6}$ &  $3.3\times10^{6}$ &  $4.0\times10^{5}$ &  $3.6\times10^{6}$ &  $4.6\times10^{6}$ &  $5.2\times10^{-1}$ &           $0.006$ \\
+CN $H_1$  &  $1.0\times10^{7}$ &  $1.0\times10^{7}$ &  $1.1\times10^{6}$ &  $1.1\times10^{7}$ &  $1.4\times10^{7}$ &  $6.7\times10^{-1}$ &             $0.0$ \\
+CN $H_2$  &  $9.7\times10^{6}$ &  $9.4\times10^{6}$ &  $1.1\times10^{6}$ &  $1.0\times10^{7}$ &  $1.3\times10^{7}$ &  $6.4\times10^{-1}$ &             $0.0$ \\
+MCI $H_0$ &  $3.6\times10^{6}$ &  $3.6\times10^{6}$ &  $4.6\times10^{5}$ &  $4.0\times10^{6}$ &  $4.8\times10^{6}$ &  $2.5\times10^{-1}$ &           $0.071$ \\
+MCI $H_1$ &  $7.9\times10^{6}$ &  $7.8\times10^{6}$ &  $8.7\times10^{5}$ &  $8.4\times10^{6}$ &  $1.0\times10^{7}$ &  $3.5\times10^{-1}$ &           $0.018$ \\
+MCI $H_2$ &  $9.1\times10^{6}$ &  $9.0\times10^{6}$ &  $9.9\times10^{5}$ &  $9.8\times10^{6}$ &  $1.1\times10^{7}$ &  $3.4\times10^{-1}$ &           $0.169$ \\
+AD $H_0$  &  $3.8\times10^{6}$ &  $3.8\times10^{6}$ &  $4.1\times10^{5}$ &  $4.1\times10^{6}$ &  $5.0\times10^{6}$ &  $4.8\times10^{-1}$ &           $0.034$ \\
+AD $H_1$  &  $9.1\times10^{6}$ &  $9.0\times10^{6}$ &  $1.0\times10^{6}$ &  $9.9\times10^{6}$ &  $1.2\times10^{7}$ &  $4.4\times10^{-1}$ &           $0.144$ \\
+AD $H_2$  &  $9.2\times10^{6}$ &  $9.1\times10^{6}$ &  $1.0\times10^{6}$ &  $9.9\times10^{6}$ &  $1.1\times10^{7}$ &  $1.0\times10^{-1}$ &           $0.387$ \\
   \bottomrule
   \vspace{1pt}
 \end{tabular}
 \caption{Summary statistics of the distribution of distances from median persistence image for each
 diagnostic category shown in Figure \ref{fig:displots_median_pi}. Highlighted values represent
-relatively high values.}
+relatively high values. SW: Shapiro-Wilk test $p$-value.}
 \label{tab:stats_median_pi}
 \end{table}
-
-
 
 \subsubsection{Intra-patient pairwise distance and average $L^1$ norm distributions -- topological
   evolution}
@@ -908,7 +929,7 @@ qualitative finding, by showing that the two distributions shown in Figure
 \ref{fig:kde_intra_patient} stem from two different latent distributions ($p<0.01$ for all distributions).
 
 
-\begin{figure}
+\begin{figure}[htb]
   \centering \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI011S0023_h_0.png}
   \hfill \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI011S0023_h_1.png}
   \hfill
@@ -917,7 +938,7 @@ qualitative finding, by showing that the two distributions shown in Figure
   \label{fig:patient_evolution_stable}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[htb]
   \centering \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI029S0878_h_0.png}
   \hfill \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI029S0878_h_1.png}
   \hfill \includegraphics[width=0.32\textwidth]{figures/temporal_evolution/ADNI029S0878_h_2.png}
@@ -929,7 +950,7 @@ highest distance from that baseline.}
 \end{figure}
 
 
-\begin{figure}
+\begin{figure}[htb]
   \centering
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/temporal_evolution/wasserstein_H_0_dist_diag_change.png}
@@ -983,7 +1004,7 @@ switched diagnoses in the whole ADNI dataset. We found that 70\% (64) of the mis
 had only one diagnosis versus 71\% (323) in the whole dataset, hence indicating that misclassified
 patients did not contain persistent features that made them more likely to be misclassified.
 
-\begin{figure}
+\begin{figure}[htb]
   \centering
   \begin{subfigure}{0.32\textwidth}
     \includegraphics[width=\textwidth]{figures/misclassification_distance/distribution_distance_misclassified_CN_H_0.png}
@@ -1022,7 +1043,7 @@ the visualization compared to CN subjects. As expected, patients diagnosed with 
 comingle among AD and CN patients. Clear clusters need yet to be defined more clearly using topological
 data analysis.
 
-\begin{figure}
+\begin{figure}[htb]
   \centering \includegraphics[width=\textwidth]{figures/cluster_CN_H_2_AD_H_2_PCA.png}
   \caption{Visualisation of the two PCA components obtained from looking at the distance between the
     $L^1$ distance of each image to the median PI of AD and CN in $H_2$.}
@@ -1079,9 +1100,6 @@ image and yields better classification results.
 
 
 \subsection{Distances}\label{sec:disc-dist}
-
-% One interpretation of this results is that, when all the topological % features are taken into account as is the case when computing the % persistence image, and not the most persistent features, as we do when % taking the persistence landscape with one layer, most of the % heterogeneity disappears
-% We interpret the skewed distribution of distances among AD patient % images as being the possible result of a preprocessing step where the % brain of the patient is projected onto the MNI space, which might lead % to different results due to the extreme distortion of some brain % regions due to atrophy present in the original image.
 
 As shown in Figure \ref{fig:displots_median_pl}, the distribution of the distances of the persistent
 landscapes of each patch PL to the median PL for each of these diagnostic categories (shown in

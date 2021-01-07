@@ -62,24 +62,6 @@ def make_dir(directory):
         print("Successfully created the directory %s " % directory)
 
 
-def get_earliest_available_diagnosis(path_to_diags):
-    """Gets diagnosis at first available timepoint"""
-    cn_patients = []
-    mci_patients = []
-    ad_patients = []
-    with open(path_to_diags) as f:
-        diagnoses = json.load(f)
-
-    for patient in list(diagnoses.keys()):
-        if diagnoses[patient][list(diagnoses[patient].keys())[0]] == "CN":
-            cn_patients.append(format_patient(patient, diagnoses))
-        elif diagnoses[patient][list(diagnoses[patient].keys())[0]] == "MCI":
-            mci_patients.append(format_patient(patient, diagnoses))
-        elif diagnoses[patient][list(diagnoses[patient].keys())[0]] == "AD":
-            ad_patients.append(format_patient(patient, diagnoses))
-    return cn_patients, mci_patients, ad_patients
-
-
 def format_tex_numbers(float_number):
     """Surrounds $float_number$. Do not use if format_tex is used."""
     return f"${np.round(float_number, 3)}$"
@@ -477,9 +459,15 @@ def plot_distance_from_median_pi(distance_files, patient_types):
             distance_stats_df = distance_stats_df.append(
                 distance_stats_df_entry.T
             )
-            ax = sns.displot(distance_data, kde=True)
+            ax = sns.displot(distance_data, kde=True, bins=20)
             # ax.set(ylim=(0, 1))  # Finetuned to the data
-            ax.set(xlim=(0, 14000000))
+            if i == 0:
+                ax.set(xlim=(2500000, 5000000))
+            elif i == 1:
+                ax.set(xlim=(5000000, 14000000))
+            else:
+                ax.set(xlim=(5000000, 14000000))
+            print(np.min(distance_data))
             plt.savefig(
                 DOTENV_KEY2VAL["GEN_FIGURES_DIR"]
                 + "/median_pis/"

@@ -63,7 +63,7 @@ def cubical_persistence(patch):
         reduced_homology=True,
         n_jobs=N_JOBS,
     )
-    diagrams_cubical_persistence = cp.fit_transform()
+    diagrams_cubical_persistence = cp.fit_transform(patch)
     # sc = Scaler(metric="bottleneck")
     # scaled_diagrams_cubical_persistence = sc.fit_transform(
     #     diagrams_cubical_persistence

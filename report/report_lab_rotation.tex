@@ -382,7 +382,7 @@ section \ref{sec:discussion}.
 
 Here, we present the methodological choices made for this pipeline. All of the code used to compute
 the findings presented in this paper is currently available upon request on
-\href{https://github.com/pjhartout/TDA_ADNI_MLCB}{GitHub}.
+\href{https://github.com/BorgwardtLab/ADNI_MRI_Analysis}{GitHub}.
 
 \subsection{Data}
 
@@ -492,7 +492,7 @@ of 50\% at training time. The output of the last dense layer is redirected to a 
 neuron for prediction. The model was trained using an exponential decay learning rate scheduler and
 early stopping, which monitored the validation loss. All of the layers and utilities to train the
 neural network were provided by the Keras library ~\citep{chollet2015keras} and are available on the
-\href{https://github.com/pjhartout/TDA_ADNI_MLCB}{repository}, and a depiction of the computation
+\href{https://github.com/BorgwardtLab/ADNI_MRI_Analysis}{repository}, and a depiction of the computation
 graph is shown in Figure ~\ref{fig:model_arch}. We also note that the model was trained on a laptop
 CPU (Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz). For consistency and to enable a direct comparison
 with results shown in \citep{bruningk2020image}, we used the same data partitioning to present any

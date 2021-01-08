@@ -1,5 +1,5 @@
 #+BIND: org-export-use-babel nil
-#+TITLE: TDA Lab Rotation on ADNI data at the MLCB lab of Prof Borgwardt
+#+TITLE: Uncovering the topology of the medial temporal lobe in Alzheimer's disease.
 #+AUTHOR: Philip Hartout
 #+EMAIL: <philip.hartout@protonmail.com>
 #+DATE: August 17, 2020

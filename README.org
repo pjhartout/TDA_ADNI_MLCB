@@ -42,7 +42,7 @@ images (from AD patients and CN subjects) allow adequate clustering of patients
 in diagnostic categories or disease subtypes?
 
 * Dependencies
-All dependencies are managed through [[https://python-poetry.org/][poetry]]. Use `poetry install` to install them.
+All dependencies are managed through [[https://python-poetry.org/][poetry]]. Use ~poetry install~ to install them.
 
 * Folder structure
 This repository is organized as follows:

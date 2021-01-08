@@ -22,9 +22,60 @@
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
-This is the repository containing a TDA of the ADNI data done in the context of a lab rotation at the MLCB lab of ETHZ.
+This is the repository containing a TDA of the ADNI data done in the context of a lab rotation at
+the MLCB lab of ETHZ. The goal of this project was fourfold:
 
-Supervision: Bastian Rieck
+1. How salient are the topological features extracted from the patch for the characterization of
+  the atrophy observed in Alzheimer's disease as measured through the classification performance of
+AD versus CN subjects using persistence images?
 
-Dataset: ADNI data
-Timeline: AS2020 (sept-dec ideally).
+2. What does the distance between the persistence image and persistence
+landscape of a patient and the median persistence image or landscape of a
+diagnostic category reveal about the topological heterogeneity within a given
+diagnostic category?
+
+3. How can the distance among persistent images taken for each patient over the course of the
+  disease inform us with regard to the progression of the patient during the monitoring period?
+
+4. Does taking the distance between each image and two median persistence
+images (from AD patients and CN subjects) allow adequate clustering of patients
+in diagnostic categories or disease subtypes?
+
+* Dependencies
+All dependencies are managed through [[https://python-poetry.org/][poetry]]. Use `poetry install` to install them.
+
+* Folder structure
+This repository is organized as follows:
+
+#+begin_example
+├── figures                         # Contains raw figures exported by scripts
+├── literature                      # Some useful literature
+├── presentation                    # Presentation made to the lab on 2/12/2020
+│   ├── figures
+│   ├── lab_update.pdf
+│   ├── lab_update.tex
+│   └── References.bib
+├── pyproject.toml                  # Poetry dependencies
+├── README.org
+├── report                          # Scripts in this directory answer question 4.
+│   ├── figures                     # Contains figures compiled in the TeX document for the report exclusively
+│   ├── main.bib
+│   ├── neurips_2020.sty
+│   ├── report_lab_rotation.tex
+└── scripts                         # Contains all scripts used in the analysis. Some may need adjustment to work
+    ├── clustering                  # Scripts in this directory answer question 4.
+    ├── distances_from_median_rep   # Scripts in this directory answer parts question 2.
+    ├── global                      # Scripts to produce data yielding the CNN performance for the whole-brain PI
+    ├── models                      # Scripts in this directory answer question 1. (also contains models not discussed in the report)
+    ├── outliers_misclassified      # Scripts in this directory answer parts of question 2.
+    ├── patient_evolution           # Scripts in this directory answer question 3.
+    ├── persistent_homology         # Scripts in this directory perform persistent homology on the sMRI, useful for all questions.
+    ├── plotting                    # Scripts in this directory produce all the plots in figures/
+    └── utils.py                    # Utilities used by multiple scripts.
+#+begin_example
+
+#+end_example
+
+* Acknowledgments
+I would like to thank [[https://bastian.rieck.me/][Bastian Rieck]] for the supervision, [[https://bsse.ethz.ch/department/people/detail-person.MTg3NjEz.TGlzdC8yNjY5LDEwNjI4NTM0MDk=.html][Catherine Jutzeler]] and [[https://bsse.ethz.ch/mlcb/people/person-detail.MjYyNjM1.TGlzdC83NjcsLTEyNjQ4MzU1MTY=.html][Sarah Brüningk]] for
+helpful discussions, and [[https://bsse.ethz.ch/mlcb][Karsten Borgwardt]] for providing the research environment.

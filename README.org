@@ -47,7 +47,6 @@ All dependencies are managed through [[https://python-poetry.org/][poetry]]. Use
 This repository is organized as follows:
 
 #+begin_example
-├── figures                         # Contains raw figures exported by scripts
 ├── literature                      # Some useful literature
 ├── presentation                    # Presentation made to the lab on 2/12/2020
 │   ├── figures

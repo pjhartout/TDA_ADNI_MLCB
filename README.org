@@ -57,20 +57,20 @@ This repository is organized as follows:
 │   └── References.bib
 ├── pyproject.toml                  # Poetry dependencies
 ├── README.org
-├── report                          # Scripts in this directory answer question 4.
-│   ├── figures                     # Contains figures compiled in the TeX document for the report exclusively
+├── report                          # Scripts in this directory answer question 4
+│   ├── figures                     # Contains figures compiled for the report
 │   ├── main.bib
 │   ├── neurips_2020.sty
 │   ├── report_lab_rotation.tex
-└── scripts                         # Contains all scripts used in the analysis. Some may need adjustment to work
-    ├── clustering                  # Scripts in this directory answer question 4.
-    ├── distances_from_median_rep   # Scripts in this directory answer parts question 2.
-    ├── global                      # Scripts to produce data yielding the CNN performance for the whole-brain PI
-    ├── models                      # Scripts in this directory answer question 1. (also contains models not discussed in the report)
-    ├── outliers_misclassified      # Scripts in this directory answer parts of question 2.
-    ├── patient_evolution           # Scripts in this directory answer question 3.
-    ├── persistent_homology         # Scripts in this directory perform persistent homology on the sMRI, useful for all questions.
-    ├── plotting                    # Scripts in this directory produce all the plots in figures/
+└── scripts                         # Contains all scripts used in the analysis.
+    ├── clustering                  # Scripts in this directory answer question 4
+    ├── distances_from_median_rep   # Scripts in this directory answer parts question 2
+    ├── global                      # Yields data to train CNNs on whole-brain data
+    ├── models                      # Answers Q1 (also contains models not discussed in the report)
+    ├── outliers_misclassified      # Answers Q2
+    ├── patient_evolution           # Answers Q3
+    ├── persistent_homology         # Applies persistent homology on the sMRI, useful for all questions.
+    ├── plotting                    # Produces all the plots in figures/
     └── utils.py                    # Utilities used by multiple scripts.
 #+begin_example
 

@@ -26,20 +26,19 @@ This is the repository containing a TDA of the ADNI data done in the context of 
 the MLCB lab of ETHZ. The goal of this project was fourfold:
 
 1. How salient are the topological features extracted from the patch for the characterization of
-  the atrophy observed in Alzheimer's disease as measured through the classification performance of
-AD versus CN subjects using persistence images?
+  the atrophy observed in Alzheimer's disease as measured through the classification performance
+  of AD versus CN subjects using persistence images?
 
-2. What does the distance between the persistence image and persistence
-landscape of a patient and the median persistence image or landscape of a
-diagnostic category reveal about the topological heterogeneity within a given
-diagnostic category?
+2. What does the distance between the persistence image and persistence landscape of a patient and
+   the median persistence image or landscape of a diagnostic category reveal about the topological
+   heterogeneity within a given diagnostic category?
 
 3. How can the distance among persistent images taken for each patient over the course of the
-  disease inform us with regard to the progression of the patient during the monitoring period?
+   disease inform us with regard to the progression of the patient during the monitoring period?
 
-4. Does taking the distance between each image and two median persistence
-images (from AD patients and CN subjects) allow adequate clustering of patients
-in diagnostic categories or disease subtypes?
+4. Does taking the distance between each image and two median persistence images (from AD patients
+   and CN subjects) allow adequate clustering of patients in diagnostic categories or disease
+   subtypes?
 
 * Dependencies
 All dependencies are managed through [[https://python-poetry.org/][poetry]]. Use ~poetry install~ to install them.

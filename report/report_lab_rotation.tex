@@ -180,9 +180,9 @@ tau proteins, accumulate in the brain of patients with AD and leads to neural ce
 ~\citep{da2016insights}. This cellular destruction leads to a cumulative effect: brain atrophy,
 which refers to the shrinkage of brain volume. This damage particularly affects brain regions
 involved in memory formation such as the medial temporal lobe (MTL), which contains the entorhinal
-cortex, the hippocampus, and the amygdala \citep{goedert2006century} is visible
-using structural Magnetic Resonance Imaging (sMRI) ~\citep{frisoni2010clinical}, and has been
-heralded as one of the most reliable biomarkers for Alzheimer's disease \citep{pini2016brain}.
+cortex, the hippocampus, and the amygdala is visible using structural Magnetic Resonance Imaging
+(sMRI) ~\citep{frisoni2010clinical, goedert2006century}, and has been heralded as one of the most
+reliable biomarkers for Alzheimer's disease \citep{pini2016brain}.
 
 Such images provide a rich source of data, which can then be used for various purposes. One of them
 is classification, which consists of categorizing cognitively intact subjects (CN) and AD patients
@@ -210,7 +210,7 @@ define several procedures that are paramount to the workflow described in this r
 persistence, various vectorized representations of the persistence diagrams obtained from filtered
 cubical complexes, and the notion of pairwise distance between such representations. For material
 providing an extensive and formal introduction to topology and persistent homology, please refer
-to~\citet{freedman2009algebraic, edelsbrunner2010computational, ghrist2008barcodes}.
+to~\citet{freedman2009algebraic, edelsbrunner2010computational}, and \citet{ghrist2008barcodes}.
 
 
 \subsubsection{Cubical complexes and persistent homology}
@@ -222,24 +222,24 @@ $d$-dimensional space, a cube is then defined as a product of $d$ elementary int
 $\Pi_{i=1}^{d}I_i$. The dimension of the cube is then equal to the number of non-degenerate interval
 in the aforementioned product, such that 0-cubes, 1-cubes, 2-cubes, and 3-cubes correspond to
 vertices, edges, squares, and 3D cubes, respectively. In this report, the 3D cube corresponds to a
-given voxel of our sMRI.
+given voxel--- or 3d pixel---of our sMRI.
 
 A cubical subcomplex $X$ of dimension $d$ is then defined as a finite set of elementary cubes of at
-most dimension $d$, where $X$ must be closed undertaking faces and intersections, i.e. for any cube
-in $X$, all of its faces must belong to $X$, and for any two cubes in $X$, their intersection is
-either empty, or there is a common face between them.
+most dimension $d$, where $X$ must be closed undertaking faces and intersections. This means that
+for any cube in $X$, all of its faces must belong to $X$, and for any two cubes in $X$, their
+intersection is either empty, or there is a common face between them.
 
 To obtain the entire cubical complex $\mathbb{X}$ contained in an sMRI image of a particular patient
-taken at a particular timepoint, we use a filtering function $f:\mathbb{X}\to\mathbb{R}$, such as an
-activation function, which corresponds to the pixel density of each voxel, to study the topology of
-the sublevel sets $\mathbb{X}_t=f^{-1}(-\infty, t]$ of cubical subcomplexes that arise. This is a
-method to study topological spaces referred to as \emph{persistent homology}. A common
-representation of the evolution of topological complexes as a function of the value of the
+taken at a particular timepoint, we use a filtering function $f:\mathbb{X}\to\mathbb{R}$, which
+ranges over all pixel intensity values observed (here, these range between $0$ and $1$), to study
+the topology of the sublevel sets $\mathbb{X}_t=f^{-1}(-\infty, t]$ of cubical subcomplexes that
+arise. This is a method to study topological spaces referred to as \emph{persistent homology}. A
+common representation of the evolution of topological complexes as a function of the value of the
 filtration function is the \emph{persistence diagram} (PD), which is a multiset of points. For each
 homological dimension (here, $0,1,2$), we obtain a collection of points, with an associated $x$ and
 $y$ coordinate which corresponds to the birth and death of a topological feature in the homology
-dimension $n=0,1,2,\ldots$, respectively. The homological dimensions $0,1,2$ can be interpreted as
-connected components, tunnels and cubes, respectively. We refer to a homological feature as
+dimension $n=0,1,2$. The points in homological dimensions $0,1,2$ can be interpreted as
+connected components, tunnels, and cubes, respectively. We refer to a homological feature as
 \emph{persistent} if the difference between its birth and death value is particularly high.
 
 
@@ -249,7 +249,7 @@ connected components, tunnels and cubes, respectively. We refer to a homological
 PDs are endowed with a metric (further discussed in Section
 \ref{sec:pairwise_distance_definitions}), so it is possible to perform a variety of machine learning
 (ML) techniques using representations of PDs as input data. However, multiple ML algorithms
-require more than a metric --fixed-size vectors are often required--. It is therefore
+require more than a metric ---fixed-size vectors are often required---. It is therefore
 desirable to have a fixed-length, stable, efficient-to-compute, interpretable (with respect to the
 PD) and tunable mapping from the PD to a vector space in $\mathbb{R}^n$ to fit various machine
 learning algorithms to them.
@@ -260,7 +260,7 @@ useful for classification. Computing the PI from a PD $D$ consists of a two-step
 PD is mapped to an integrable function $\rho_D : \mathbb{R}^2\to \mathbb{R}$ called a persistent
 surface. This surface is a weighted sum of Gaussian distributions, each centered around a point of
 the PD. The matrix of pixel values can be obtained from the computation of the integration of
-$\rho_D$ on a grid overlaid on the surface ~\citet{adams2017persistence}. An overview of the
+$\rho_D$ on a grid overlaid on the surface ~\citep{adams2017persistence}. An overview of the
 pipeline to obtain persistence images is shown in Figure~\ref{fig:pipeline_persistence_image}.
 
 \begin{figure}[htb]
@@ -272,10 +272,10 @@ pipeline to obtain persistence images is shown in Figure~\ref{fig:pipeline_persi
 \end{figure}
 
 Another representation associated to the PD is the persistence landscape (PL). Similarly to PIs, PLs
-maps the PD into a Hilbert space as well, which is useful for ML applications, but additionally
-extracts the most persistent features of the data. In order to define a persistence landscape, let
+maps the PD into a Hilbert space, which is useful for ML applications, but additionally
+extracts the most persistent features from the PD. In order to define a persistence landscape, let
 us take a pair $(b,d)$, which refer to the birth and death of a topological feature. We now define
-the piecewise linear function $f_{(b,d)}:\mathbb{R} \to [0, \infty]$ as
+the piecewise linear function $f_{(b,d)}:\mathbb{R} \to [0, \infty]$ as:
 \begin{equation}
   \label{eq:piecewise_linear_landscape}
   f_{(b,d)}(x)=
@@ -304,7 +304,7 @@ value does not exist, which results in $\lambda_k=0$ for $k>n$ ~\citep{bubenik20
     \includegraphics[width=53mm]{figures/persistence_landscape_bubenik_paper/paper3dlandscape.png}
   \end{minipage}
   \vspace{5ex}
-  \caption{PL for the homology in degree 1 of linked annuli from \citep{bubenik2015statistical}. Top
+  \caption{PL for the homology in degree 1 of linked annuli from \citet{bubenik2015statistical}. Top
     left, persistence diagram, top right, rescaled function from equation
     \ref{eq:piecewise_linear_landscape}. Bottom left and right, 2 and 3-d representation of the
     persistent landscape. Note that $\lambda_1$ represents the most persistent topological features.}
@@ -314,37 +314,38 @@ value does not exist, which results in $\lambda_k=0$ for $k>n$ ~\citep{bubenik20
 \subsubsection{Pairwise distances and medians}\label{sec:pairwise_distance_definitions}
 
 A crucial element in our investigations consists of examining distances between vectorized
-topological representations. Intuitively, and as noted by
-\citep{berwald2018computing}, it important to take the meaning of the points of the PD into account;
-namely that a point close to the diagonal $(c,c+\epsilon)$ represents a feature that lived for a
-short time $\epsilon$. A diagram with this small lifetime point should therefore be close to the
-same diagram without that point, where the feature would not appear at all. Hence, it makes sense to
-introduce the notion of minimal cost required to match up points of the two diagrams, either
-off-diagonal to off-diagonal, or off-diagonal to the nearest point on the diagonal (for small values
-of $\epsilon$). In this context, distance functions usually applied to evaluate the distance between
-two probability density distributions are relevant: the bottleneck distance and the $p$-Wasserstein
-distance, where $p\geq 1$. The $p$-Wasserstein distance between two diagrams $D_1$ and $D_2$ is the
-infimum over all bijections $\gamma: D_1 \cup \Delta \to D_2 \cup \Delta$, where $\Delta$ is the
-multiset $\lbrace (s, s) \mid s \in \mathbb{R} \rbrace$ with multiplicity $(s,s) \mapsto +\infty$,
-of
+topological representations. Intuitively, and as noted by \citet{berwald2018computing}, it important
+to take the meaning of the points of the PD into account; namely that a point close to the diagonal
+$(c,c+\epsilon)$ represents a feature that lived for a short time $\epsilon$. A diagram with this
+small lifetime point should therefore be close to the same diagram without that point, where the
+feature would not appear at all. Hence, it makes sense to introduce the notion of minimal cost
+required to match up points of the two diagrams, either off-diagonal to off-diagonal, or
+off-diagonal to the nearest point on the diagonal (for small values of $\epsilon$). In this context,
+distance functions usually applied to evaluate the distance between two probability density
+distributions are relevant: the bottleneck distance and the (more general) $p$-Wasserstein distance,
+where $p\geq 1$. The $p$-Wasserstein distance between two diagrams $D_1$ and $D_2$ is the infimum
+over all bijections $\gamma: D_1 \cup \Delta \to D_2 \cup \Delta$, where $\Delta$ is the multiset
+$\lbrace (s, s) \mid s \in \mathbb{R} \rbrace$ with multiplicity $(s,s) \mapsto +\infty$, such that:
 \begin{equation}
   \label{eq:wasserstein_distance}
-  \left(\sum_{x \in D_1 \cup \Delta} ||x - \gamma(x)||_q^p \right)^{1/p}
+  W_p(D_1,D_2)=\left(\sum_{x \in D_1 \cup \Delta} ||x - \gamma(x)||_q^p \right)^{1/p}
 \end{equation}
 
 where we usually have $q=\infty$. When we let $p\to\infty$, we recover the bottleneck distance.
 
 We also use the notion of a median persistence landscape, where, given a collection of PDs, we
-compute their associated binned PL, which is a matrix of fixed dimension $m\times h$ where $m$ is the
-length of the binned $\lambda_1$ persistence landscape, and $h$ is the homology dimension. We compute the median PL by taking the
-median over all samples for each cell in $m$ for each homology dimension $h$, so we end up with a PL
-representative of the collection of the samples in the collection. A similar approach can be adopted
-for PIs. The median PL and PI were chosen over the average PL or PI due to the skewed distribution of
-the data observed in some cases, as will be highlighted in section \ref{sec:disc-dist}.
+compute their associated binned PL, which is a matrix of fixed dimension $m\times h$ where $m$ is
+the length of the binned $\lambda_1$ persistence landscape, and $h$ is the homology dimension. We
+compute the median PL by taking the median over all samples for each cell in $m$ for each homology
+dimension $h$, which results in a PL representative of the collection of the samples in the
+collection. A similar approach can be adopted for PIs. The median PL and PI were chosen over the
+average PL or PI due to the skewed distribution of the data observed in some cases, as will be
+highlighted in section \ref{sec:disc-dist}.
 
 Taking the distance between any two persistence landscapes or images can be achieved using the
-Minkowski distance, essentially a proxy for the $p$-Wasserstein distance for fixed-length vectors.
-We define the Minkowski distance given two vectors $\mathbf{x},\mathbf{y}\in\mathbb{R}^n$, as:
+Minkowski distance, which is essentially a proxy for the $p$-Wasserstein distance for two vectors of
+the same length. We define the Minkowski distance given two vectors
+$\mathbf{x},\mathbf{y}\in\mathbb{R}^n$, as:
 \begin{equation}
   \label{eq:minkowski}
   D(\mathbf{x},\mathbf{y}) = \left(\sum_{i=1}^{n}|x_i-y_i|^p\right)^{1\over p}.
@@ -593,11 +594,12 @@ We compute the distances in two settings:
 \begin{description}
 \item[Intra-diagnostic category setting]: here, we compute the distance of each PL available for all
 available sMRIs belonging to a diagnostic category with respect to the median PL of that category.
-For this particular analysis, we extracted the earliest available image for that patient patient.
-Additionally, we check whether or not the distribution of the distances is skewed by performing a
-Shapiro-Wilk test of normality \citep{shapiro1965analysis}. A significant $p$-value--- defined at
-$\alpha<0.05$ for all statistical tests used throughout this report--- for this test indicates
-evidence that the distribution is not normal, therefore indicating skewness.
+For this particular analysis, we extracted the earliest available image for that patient so that no
+redundant information is contained in the resulting distance distribution. Additionally, we check
+whether or not the distribution of the distances is skewed by performing a Shapiro-Wilk test of
+normality \citep{shapiro1965analysis}. A significant $p$-value--- defined at $\alpha<0.05$ for all
+statistical tests used throughout this report--- for this test indicates evidence that the
+distribution is not normal, therefore indicating skewness.
 
 \item[Intra-patient distance]: this allows us to assess the distance of the different PDs of the
 same patient, to see if there is any distinctive evolution of the topological features over time. In
@@ -654,14 +656,13 @@ seems to be somewhat inferior to state-of-the-art models trained on similar data
 \citep{wen2020convolutional}, but requires dramatically less computing power -- the relatively
 shallow multilayer CNN shown in \citet{bruningk2020image}, for instance, requires 15 minutes of
 training time on a server GPU while our approach requires only 2 minutes on one laptop CPU, showing
-the high grade of compression of the approach presented here. Additionally, the model trained on
-local PIs yields higher performance compared to whole-brain persistence images reported in
-\citep{bruningk2020image} as well as when training the network on whole-brain PIs obtained with the
-same parameters. Theoretically, the information contained in a patch PI should be contained in a
-whole-brain PI, so reducing the standard deviation of the Gaussian kernel as well as computing
-larger patches should be preferred. Remarkably, we observe that the performance of our network seems
-to be more stable than other approaches for which standard deviations of performance metrics are
-provided.
+the high grade of compression of the approach presented here. The performance measures also show
+that training the same architecture on whole-brain CNNs does not yield better performance, instead
+showing a slight decline. Additionally, the model trained on local PIs yields higher performance
+compared to whole-brain persistence images reported in \citep{bruningk2020image} as well as when
+training the network on whole-brain PIs obtained with the same parameters. Remarkably, we observe
+that the performance of our network seems to be more stable than other approaches for which standard
+deviations of performance metrics are provided.
 
 \begin{table}
   \centering
@@ -669,7 +670,7 @@ provided.
     \toprule
     Local (single patch) & \textbf{PI} & & 3D Conv & & \\
     Global (whole-brain) &&\textbf{PI}& & PI & SOTA \\ \midrule Validation
-    accuracy & $0.79\pm 0.02$ & $0.74\pm 0.03$ & $0.85\pm 0.06$ & $ 0.76\pm 0.02$ & $0.91$\\
+    accuracy & $0.80\pm 0.02$ & $0.74\pm 0.03$ & $0.85\pm 0.06$ & $ 0.76\pm 0.02$ & $0.91$\\
     Precision & $0.81\pm 0.04$ & $0.80\pm0.05$ &  $0.78\pm 0.04$ & $0.87\pm0.04$ & - \\
     Recall & $0.81\pm 0.02$ & $0.85\pm0.08$ & $0.87\pm0.08$ & $0.88\pm 0.08$ &$0.84$\\
     AUC & $0.85\pm 0.03$ & $0.77\pm0.03$ & $0.89\pm0.05$ & $ 0.78\pm 0.02$ & $0.96$\\
@@ -692,12 +693,15 @@ each image with respect to the median PL and PI for each diagnostic category. Th
 and PI for each diagnostic category is shown in Figure \ref{fig:median_pls} and
 \ref{fig:median_pis}, and the distribution of the $L^1$ norm between each patient and these median
 PLs and PIs is shown in Figure \ref{fig:displots_median_pl} and Figure \ref{fig:displots_median_pi},
-respectively. Before looking at the distribution of distance values, we first note that the height of the peak median PL of AD patients in
-$H_2$ seems to be \emph{lower} than in CN or MCI. Interestingly, we see that the distribution of distances between PLs and the median PL
-in each diagnostic category and homological dimension is far more skewed---which is reflected by very low
-$p$-values of the Shapiro-Wilk test. For persistence images---see Figure \ref{fig:displots_median_pi}---,the distance distributions seem to be
-much more homogeneous with $p$-values still significant for some scenarios, but not all. Refer to Table
-\ref{tab:stats_median_pl} for details. Overall, the $p$-values are much more closer to the significance threshold.
+respectively. Before looking at the distribution of distance values, we first note that the height
+of the peak median PL of AD patients in $H_2$ seems to be \emph{lower} than in CN or MCI.
+Interestingly, we see that the distribution of distances between PLs and the median PL in each
+diagnostic category and homological dimension is far more skewed---which is reflected by very low
+$p$-values of the Shapiro-Wilk test. For persistence images---see Figure
+\ref{fig:displots_median_pi}---, the distance distributions seem to be much more homogeneous with
+$p$-values still significant for some scenarios, but not all. Refer to Table
+\ref{tab:stats_median_pl} for details. Overall, the $p$-values are much more closer to the
+significance threshold.
 
 \begin{figure}[htb]
   \centering
@@ -906,7 +910,7 @@ As indicated in section \ref{sec:tda_setup}, we can compute the distance between
 associated with the different timepoints available to a single patient to evaluate the distance
 between each of these topological representations at these timepoints, hence obtaining a
 representation of the topological evolution of that particular patient. When applying this approach
-to the ADNI data, we find interesting qualitative results: distances varying widely from one patient to
+to the ADNI data, we find interesting qualitative results: distances vary widely from one patient to
 the next. For instance, if we take a CN patient diagnosed as such throughout the time that patient
 has been monitored, we see relatively low distances between that patients and other timepoints --
 see Figure \ref{fig:patient_evolution_stable} for an example. However, distances seem higher when
@@ -1079,32 +1083,36 @@ reasonably reliably from local persistence images (shown in Table ~\ref{tab:perf
 classification performance is lower than the state of the art reported in \citep{liu2018anatomical},
 which are about 85\% to 90\% and reported in Table \ref{tab:performance}, our results were obtained
 using a very simple neural architecture and only the local topological features of a single, small
-patch in the temporal lobe. Additionally, the standard deviation of our approach seems to be
-consistently lower than other approaches presented so far for which standard deviations of
-performance measures were available. This stability is likely because persistence
-homology itself is a stable method, robust to noise present in data \citep{cohen2007stability},
-but this stability is also compounded by the fact that that persistence images have also been proven
-to be stable when introducing noise to the underlying persistence diagram
-\citep{adams2017persistence}. We note that one of the inherent impediments to our classifiers is that
-it does not have access to all the available clinical data contributing to the establishment of
-a formal diagnosis of Alzheimer's disease. As per the revised guidelines for the diagnosis of AD,
-other factors such as blood and cerebrospinal fluid biomarkers and positron emission tomography
-(PET) scans also greatly influence the establishment of an AD diagnosis \citep{mckhann2011diagnosis}.
+patch in the temporal lobe. Additionally, the standard deviation of the performance measures of our
+approach seems to be consistently lower than other approaches presented so far for which standard
+deviations of performance measures were available. This stability is likely because persistence
+homology itself is a stable method, robust to noise present in data \citep{cohen2007stability}, but
+this stability is also compounded by the fact that that persistence images have also been proven to
+be stable when introducing noise to the underlying persistence diagram \citep{adams2017persistence}.
+We note that one of the inherent impediments to our classifiers is that it does not have access to
+all the available clinical data contributing to the establishment of a formal diagnosis of
+Alzheimer's disease. As per the revised guidelines for the diagnosis of AD, other factors such as
+blood and cerebrospinal fluid biomarkers and positron emission tomography (PET) scans also greatly
+influence the establishment of an AD diagnosis \citep{mckhann2011diagnosis}.
 
 Signs showing that our accuracy might be improved is that there is no increased ratio of topological
-outliers among the misclassified samples (Figure~\ref{fig:outlier_misclassified}), nor is the
-the proportion of patients showing a change in diagnosis substantially higher among misclassified
-samples, showing that patients who are oscillating between two diagnostic categories do not account
-for a high uncertainty. One way to increase the performance of our models would be a multi-patch
-setup, where the persistent image of other relevant patches could be considered. This stems from the
-fact that there is increasing evidence for the existence of biological subtypes of AD, which
-translate in differentially affected brain regions \citep{poulakis2018heterogeneous,
-tijms2020pathophysiological}. In this context, computing the PI of other local areas of the brain
-which are affected by other subtypes of AD, like the precuneus, the medial and lateral temporal
-cortex, some of which incidentally also show increased accuracy in patch-based classification as
-seen in Figure~\ref{fig:acc}. Another research avenue to be explored is the determination of
-possible weight functions applied to obtain persistence images to emphasize particularly important
-landmarks of Alzheimer's disease. One might consider combining the results of a gradient-weighted
+outliers (i.e. PIs showing an unusually high distance w.r.t. the median PL or PI of the diagnostic
+category to which the PI belongs) among the misclassified samples
+(Figure~\ref{fig:outlier_misclassified}), nor is the the proportion of patients showing a change in
+diagnosis substantially higher among misclassified samples, showing that patients who are
+oscillating between two diagnostic categories do not account for a high uncertainty. One way to
+increase the performance of our models would be a multi-patch setup, where the persistent image of
+other relevant patches could be considered. This stems from the fact that there is increasing
+evidence for the existence of biological subtypes of AD, which translate into differentially affected
+brain regions \citep{poulakis2018heterogeneous, tijms2020pathophysiological}. In this context,
+computing the PI of other local areas of the brain which are affected by other subtypes of AD, like
+the precuneus, the medial and lateral temporal cortex, some of which incidentally also show
+increased accuracy in patch-based classification as seen in Figure~\ref{fig:acc}. Another research
+avenue to be explored is the determination of possible weight functions applied to obtain
+persistence images to emphasize particularly important landmarks of Alzheimer's disease. Although
+theoretically the information contained in a patch PI should be contained in a whole-brain PI, the
+amount of noisy features is also much higher, and thereby prevents the CNN to obtain higher
+performance on whole-brain PIs. One might consider combining the results of a gradient-weighted
 class activation mapping (Grad-CAM) on a raw CNN trained on the patch with the persistence surface
 to increase the weight of particular topological features, should they stand out in the persistence
 image and yields better classification results.
@@ -1115,7 +1123,7 @@ image and yields better classification results.
 We begin the discussion of our distance distribution analyses by showing a somewhat surprising
 finding highlighted in Section \label{sec:results_between_images}, specifically in Figure
 \ref{fig:median_pls}. This is somewhat contrary to expectation, as we would expect larger, more
-persistent wholes to appear in brains affected by Alzheimer's disease, resulting in a higher valued
+persistent holes to appear in brains affected by Alzheimer's disease, resulting in a higher valued
 persistent $\lambda_1$ persistent landscape. One possible explanation for this phenomenon is that
 the wholes attributed to Alzheimer's disease do not appear as the median most persistent feature at
 any given value of the filtration function. Yet, this hypothesis is difficult to prove visually.
@@ -1146,12 +1154,11 @@ topological heterogeneity mostly concerns the most persistent features. As noted
 analysis using persistence images as vectorized representations for the analysis. We hypothesize
 that this change is because persistence images consider all topological features,
 regardless of whether or not they are persistent. Hence, when considering all features, the
-distribution is mostly even, and topological outliers cannot be identified, save a few exceptions,
-namely AD patients in $H_1$ and $H_2$.
+distribution is mostly even, and topological outliers cannot be identified, save a few exceptions.
 
 Contrary to expectation, little appreciable difference was seen in intra-patient samples across
 distance functions. The reason for this lack of signal is likely because the level of
-noise introduced by averaging for each patient likely drown any intra-patient evolution. More
+noise introduced by averaging for each patient likely drown any intra-patient evolution signal. More
 sensitive clustering techniques using PDs could be more useful to determine the temporal trajectory
 of each patient. Additionally, the features extracted from a local patch are most likely
 not enough to characterize global atrophy progression patterns seen in the cortex of Alzheimer's
@@ -1164,17 +1171,19 @@ computing the $L^1$ norm of each image with respect to the median image in $H_2$
 emerging: for instance, we tend to see CN PIs cluster in the upper part of the plot while AD PIs
 tend to cluster in the bottom, with MCI patients mostly blended in between. Yet, these trends are
 not clear enough to obtain clear clusters of disease phenotypes (i.e. one associated with each
-condition), let alone disease subtypes. Obtaining features more salient for clustering various
-subtypes would probably require more complex features, extracted for instance using a dynamic
-autoencoder on the persistence images \citep{mrabah2019deep}. Additionally, other methods tailored
-for topological features might also be developed and applied here.
+condition), let alone disease subtypes. It should be noted that the approach presented here to
+cluster patients still performs qualitatively better than out-of-the-box embedding approaches such
+as mMDS plots as shown in Figure \ref{fig:mds_plot}. Obtaining features more salient for clustering
+various subtypes would probably require more complex features, extracted for instance using a
+dynamic autoencoder on the persistence images \citep{mrabah2019deep}. Additionally, other methods
+tailored for topological features might also be developed and applied here.
 
 \subsection{Limitations and outlook}
 
 The first drawback of our analysis is the difficulty to highlight sources of noise in high
 persistence features. For instance, we mention in section \ref{sec:disc-dist} that some of the
 topological outliers that were highlighted in Figure \ref{fig:displots_median_pl} (but also observed
-among AD patients in Figure \ref{fig:vis_pca_ad_cn}) could be due to noise, but the source of that
+among AD patients in Figure \ref{fig:vis_pca_ad_cn}) could be due to noise, but the source of this
 noise is unknown. Specifically, it is not possible to investigate whether this noise comes from the
 preprocessing pipeline applied to it, or from the latent data distribution. We hypothesize that part
 of the noise could be introduced during the mapping of the original T1-weighted image to the
@@ -1235,8 +1244,9 @@ outliers, but, overall, does not affect the classification performance. Then, we
 but not substantial, increase in distance among images belonging to a given patient who deteriorates
 towards Alzheimer's disease versus patients who do not. Our last finding is that clustering patients
 solely according to their distance with respect to multiple median PI does not allow proper AD
-subtype identification. Although promising, all of these topology-driven approaches need further
-development to maximize the information that can be extracted from MRI images.
+subtype identification, be shows a promising research avenue. Although promising, all of these
+topology-driven approaches need further development to maximize the information that can be
+extracted from MRI images.
 
 \clearpage
 \bibliographystyle{unsrtnat}
@@ -1269,6 +1279,6 @@ For more details of the pipeline, please refer to
 \href{https://fMRIPrep.readthedocs.io/en/latest/workflows.html}{the official documentation of
   \texttt{fMRIPrep}}. Preprocessing was finalized by intensity normalization of the extracted and
 MNI space registered brain images.
-%[the section corresponding to workflows in *fMRIPrep*'s documentation](https://fMRIPrep.readthedocs.io/en/latest/workflows.html "fMRIPrep's documentation").
+
 
 \end{document}

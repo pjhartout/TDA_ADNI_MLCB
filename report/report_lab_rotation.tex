@@ -87,7 +87,7 @@ to (iv) cluster the patients according to their diagnosis and disease subtypes, 
 A graphical abstract of the analyses discussed in this report is shown in
 Figure~\ref{fig:graphical_abstract}
 
-\begin{figure}[htb][b]
+\begin{figure}[htb]
   \centering
   \begin{tikzpicture}[align=center, node distance = 1cm, auto]
     \node[](unprocessed) {\includegraphics[width=0.15\textwidth]{figures/t1_unprocessed.jpg}};
@@ -224,15 +224,15 @@ in the aforementioned product, such that 0-cubes, 1-cubes, 2-cubes, and 3-cubes 
 vertices, edges, squares, and 3D cubes, respectively. In this report, the 3D cube corresponds to a
 given voxel--- or 3d pixel---of our sMRI.
 
-A cubical subcomplex $X$ of dimension $d$ is then defined as a finite set of elementary cubes of at
+A cubical complex $X$ of dimension $d$ is then defined as a finite set of elementary cubes of at
 most dimension $d$, where $X$ must be closed undertaking faces and intersections. This means that
 for any cube in $X$, all of its faces must belong to $X$, and for any two cubes in $X$, their
 intersection is either empty, or there is a common face between them.
 
-To obtain the entire cubical complex $\mathbb{X}$ contained in an sMRI image of a particular patient
+To obtain the cubical complex $\mathbb{X}$ contained in an sMRI image of a particular patient
 taken at a particular timepoint, we use a filtering function $f:\mathbb{X}\to\mathbb{R}$, which
 ranges over all pixel intensity values observed (here, these range between $0$ and $1$), to study
-the topology of the sublevel sets $\mathbb{X}_t=f^{-1}(-\infty, t]$ of cubical subcomplexes that
+the topology of the sublevel sets $\mathbb{X}_t=f^{-1}(-\infty, t]$ of cubical complexes that
 arise. This is a method to study topological spaces referred to as \emph{persistent homology}. A
 common representation of the evolution of topological complexes as a function of the value of the
 filtration function is the \emph{persistence diagram} (PD), which is a multiset of points. For each

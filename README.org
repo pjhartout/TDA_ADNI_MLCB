@@ -43,7 +43,7 @@ the MLCB lab of ETHZ. The goal of this project was fourfold:
 
 #+CAPTION: Flow chart of the analyses conducted in this report. Images adapted from [[https://commons.wikimedia.org/wiki/Brain/media/File:MRI_head_side.jpg][Wikimedia]], [[https://www.slicer.org/wiki/Documentation/Nightly/Modules/BrainVolumeRefinement][slicer.org]], [[https://thenounproject.com/xela./collection/diagrams/?i=486221][Xela Ub]] and [[https://thenounproject.com/smodgekar/collection/data-classify/][Sachin Modgekar]]
 #+NAME:   fig:SED-HR4049
-[[./summary_pipeline.png]]
+[[summary_pipeline.png]]
 
 * Dependencies
 All dependencies are managed through [[https://python-poetry.org/][poetry]]. Use ~poetry install~ to install them.

@@ -22,6 +22,7 @@
 #+STARTUP: latexpreview
 #+LATEX_COMPILER: pdflatexorg-mode restarted
 
+
 This is the repository containing a TDA of the ADNI data done in the context of a lab rotation at
 the MLCB lab of ETHZ. The goal of this project was fourfold:
 
@@ -39,6 +40,10 @@ the MLCB lab of ETHZ. The goal of this project was fourfold:
 4. Does taking the distance between each image and two median persistence images (from AD patients
    and CN subjects) allow adequate clustering of patients in diagnostic categories or disease
    subtypes?
+
+#+CAPTION: Flow chart of the analyses conducted in this report. Images adapted from [[https://commons.wikimedia.org/wiki/Brain/media/File:MRI_head_side.jpg][Wikimedia]], [[https://www.slicer.org/wiki/Documentation/Nightly/Modules/BrainVolumeRefinement][slicer.org]], [[https://thenounproject.com/xela./collection/diagrams/?i=486221][Xela Ub]] and [[https://thenounproject.com/smodgekar/collection/data-classify/][Sachin Modgekar]]
+#+NAME:   fig:SED-HR4049
+[[./summary_pipeline.png]]
 
 * Dependencies
 All dependencies are managed through [[https://python-poetry.org/][poetry]]. Use ~poetry install~ to install them.
